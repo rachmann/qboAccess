@@ -6,7 +6,7 @@ namespace QuickBooksAccess.Misc
 	{
 		public static ILogger Log()
 		{
-			return NetcoLogger.GetLogger("MagentoLogger");
+			return NetcoLogger.GetLogger( "MagentoLogger" );
 		}
 	}
 }

@@ -13,97 +13,97 @@ namespace QuickBooksAccess
 {
 	public class QuickBooksService : IQuickBooksService
 	{
-		private void LogTraceException(Exception exception)
+		private void LogTraceException( Exception exception )
 		{
-			QuickBooksLogger.Log().Trace(exception, "[quickBooks] An exception occured.");
+			QuickBooksLogger.Log().Trace( exception, "[quickBooks] An exception occured." );
 		}
 
-		public async Task<PingInfo> Ping()
+		public async Task< PingInfo > Ping()
 		{
 			try
 			{
 				//todo: replace me
 				throw new NotImplementedException();
 			}
-			catch (Exception exception)
+			catch( Exception exception )
 			{
-				this.LogTraceException(exception);
+				this.LogTraceException( exception );
 				throw;
 			}
 		}
 
-		public QuickBooksService(QuickBooksAuthenticatedUserCredentials quickBooksAuthenticatedUserCredentials)
+		public QuickBooksService( QuickBooksAuthenticatedUserCredentials quickBooksAuthenticatedUserCredentials )
 		{
 			//todo: replace me
 			throw new NotImplementedException();
 		}
 
-		public async Task<IEnumerable<Order>> GetOrdersAsync(DateTime dateFrom, DateTime dateTo)
+		public async Task< IEnumerable< Order > > GetOrdersAsync( DateTime dateFrom, DateTime dateTo )
 		{
 			try
 			{
 				//todo: replace me
 				throw new NotImplementedException();
 			}
-			catch (Exception exception)
+			catch( Exception exception )
 			{
-				this.LogTraceException(exception);
-				return Enumerable.Empty<Order>();
+				this.LogTraceException( exception );
+				return Enumerable.Empty< Order >();
 			}
 		}
 
-		public async Task<IEnumerable<Order>> GetOrdersAsync()
+		public async Task< IEnumerable< Order > > GetOrdersAsync()
 		{
 			try
 			{
 				//todo: replace me
 				throw new NotImplementedException();
 			}
-			catch (Exception exception)
+			catch( Exception exception )
 			{
-				this.LogTraceException(exception);
-				return Enumerable.Empty<Order>();
+				this.LogTraceException( exception );
+				return Enumerable.Empty< Order >();
 			}
 		}
 
-		public async Task<IEnumerable<Product>> GetProductsSimpleAsync()
+		public async Task< IEnumerable< Product > > GetProductsSimpleAsync()
 		{
 			try
 			{
 				//todo: replace me
 				throw new NotImplementedException();
 			}
-			catch (Exception exception)
+			catch( Exception exception )
 			{
-				this.LogTraceException(exception);
-				return Enumerable.Empty<Product>();
+				this.LogTraceException( exception );
+				return Enumerable.Empty< Product >();
 			}
 		}
 
-		public async Task<IEnumerable<Product>> GetProductsAsync()
+		public async Task< IEnumerable< Product > > GetProductsAsync()
 		{
 			try
 			{
 				//todo: replace me
 				throw new NotImplementedException();
 			}
-			catch (Exception exception)
+			catch( Exception exception )
 			{
-				this.LogTraceException(exception);
-				return Enumerable.Empty<Product>();
+				this.LogTraceException( exception );
+				return Enumerable.Empty< Product >();
 			}
 		}
 
-		public async Task UpdateInventoryAsync(IEnumerable<Inventory> products)
+		public async Task UpdateInventoryAsync( IEnumerable< Inventory > products )
 		{
 			try
 			{
 				//todo: replace me
 				throw new NotImplementedException();
 			}
-			catch (Exception exception)
+			catch( Exception exception )
 			{
-				this.LogTraceException(exception);
+				this.LogTraceException( exception );
 			}
 		}
 	}

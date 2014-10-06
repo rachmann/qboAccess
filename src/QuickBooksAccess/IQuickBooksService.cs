@@ -10,14 +10,14 @@ namespace QuickBooksAccess
 {
 	public interface IQuickBooksService
 	{
-		Task<IEnumerable<Order>> GetOrdersAsync(DateTime dateFrom, DateTime dateTo);
+		Task< IEnumerable< Order > > GetOrdersAsync( DateTime dateFrom, DateTime dateTo );
 
-		Task<IEnumerable<Order>> GetOrdersAsync();
+		Task< IEnumerable< Order > > GetOrdersAsync();
 
-		Task UpdateInventoryAsync(IEnumerable<Inventory> products);
+		Task UpdateInventoryAsync( IEnumerable< Inventory > products );
 
-		Task<IEnumerable<Product>> GetProductsAsync();
+		Task< IEnumerable< Product > > GetProductsAsync();
 
-		Task<PingInfo> Ping();
+		Task< PingInfo > Ping();
 	}
 }
