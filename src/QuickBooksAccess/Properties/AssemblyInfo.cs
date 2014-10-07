@@ -8,8 +8,8 @@ using System.Runtime.InteropServices;
 
 [ assembly : AssemblyTitle( "QuickBooksAccess" ) ]
 [ assembly : AssemblyConfiguration( "" ) ]
-[ assembly : InternalsVisibleTo( "MagentoAccessTestsIntegration" ) ]
-[ assembly : InternalsVisibleTo( "MagentoAccessTests" ) ]
+[assembly: InternalsVisibleTo("QuickBooksAccessTestsIntegration")]
+[assembly: InternalsVisibleTo("QuickBooksAccessTests")]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 
