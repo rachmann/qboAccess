@@ -1,85 +1,105 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using Intuit.Ipp.Core;
 using Intuit.Ipp.Data;
+using Intuit.Ipp.DataService;
 using Intuit.Ipp.LinqExtender;
 using Intuit.Ipp.QueryFilter;
 using Intuit.Ipp.Security;
+using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.Auth;
+using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetOrders;
+using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetPurchaseOrders;
+using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.UpdateInventory;
 
 namespace QuickBooksAccess.Services
 {
 	internal class QuickBooksServiceSdk
 	{
-		public RestProfile profile { get; set; }
-		private string _consumerKey { get; set; }
-		public string _consumerSecret { get; set; }
+		public QuickBooksServiceSdk( RestProfile restProfile, ConsumerProfile consumerProfile )
+		{
+			this.RestProfile = restProfile;
+			this.ConsumerProfile = consumerProfile;
+		}
 
+		public RestProfile RestProfile { get; set; }
+
+		public ConsumerProfile ConsumerProfile { get; set; }
 
 		public UpdateInventoryResponse UpdateInventory()
 		{
-			ServiceContext serviceContext = getServiceContext(profile);
-			QueryService<Customer> customerQueryService = new QueryService<Customer>(serviceContext);
-			return new UpdateInventoryResponse(customerQueryService.Select(c => c).ToList());
+			///standart
+			var serviceContext = this.getServiceContext( this.RestProfile );
+			var customerQueryService = new QueryService< Customer >( serviceContext );
+			var itemQueryService = new QueryService< Item >( serviceContext );
+			var vv = itemQueryService.Select( c => c ).ToList();
+
+			//my0
+			//var itemQueryService22 = new DataService( serviceContext );
+			//var vv2 = itemQueryService22.Update( new Item()
+			//{
+			//	Name = "testSku1",
+			//	QtyOnHand = 31,
+			//	Id = "20",
+			//	SyncToken = "2",
+			//	QtyOnHandSpecified = true,
+			//	Active = true,
+			//	ActiveSpecified = true
+			//});
+
+			//batch
+			var dataService = new DataService( serviceContext );
+			var batch = dataService.CreateNewBatch(); // = new Intuit.Ipp.DataService.Batch(serviceContext, new SyncRestHandler(serviceContext));
+			batch.Add( new Item()
+			{
+				Name = "testSku1",
+				Type = ItemTypeEnum.Inventory,
+				TypeSpecified = true,
+				SyncToken = "2",
+				QtyOnHand = 31,
+				QtyOnHandSpecified = true
+			}, "20", OperationEnum.update );
+			batch.Execute();
+			return new UpdateInventoryResponse( customerQueryService.Select( c => c ).ToList() );
+			////my
+			//var dataService = new DataService(serviceContext);
+			//dataService.FindAll<Customer>();
+
+			//my2
+			//			OAuthRequestValidator oauth = new OAuthRequestValidator(profile.OAuthAccessToken, profile.OAuthAccessTokenSecret, _consumerKey, _consumerSecret);           
+
+			//ServiceContext context = new ServiceContext(profile.OAuthAccessToken, _consumerKey, IntuitServicesType.QBO, oauth);
+
+			//DataService service = new DataService(context);
+
+			//var customer = new QueryService<Customer>(service).;
+
+			//String query = select($(customer.getId()), $(customer.getGivenName())).generate();
+
+			//QueryResult queryResult = service.executeQuery(query);
+
+			//System.out.println("from query: "+((Customer)queryResult.getEntities().get(0)).getGivenName());      
 		}
 
-		private ServiceContext getServiceContext(RestProfile profile)
+		public GetPurchaseOrdersResponse GetPurchseOrders( DateTime from, DateTime to )
 		{
-			var consumerKey = _consumerKey;
-			var consumerSecret = _consumerSecret;
-			OAuthRequestValidator oauthValidator = new OAuthRequestValidator(profile.OAuthAccessToken, profile.OAuthAccessTokenSecret, consumerKey, consumerSecret);
-			return new ServiceContext(profile.RealmId, (IntuitServicesType)profile.DataSource, oauthValidator);
-		}
-	}
-
-	internal class UpdateInventoryResponse
-	{
-		public UpdateInventoryResponse( List< Customer > toList )
-		{
-		}
-	}
-
-
-	public class RestProfile
-	{
-		public RestProfile() { }
-
-		//public static RestProfile GetRestProfile(string username)
-		//{
-		//	return Create(username) as RestProfile;
-		//}
-
-		//public static RestProfile GetRestProfile()
-		//{
-		//	return Create(Membership.GetUser().UserName) as RestProfile;
-		//}
-
-		private string _oAuthAccessToken { get; set; }
-		private string _oAuthAccessTokenSecret { get; set; }
-		private string _realmId { get; set; }
-		private int _dataSource { get; set; }
-
-		public string RealmId
-		{
-			get { return _realmId as string; }
-			set { _realmId = value; }
+			var context = this.getServiceContext( this.RestProfile );
+			var queryService = new QueryService< PurchaseOrder >( context );
+			var purchaseOrdersFilteredFrom = queryService.Where( x => x.MetaData.CreateTime >= from ).ToList();
+			//todo: try to avoid additional filter with 'to', and inject it in first query
+			var purchaseOrdersFilteredFromAndTo = purchaseOrdersFilteredFrom.Where( x => x.MetaData.CreateTime <= to ).ToList();
+			return new GetPurchaseOrdersResponse( purchaseOrdersFilteredFromAndTo );
 		}
 
-		public string OAuthAccessToken
+		private ServiceContext getServiceContext( RestProfile profile )
 		{
-			get { return _oAuthAccessToken as string; }
-			set { _oAuthAccessToken = value; }
+			var oauthValidator = new OAuthRequestValidator( profile.OAuthAccessToken, profile.OAuthAccessTokenSecret, this.ConsumerProfile.ConsumerKey, this.ConsumerProfile.ConsumerSecret );
+			//return new ServiceContext(profile.OAuthAccessToken, consumerKey, IntuitServicesType.QBO, oauthValidator);
+			return new ServiceContext( this.RestProfile.AppToken, this.RestProfile.CompanyId, IntuitServicesType.QBO, oauthValidator );
 		}
 
-		public string OAuthAccessTokenSecret
+		public GetOrdersResponse GetOrders( DateTime from, DateTime to )
 		{
-			get { return _oAuthAccessTokenSecret as string; }
-			set { _oAuthAccessTokenSecret = value; }
-		}
-
-		public int DataSource
-		{
-			get { object dataSource = _dataSource; if (!dataSource.Equals(null)) { return (int)dataSource; } else { return -1; } }
-			set { _dataSource = value; }
+			throw new Exception();
 		}
 	}
 }

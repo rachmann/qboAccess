@@ -44,6 +44,19 @@ namespace QuickBooksAccess.Misc
 			}
 		}
 
+		public static int ToIntOrDefault( this string srcString )
+		{
+			try
+			{
+				var result = int.Parse( srcString, CultureInfo.InvariantCulture );
+				return result;
+			}
+			catch
+			{
+				return default( int );
+			}
+		}
+
 		public static decimal ToDecimalOrDefault( this string srcString )
 		{
 			decimal parsedNumber;

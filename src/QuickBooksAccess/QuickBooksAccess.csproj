@@ -100,6 +100,11 @@
     </Compile>
     <Compile Include="IQuickBooksFactory.cs" />
     <Compile Include="IQuickBooksService.cs" />
+    <Compile Include="Models\Services\QuickBooksServicesSdk\Auth\ConsumerProfile.cs" />
+    <Compile Include="Models\Services\QuickBooksServicesSdk\Auth\RestProfile.cs" />
+    <Compile Include="Models\Services\QuickBooksServicesSdk\GetOrders\GetOrdersResponse.cs" />
+    <Compile Include="Models\Services\QuickBooksServicesSdk\GetPurchaseOrders\GetPurchaseOrdersResponse.cs" />
+    <Compile Include="Models\Services\QuickBooksServicesSdk\UpdateInventory\UpdateInventoryResponse.cs" />
     <Compile Include="QuickBooksException.cs" />
     <Compile Include="QuickBooksAuthException.cs" />
     <Compile Include="QuickBooksFactory.cs" />
@@ -121,9 +126,7 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\Services\QuickBooksServicesSdk\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
