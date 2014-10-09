@@ -53,6 +53,17 @@ namespace QuickBooksAccessTestsIntegration.Services
 		}
 
 		[ Test ]
+		public void CreatePurchaseOrders_ServiceDontContainsTheSamePurchaseOrders_PurchaseOrdersCreated()
+		{
+			//A
+
+			//A
+			var getOrdersResponse = this._quickBooksServiceSdk.CreatePurchaseOrders( new PurchaseOrder[ 0 ] );
+
+			//A
+		}
+
+		[ Test ]
 		public void GetOrders_ServiceContainsOrders_OrdersReceived()
 		{
 			//A

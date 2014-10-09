@@ -8,6 +8,7 @@ using Intuit.Ipp.QueryFilter;
 using Intuit.Ipp.Security;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.Auth;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.CreateOrders;
+using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.CreatePurchaseOrders;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetOrders;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetPurchaseOrders;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.UpdateInventory;
@@ -88,6 +89,7 @@ namespace QuickBooksAccess.Services
 			//System.out.println("from query: "+((Customer)queryResult.getEntities().get(0)).getGivenName());      
 		}
 
+		#region PurchaseOrders
 		public GetPurchaseOrdersResponse GetPurchseOrders( DateTime from, DateTime to )
 		{
 			var context = this.GetServiceContext( this.RestProfile );
@@ -97,6 +99,12 @@ namespace QuickBooksAccess.Services
 			var purchaseOrdersFilteredFromAndTo = purchaseOrdersFilteredFrom.Where( x => x.MetaData.CreateTime <= to ).ToList();
 			return new GetPurchaseOrdersResponse( purchaseOrdersFilteredFromAndTo );
 		}
+
+		public CreatePurchaseOrdersResponse CreatePurchaseOrders( params PurchaseOrder[] purchaseOrders )
+		{
+			throw new Exception();
+		}
+		#endregion
 
 		#region Orders
 		public GetOrdersResponse GetOrders( DateTime from, DateTime to )

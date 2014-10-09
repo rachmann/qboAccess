@@ -103,6 +103,7 @@
     <Compile Include="Models\Services\QuickBooksServicesSdk\Auth\ConsumerProfile.cs" />
     <Compile Include="Models\Services\QuickBooksServicesSdk\Auth\RestProfile.cs" />
     <Compile Include="Models\Services\QuickBooksServicesSdk\CreateOrders\CreateOrdersResponse.cs" />
+    <Compile Include="Models\Services\QuickBooksServicesSdk\CreatePurchaseOrders\CreatePurchaseOrdersResponse.cs" />
     <Compile Include="Models\Services\QuickBooksServicesSdk\GetOrders\GetOrdersResponse.cs" />
     <Compile Include="Models\Services\QuickBooksServicesSdk\GetPurchaseOrders\GetPurchaseOrdersResponse.cs" />
     <Compile Include="Models\Services\QuickBooksServicesSdk\UpdateInventory\UpdateInventoryResponse.cs" />
