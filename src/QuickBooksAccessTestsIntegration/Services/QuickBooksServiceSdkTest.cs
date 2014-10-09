@@ -2,6 +2,7 @@
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
+using QuickBooksAccess.Models.GetOrders;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.Auth;
 using QuickBooksAccess.Services;
 using QuickBooksAccessTestsIntegration.TestEnvironment;
@@ -58,6 +59,18 @@ namespace QuickBooksAccessTestsIntegration.Services
 
 			//A
 			var getOrdersResponse = this._quickBooksServiceSdk.GetOrders(DateTime.Now.AddMonths(-1), DateTime.Now);
+
+			//A
+			getOrdersResponse.Orders.Count().Should().BeGreaterThan(0);
+		}
+
+		[Test]
+		public void CreateOrders_ServiceDontContainsTheSameOrders_OrdersCreated()
+		{
+			//A
+
+			//A
+			var getOrdersResponse = this._quickBooksServiceSdk.CreateOrders(new Order);
 
 			//A
 			getOrdersResponse.Orders.Count().Should().BeGreaterThan(0);

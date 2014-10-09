@@ -7,6 +7,7 @@ using Intuit.Ipp.LinqExtender;
 using Intuit.Ipp.QueryFilter;
 using Intuit.Ipp.Security;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.Auth;
+using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.CreateOrders;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetOrders;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetPurchaseOrders;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.UpdateInventory;
@@ -98,6 +99,11 @@ namespace QuickBooksAccess.Services
 		}
 
 		public GetOrdersResponse GetOrders( DateTime from, DateTime to )
+		{
+			throw new Exception();
+		}
+
+		public CreateOrdersResponse CreateOrders( params SalesOrder[] orders )
 		{
 			throw new Exception();
 		}
