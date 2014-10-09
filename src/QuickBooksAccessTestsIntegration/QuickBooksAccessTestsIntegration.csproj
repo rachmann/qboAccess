@@ -108,7 +108,8 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\QuickBooksServiceSdkTest.cs" />
-    <Compile Include="TestDataReader.cs" />
+    <Compile Include="TestEnvironment\FlatCsvLineAppKeys.cs" />
+    <Compile Include="TestEnvironment\FlatCsvLineConsumerKeys.cs" />
     <Compile Include="TestEnvironment\TestDataReader.cs" />
   </ItemGroup>
   <ItemGroup>
