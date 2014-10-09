@@ -64,15 +64,15 @@ namespace QuickBooksAccessTestsIntegration.Services
 		}
 
 		[ Test ]
-		public void GetOrders_ServiceContainsOrders_OrdersReceived()
+		public void GetSalesReceipt_ServiceContainsSalesReceipt_SalesReceiptReceived()
 		{
 			//A
 
 			//A
-			var getOrdersResponse = this._quickBooksServiceSdk.GetOrders( DateTime.Now.AddMonths( -1 ), DateTime.Now );
+			var getSalesReceiptResponse = this._quickBooksServiceSdk.GetSalesReceipt( DateTime.Now.AddMonths( -1 ), DateTime.Now );
 
 			//A
-			getOrdersResponse.Orders.Count().Should().BeGreaterThan( 0 );
+			getSalesReceiptResponse.Orders.Count().Should().BeGreaterThan( 0 );
 		}
 
 		[ Test ]

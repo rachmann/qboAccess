@@ -107,9 +107,14 @@ namespace QuickBooksAccess.Services
 		#endregion
 
 		#region Orders
-		public GetOrdersResponse GetOrders( DateTime from, DateTime to )
+		public GetSalesReceiptResponse GetSalesReceipt( DateTime from, DateTime to )
 		{
-			throw new Exception();
+			var context = this.GetServiceContext( this.RestProfile );
+			var queryService = new QueryService< SalesReceipt >( context );
+			var ordersFilteredFrom = queryService.Where( x => x.MetaData.LastUpdatedTime >= from ).ToList();
+			//todo: try to avoid additional filter with 'to', and inject it in first query
+			var ordersFilteredFromAndTo = ordersFilteredFrom.Where( x => x.MetaData.LastUpdatedTime <= to ).ToList();
+			return new GetSalesReceiptResponse( ordersFilteredFromAndTo );
 		}
 
 		public CreateOrdersResponse CreateOrders( params SalesOrder[] orders )
