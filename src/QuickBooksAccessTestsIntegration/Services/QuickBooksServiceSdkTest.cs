@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using FluentAssertions;
+using Intuit.Ipp.Data;
 using NUnit.Framework;
 using QuickBooksAccess.Models.GetOrders;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.Auth;
@@ -70,10 +71,9 @@ namespace QuickBooksAccessTestsIntegration.Services
 			//A
 
 			//A
-			var getOrdersResponse = this._quickBooksServiceSdk.CreateOrders(new Order);
+			var getOrdersResponse = this._quickBooksServiceSdk.CreateOrders(new SalesOrder[0]);
 
 			//A
-			getOrdersResponse.Orders.Count().Should().BeGreaterThan(0);
 		}
 	}
 }

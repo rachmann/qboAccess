@@ -16,20 +16,27 @@ namespace QuickBooksAccess.Services
 {
 	internal class QuickBooksServiceSdk
 	{
+		private ServiceContext GetServiceContext( RestProfile profile )
+		{
+			var oauthValidator = new OAuthRequestValidator( profile.OAuthAccessToken, profile.OAuthAccessTokenSecret, this.ConsumerProfile.ConsumerKey, this.ConsumerProfile.ConsumerSecret );
+			//return new ServiceContext(profile.OAuthAccessToken, consumerKey, IntuitServicesType.QBO, oauthValidator);
+			return new ServiceContext( this.RestProfile.AppToken, this.RestProfile.CompanyId, IntuitServicesType.QBO, oauthValidator );
+		}
+
+		public ConsumerProfile ConsumerProfile { get; set; }
+
+		public RestProfile RestProfile { get; set; }
+
 		public QuickBooksServiceSdk( RestProfile restProfile, ConsumerProfile consumerProfile )
 		{
 			this.RestProfile = restProfile;
 			this.ConsumerProfile = consumerProfile;
 		}
 
-		public RestProfile RestProfile { get; set; }
-
-		public ConsumerProfile ConsumerProfile { get; set; }
-
 		public UpdateInventoryResponse UpdateInventory()
 		{
 			///standart
-			var serviceContext = this.getServiceContext( this.RestProfile );
+			var serviceContext = this.GetServiceContext( this.RestProfile );
 			var customerQueryService = new QueryService< Customer >( serviceContext );
 			var itemQueryService = new QueryService< Item >( serviceContext );
 			var vv = itemQueryService.Select( c => c ).ToList();
@@ -83,7 +90,7 @@ namespace QuickBooksAccess.Services
 
 		public GetPurchaseOrdersResponse GetPurchseOrders( DateTime from, DateTime to )
 		{
-			var context = this.getServiceContext( this.RestProfile );
+			var context = this.GetServiceContext( this.RestProfile );
 			var queryService = new QueryService< PurchaseOrder >( context );
 			var purchaseOrdersFilteredFrom = queryService.Where( x => x.MetaData.CreateTime >= from ).ToList();
 			//todo: try to avoid additional filter with 'to', and inject it in first query
@@ -91,13 +98,7 @@ namespace QuickBooksAccess.Services
 			return new GetPurchaseOrdersResponse( purchaseOrdersFilteredFromAndTo );
 		}
 
-		private ServiceContext getServiceContext( RestProfile profile )
-		{
-			var oauthValidator = new OAuthRequestValidator( profile.OAuthAccessToken, profile.OAuthAccessTokenSecret, this.ConsumerProfile.ConsumerKey, this.ConsumerProfile.ConsumerSecret );
-			//return new ServiceContext(profile.OAuthAccessToken, consumerKey, IntuitServicesType.QBO, oauthValidator);
-			return new ServiceContext( this.RestProfile.AppToken, this.RestProfile.CompanyId, IntuitServicesType.QBO, oauthValidator );
-		}
-
+		#region Orders
 		public GetOrdersResponse GetOrders( DateTime from, DateTime to )
 		{
 			throw new Exception();
@@ -107,5 +108,6 @@ namespace QuickBooksAccess.Services
 		{
 			throw new Exception();
 		}
+		#endregion
 	}
 }
