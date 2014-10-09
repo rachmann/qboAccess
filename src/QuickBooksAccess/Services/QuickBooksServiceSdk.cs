@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Intuit.Ipp.Core;
 using Intuit.Ipp.Data;
@@ -9,8 +10,9 @@ using Intuit.Ipp.Security;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.Auth;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.CreateOrders;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.CreatePurchaseOrders;
-using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetOrders;
+using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetInvoices;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetPurchaseOrders;
+using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetSalesReceipts;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.UpdateInventory;
 
 namespace QuickBooksAccess.Services
@@ -38,10 +40,10 @@ namespace QuickBooksAccess.Services
 		{
 			///standart
 			var serviceContext = this.GetServiceContext( this.RestProfile );
-			var customerQueryService = new QueryService< Customer >( serviceContext );
-			var itemQueryService = new QueryService< Item >( serviceContext );
-			var vv = itemQueryService.Select( c => c ).ToList();
-
+			//var customerQueryService = new QueryService< Customer >( serviceContext );
+			//var itemQueryService = new QueryService< Item >( serviceContext );
+			//var vv = itemQueryService.Select( c => c ).ToList();
+			//return new UpdateInventoryResponse(customerQueryService.Select(c => c).ToList());
 			//my0
 			//var itemQueryService22 = new DataService( serviceContext );
 			//var vv2 = itemQueryService22.Update( new Item()
@@ -61,14 +63,14 @@ namespace QuickBooksAccess.Services
 			batch.Add( new Item()
 			{
 				Name = "testSku1",
-				Type = ItemTypeEnum.Inventory,
-				TypeSpecified = true,
-				SyncToken = "2",
+				//Type = ItemTypeEnum.Inventory,
+				//TypeSpecified = true,
+				//SyncToken = "0",
 				QtyOnHand = 31,
 				QtyOnHandSpecified = true
 			}, "20", OperationEnum.update );
 			batch.Execute();
-			return new UpdateInventoryResponse( customerQueryService.Select( c => c ).ToList() );
+			return new UpdateInventoryResponse( new List< Customer >() );
 			////my
 			//var dataService = new DataService(serviceContext);
 			//dataService.FindAll<Customer>();
@@ -107,14 +109,24 @@ namespace QuickBooksAccess.Services
 		#endregion
 
 		#region Orders
-		public GetSalesReceiptResponse GetSalesReceipt( DateTime from, DateTime to )
+		public GetSalesReceiptsResponse GetSalesReceipt( DateTime from, DateTime to )
 		{
 			var context = this.GetServiceContext( this.RestProfile );
 			var queryService = new QueryService< SalesReceipt >( context );
 			var ordersFilteredFrom = queryService.Where( x => x.MetaData.LastUpdatedTime >= from ).ToList();
 			//todo: try to avoid additional filter with 'to', and inject it in first query
 			var ordersFilteredFromAndTo = ordersFilteredFrom.Where( x => x.MetaData.LastUpdatedTime <= to ).ToList();
-			return new GetSalesReceiptResponse( ordersFilteredFromAndTo );
+			return new GetSalesReceiptsResponse( ordersFilteredFromAndTo );
+		}
+
+		public GetInvoicesResponse GetInvoices( DateTime from, DateTime to )
+		{
+			var context = this.GetServiceContext( this.RestProfile );
+			var queryService = new QueryService< Invoice >( context );
+			var invoicesFilteredFrom = queryService.Where( x => x.MetaData.LastUpdatedTime >= from ).ToList();
+			//todo: try to avoid additional filter with 'to', and inject it in first query
+			var invoicesFilteredFromAndTo = invoicesFilteredFrom.Where( x => x.MetaData.LastUpdatedTime <= to ).ToList();
+			return new GetInvoicesResponse( invoicesFilteredFromAndTo );
 		}
 
 		public CreateOrdersResponse CreateOrders( params SalesOrder[] orders )
