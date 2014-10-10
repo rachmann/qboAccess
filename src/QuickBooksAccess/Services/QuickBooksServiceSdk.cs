@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Intuit.Ipp.Core;
 using Intuit.Ipp.Data;
 using Intuit.Ipp.DataService;
@@ -16,6 +16,7 @@ using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetInvoices;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetPurchaseOrders;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetSalesReceipts;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.UpdateInventory;
+using Task = System.Threading.Tasks.Task;
 
 namespace QuickBooksAccess.Services
 {
@@ -40,30 +41,34 @@ namespace QuickBooksAccess.Services
 
 		public UpdateInventoryResponse UpdateItemQuantityOnHand( params InventoryItem[] inventoryItems )
 		{
+			//environment
 			var oauthValidator = new OAuthRequestValidator( this.RestProfile.OAuthAccessToken, this.RestProfile.OAuthAccessTokenSecret, this.ConsumerProfile.ConsumerKey, this.ConsumerProfile.ConsumerSecret );
 			var serviceContext = new ServiceContext( this.RestProfile.AppToken, this.RestProfile.CompanyId, IntuitServicesType.QBO, oauthValidator );
 			var dataService = new DataService( serviceContext );
 			var queryService = new QueryService< Item >( serviceContext );
 			var queryServiceAccount = new QueryService< Account >( serviceContext );
 
+			//get items
 			var items = queryService.Where( x => x.Type == ItemTypeEnum.Inventory ).ToList();
-
-			var skus = inventoryItems.Select(x => x.Sku).ToArray();
-			var items2 = queryService.Where(x => x.Name.In(skus)).DoWithPagesAsync(1, System.Threading.Tasks.Task.FromResult);
+			var skus = inventoryItems.Select( x => x.Sku ).ToArray();
+			var itemsCollections = new ConcurrentBag< IEnumerable< Item > >();
+			var items2 = queryService.Where( x => x.Name.In( skus ) ).DoWithPagesAsync(
+				1,
+				y => ( Task.Factory.StartNew( () => itemsCollections.Add( y ) ) ) );
 			items2.Wait();
+			var itemsCollectionsMany = itemsCollections.SelectMany(x => x).ToList();
 
-			var itemsQuery = queryService.Where(x =>  x.Name.In(skus)).ToIdsQuery();
+			var itemsQuery = queryService.Where( x => x.Name.In( skus ) ).ToIdsQuery();
 
 			var itemsQueryBatch = dataService.CreateNewBatch();
-			itemsQueryBatch.Add(itemsQuery, "bID1");
+			itemsQueryBatch.Add( itemsQuery, "bID1" );
 			itemsQueryBatch.Execute();
-			IntuitBatchResponse queryResponse = itemsQueryBatch["bID1"];
-			List<Item> customers = queryResponse.Entities.Cast<Item>().ToList();
+			var queryResponse = itemsQueryBatch[ "bID1" ];
+			var customers = queryResponse.Entities.Cast< Item >().ToList();
 
-
+			var batch = dataService.CreateNewBatch();
 			var accounts = queryServiceAccount.Where( x => x.Name == "Cost of Goods Sold" ).ToList();
 			var accReference = accounts.FirstOrDefault();
-			var batch = dataService.CreateNewBatch();
 			var expenseAccountRef = new ReferenceType { type = accReference.AccountType.ToString(), name = accReference.Name, Value = accReference.Id };
 			foreach( var item in items )
 			{
@@ -77,6 +82,7 @@ namespace QuickBooksAccess.Services
 					QtyOnHand = item.QtyOnHand + 1,
 					QtyOnHandSpecified = true,
 					ExpenseAccountRef = expenseAccountRef,
+				
 				}, item.Id, OperationEnum.update );
 			}
 
