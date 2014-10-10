@@ -4,6 +4,7 @@ using FluentAssertions;
 using Intuit.Ipp.Data;
 using NUnit.Framework;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.Auth;
+using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.UpdateInventory;
 using QuickBooksAccess.Services;
 using QuickBooksAccessTestsIntegration.TestEnvironment;
 
@@ -35,8 +36,11 @@ namespace QuickBooksAccessTestsIntegration.Services
 		public void getSomeInfo_ServiceContainsInfo_InfoReceived()
 		{
 			//A
+			var itemsToUpdate = new InventoryItem[] { 
+				new InventoryItem() { Qty = 55, Sku = "testSku1" }, 
+				new InventoryItem() { Qty = 55, Sku = "qqq" } };
 			//A
-			this._quickBooksServiceSdk.UpdateInventory();
+			this._quickBooksServiceSdk.UpdateItemQuantityOnHand(itemsToUpdate);
 			//A
 		}
 
@@ -72,19 +76,19 @@ namespace QuickBooksAccessTestsIntegration.Services
 			var getSalesReceiptsResponse = this._quickBooksServiceSdk.GetInvoices( DateTime.Now.AddMonths( -1 ), DateTime.Now );
 
 			//A
-			getSalesReceiptsResponse.Invoices.Count.Should().BeGreaterThan(0);
+			getSalesReceiptsResponse.Invoices.Count.Should().BeGreaterThan( 0 );
 		}
 
-		[Test]
+		[ Test ]
 		public void GetSalesReceipts_ServiceContainsSalesReceipt_SalesReceiptReceived()
 		{
 			//A
 
 			//A
-			var getSalesReceiptsResponse = this._quickBooksServiceSdk.GetSalesReceipt(DateTime.Now.AddMonths(-1), DateTime.Now);
+			var getSalesReceiptsResponse = this._quickBooksServiceSdk.GetSalesReceipt( DateTime.Now.AddMonths( -1 ), DateTime.Now );
 
 			//A
-			getSalesReceiptsResponse.Orders.Count().Should().BeGreaterThan(0);
+			getSalesReceiptsResponse.Orders.Count().Should().BeGreaterThan( 0 );
 		}
 
 		[ Test ]

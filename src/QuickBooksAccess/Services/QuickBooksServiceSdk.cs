@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Intuit.Ipp.Core;
 using Intuit.Ipp.Data;
 using Intuit.Ipp.DataService;
 using Intuit.Ipp.LinqExtender;
 using Intuit.Ipp.QueryFilter;
 using Intuit.Ipp.Security;
+using Netco.Extensions;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.Auth;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.CreateOrders;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.CreatePurchaseOrders;
@@ -36,77 +38,50 @@ namespace QuickBooksAccess.Services
 			this.ConsumerProfile = consumerProfile;
 		}
 
-		public UpdateInventoryResponse UpdateInventory()
+		public UpdateInventoryResponse UpdateItemQuantityOnHand( params InventoryItem[] inventoryItems )
 		{
-			///standart
-			//var serviceContext = this.GetServiceContext( this.RestProfile );
-			//var customerQueryService = new QueryService< Customer >( serviceContext );
-			//var itemQueryService = new QueryService< Item >( serviceContext );
-			//var vv = itemQueryService.Select( c => c ).ToList();
-			//return new UpdateInventoryResponse(customerQueryService.Select(c => c).ToList());
-			//my0
-			//var itemQueryService22 = new DataService( serviceContext );
-			//var vv2 = itemQueryService22.Update( new Item()
-			//{
-			//	Name = "testSku1",
-			//	QtyOnHand = 31,
-			//	Id = "20",
-			//	SyncToken = "2",
-			//	QtyOnHandSpecified = true,
-			//	Active = true,
-			//	ActiveSpecified = true
-			//});
-
-			//batch
-			var oauthValidator = new OAuthRequestValidator(RestProfile.OAuthAccessToken, RestProfile.OAuthAccessTokenSecret, this.ConsumerProfile.ConsumerKey, this.ConsumerProfile.ConsumerSecret);
-			var serviceContext = new ServiceContext(this.RestProfile.AppToken, this.RestProfile.CompanyId, IntuitServicesType.QBO, oauthValidator);
+			var oauthValidator = new OAuthRequestValidator( this.RestProfile.OAuthAccessToken, this.RestProfile.OAuthAccessTokenSecret, this.ConsumerProfile.ConsumerKey, this.ConsumerProfile.ConsumerSecret );
+			var serviceContext = new ServiceContext( this.RestProfile.AppToken, this.RestProfile.CompanyId, IntuitServicesType.QBO, oauthValidator );
 			var dataService = new DataService( serviceContext );
-			var queryService = new QueryService<Item>( serviceContext );
-			var queryServiceAccount = new QueryService<Account>( serviceContext );
-			//var items = queryService.Select(c => c).ToList();
-			var items = queryService.Where(x=>x.Type == ItemTypeEnum.Inventory).ToList();
-			var accounts = queryServiceAccount.Where(x=>x.Name == "Cost of Goods Sold").ToList();
+			var queryService = new QueryService< Item >( serviceContext );
+			var queryServiceAccount = new QueryService< Account >( serviceContext );
+
+			var items = queryService.Where( x => x.Type == ItemTypeEnum.Inventory ).ToList();
+
+			var skus = inventoryItems.Select(x => x.Sku).ToArray();
+			var items2 = queryService.Where(x => x.Name.In(skus)).DoWithPagesAsync(1, System.Threading.Tasks.Task.FromResult);
+			items2.Wait();
+
+			var itemsQuery = queryService.Where(x =>  x.Name.In(skus)).ToIdsQuery();
+
+			var itemsQueryBatch = dataService.CreateNewBatch();
+			itemsQueryBatch.Add(itemsQuery, "bID1");
+			itemsQueryBatch.Execute();
+			IntuitBatchResponse queryResponse = itemsQueryBatch["bID1"];
+			List<Item> customers = queryResponse.Entities.Cast<Item>().ToList();
+
+
+			var accounts = queryServiceAccount.Where( x => x.Name == "Cost of Goods Sold" ).ToList();
 			var accReference = accounts.FirstOrDefault();
 			var batch = dataService.CreateNewBatch();
-			var expenseAccountRef = new ReferenceType { type = accReference.AccountType.ToString(), name = accReference.Name, Value = accReference.Id};
+			var expenseAccountRef = new ReferenceType { type = accReference.AccountType.ToString(), name = accReference.Name, Value = accReference.Id };
 			foreach( var item in items )
 			{
-				batch.Add(new Item()
+				batch.Add( new Item()
 				{
 					Name = item.Name,
 					Id = item.Id,
 					//Type = ItemTypeEnum.Inventory,
 					//TypeSpecified = true,
 					SyncToken = item.SyncToken,
-					QtyOnHand = item.QtyOnHand+1,
+					QtyOnHand = item.QtyOnHand + 1,
 					QtyOnHandSpecified = true,
 					ExpenseAccountRef = expenseAccountRef,
-				}, item.Id, OperationEnum.update);
-
-				//item.QtyOnHand = item.QtyOnHand + 1;
-				//batch.Add(item, item.Id, OperationEnum.update);
+				}, item.Id, OperationEnum.update );
 			}
 
 			batch.Execute();
 			return new UpdateInventoryResponse( new List< Customer >() );
-			////my
-			//var dataService = new DataService(serviceContext);
-			//dataService.FindAll<Customer>();
-
-			//my2
-			//			OAuthRequestValidator oauth = new OAuthRequestValidator(profile.OAuthAccessToken, profile.OAuthAccessTokenSecret, _consumerKey, _consumerSecret);           
-
-			//ServiceContext context = new ServiceContext(profile.OAuthAccessToken, _consumerKey, IntuitServicesType.QBO, oauth);
-
-			//DataService service = new DataService(context);
-
-			//var customer = new QueryService<Customer>(service).;
-
-			//String query = select($(customer.getId()), $(customer.getGivenName())).generate();
-
-			//QueryResult queryResult = service.executeQuery(query);
-
-			//System.out.println("from query: "+((Customer)queryResult.getEntities().get(0)).getGivenName());      
 		}
 
 		#region PurchaseOrders
