@@ -39,7 +39,7 @@ namespace QuickBooksAccess.Services
 		public UpdateInventoryResponse UpdateInventory()
 		{
 			///standart
-			var serviceContext = this.GetServiceContext( this.RestProfile );
+			//var serviceContext = this.GetServiceContext( this.RestProfile );
 			//var customerQueryService = new QueryService< Customer >( serviceContext );
 			//var itemQueryService = new QueryService< Item >( serviceContext );
 			//var vv = itemQueryService.Select( c => c ).ToList();
@@ -58,17 +58,35 @@ namespace QuickBooksAccess.Services
 			//});
 
 			//batch
+			var oauthValidator = new OAuthRequestValidator(RestProfile.OAuthAccessToken, RestProfile.OAuthAccessTokenSecret, this.ConsumerProfile.ConsumerKey, this.ConsumerProfile.ConsumerSecret);
+			var serviceContext = new ServiceContext(this.RestProfile.AppToken, this.RestProfile.CompanyId, IntuitServicesType.QBO, oauthValidator);
 			var dataService = new DataService( serviceContext );
-			var batch = dataService.CreateNewBatch(); // = new Intuit.Ipp.DataService.Batch(serviceContext, new SyncRestHandler(serviceContext));
-			batch.Add( new Item()
+			var queryService = new QueryService<Item>( serviceContext );
+			var queryServiceAccount = new QueryService<Account>( serviceContext );
+			//var items = queryService.Select(c => c).ToList();
+			var items = queryService.Where(x=>x.Type == ItemTypeEnum.Inventory).ToList();
+			var accounts = queryServiceAccount.Where(x=>x.Name == "Cost of Goods Sold").ToList();
+			var accReference = accounts.FirstOrDefault();
+			var batch = dataService.CreateNewBatch();
+			var expenseAccountRef = new ReferenceType { type = accReference.AccountType.ToString(), name = accReference.Name, Value = accReference.Id};
+			foreach( var item in items )
 			{
-				Name = "testSku1",
-				//Type = ItemTypeEnum.Inventory,
-				//TypeSpecified = true,
-				//SyncToken = "0",
-				QtyOnHand = 31,
-				QtyOnHandSpecified = true
-			}, "20", OperationEnum.update );
+				batch.Add(new Item()
+				{
+					Name = item.Name,
+					Id = item.Id,
+					//Type = ItemTypeEnum.Inventory,
+					//TypeSpecified = true,
+					SyncToken = item.SyncToken,
+					QtyOnHand = item.QtyOnHand+1,
+					QtyOnHandSpecified = true,
+					ExpenseAccountRef = expenseAccountRef,
+				}, item.Id, OperationEnum.update);
+
+				//item.QtyOnHand = item.QtyOnHand + 1;
+				//batch.Add(item, item.Id, OperationEnum.update);
+			}
+
 			batch.Execute();
 			return new UpdateInventoryResponse( new List< Customer >() );
 			////my
