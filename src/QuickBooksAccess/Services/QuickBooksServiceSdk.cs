@@ -25,12 +25,14 @@ namespace QuickBooksAccess.Services
 {
 	internal class QuickBooksServiceSdk
 	{
-		private ServiceContext GetServiceContext( RestProfile profile )
-		{
-			var oauthValidator = new OAuthRequestValidator( profile.OAuthAccessToken, profile.OAuthAccessTokenSecret, this.ConsumerProfile.ConsumerKey, this.ConsumerProfile.ConsumerSecret );
-			//return new ServiceContext(profile.OAuthAccessToken, consumerKey, IntuitServicesType.QBO, oauthValidator);
-			return new ServiceContext( this.RestProfile.AppToken, this.RestProfile.CompanyId, IntuitServicesType.QBO, oauthValidator );
-		}
+		private readonly OAuthRequestValidator _requestValidator;
+		private readonly ServiceContext _serviceContext;
+		private readonly DataService _dataService;
+		private readonly QueryService< Item > _queryService;
+		private readonly QueryService< Account > _queryServiceAccount;
+		private readonly QueryService< PurchaseOrder > _queryServicePurchaseOrder;
+		private readonly QueryService< SalesReceipt > _queryServiceSalesReceipt;
+		private readonly QueryService< Invoice > _queryServiceInvoice;
 
 		public ConsumerProfile ConsumerProfile { get; set; }
 
@@ -40,37 +42,39 @@ namespace QuickBooksAccess.Services
 		{
 			this.RestProfile = restProfile;
 			this.ConsumerProfile = consumerProfile;
+			this._requestValidator = new OAuthRequestValidator( this.RestProfile.OAuthAccessToken, this.RestProfile.OAuthAccessTokenSecret, this.ConsumerProfile.ConsumerKey, this.ConsumerProfile.ConsumerSecret );
+			this._serviceContext = new ServiceContext( this.RestProfile.AppToken, this.RestProfile.CompanyId, IntuitServicesType.QBO, this._requestValidator );
+			this._dataService = new DataService( this._serviceContext );
+			this._queryService = new QueryService< Item >( this._serviceContext );
+			this._queryServiceAccount = new QueryService< Account >( this._serviceContext );
+			this._queryServicePurchaseOrder = new QueryService< PurchaseOrder >( this._serviceContext );
+			this._queryServiceSalesReceipt = new QueryService< SalesReceipt >( this._serviceContext );
+			this._queryServiceInvoice = new QueryService< Invoice >( this._serviceContext );
 		}
 
 		public UpdateInventoryResponse UpdateItemQuantityOnHand( params InventoryItem[] inventoryItems )
 		{
-			//environment
-			var oauthValidator = new OAuthRequestValidator( this.RestProfile.OAuthAccessToken, this.RestProfile.OAuthAccessTokenSecret, this.ConsumerProfile.ConsumerKey, this.ConsumerProfile.ConsumerSecret );
-			var serviceContext = new ServiceContext( this.RestProfile.AppToken, this.RestProfile.CompanyId, IntuitServicesType.QBO, oauthValidator );
-			var dataService = new DataService( serviceContext );
-			var queryService = new QueryService< Item >( serviceContext );
-			var queryServiceAccount = new QueryService< Account >( serviceContext );
-
 			//get items
-			var items = queryService.Where( x => x.Type == ItemTypeEnum.Inventory ).ToList();
+			var items = this._queryService.Where( x => x.Type == ItemTypeEnum.Inventory ).ToList();
 			var skus = inventoryItems.Select( x => x.Sku ).ToArray();
+
 			var itemsCollections = new ConcurrentBag< IEnumerable< Item > >();
-			var items2 = queryService.Where( x => x.Name.In( skus ) ).DoWithPagesAsync(
+			var items2 = this._queryService.Where( x => x.Name.In( skus ) ).DoWithPagesAsync(
 				1,
 				y => ( Task.Factory.StartNew( () => itemsCollections.Add( y ) ) ) );
 			items2.Wait();
-			var itemsCollectionsMany = itemsCollections.SelectMany(x => x).ToList();
+			var itemsCollectionsMany = itemsCollections.SelectMany( x => x ).ToList();
 
-			var itemsQuery = queryService.Where( x => x.Name.In( skus ) ).ToIdsQuery();
+			var itemsQuery = this._queryService.Where( x => x.Name.In( skus ) ).ToIdsQuery();
 
-			var itemsQueryBatch = dataService.CreateNewBatch();
+			var itemsQueryBatch = this._dataService.CreateNewBatch();
 			itemsQueryBatch.Add( itemsQuery, "bID1" );
 			itemsQueryBatch.Execute();
 			var queryResponse = itemsQueryBatch[ "bID1" ];
 			var customers = queryResponse.Entities.Cast< Item >().ToList();
 
-			var batch = dataService.CreateNewBatch();
-			var accounts = queryServiceAccount.Where( x => x.Name == "Cost of Goods Sold" ).ToList();
+			var batch = this._dataService.CreateNewBatch();
+			var accounts = this._queryServiceAccount.Where( x => x.Name == "Cost of Goods Sold" ).ToList();
 			var accReference = accounts.FirstOrDefault();
 			var expenseAccountRef = new ReferenceType { type = accReference.AccountType.ToString(), name = accReference.Name, Value = accReference.Id };
 			foreach( var item in items )
@@ -85,7 +89,6 @@ namespace QuickBooksAccess.Services
 					QtyOnHand = item.QtyOnHand + 1,
 					QtyOnHandSpecified = true,
 					ExpenseAccountRef = expenseAccountRef,
-				
 				}, item.Id, OperationEnum.update );
 			}
 
@@ -96,9 +99,7 @@ namespace QuickBooksAccess.Services
 		#region PurchaseOrders
 		public GetPurchaseOrdersResponse GetPurchseOrders( DateTime from, DateTime to )
 		{
-			var context = this.GetServiceContext( this.RestProfile );
-			var queryService = new QueryService< PurchaseOrder >( context );
-			var purchaseOrdersFilteredFrom = queryService.Where( x => x.MetaData.CreateTime >= from ).ToList();
+			var purchaseOrdersFilteredFrom = this._queryServicePurchaseOrder.Where( x => x.MetaData.CreateTime >= from ).ToList();
 			//todo: try to avoid additional filter with 'to', and inject it in first query
 			var purchaseOrdersFilteredFromAndTo = purchaseOrdersFilteredFrom.Where( x => x.MetaData.CreateTime <= to ).ToList();
 			return new GetPurchaseOrdersResponse( purchaseOrdersFilteredFromAndTo );
@@ -113,9 +114,7 @@ namespace QuickBooksAccess.Services
 		#region Orders
 		public GetSalesReceiptsResponse GetSalesReceipt( DateTime from, DateTime to )
 		{
-			var context = this.GetServiceContext( this.RestProfile );
-			var queryService = new QueryService< SalesReceipt >( context );
-			var ordersFilteredFrom = queryService.Where( x => x.MetaData.LastUpdatedTime >= from ).ToList();
+			var ordersFilteredFrom = this._queryServiceSalesReceipt.Where( x => x.MetaData.LastUpdatedTime >= from ).ToList();
 			//todo: try to avoid additional filter with 'to', and inject it in first query
 			var ordersFilteredFromAndTo = ordersFilteredFrom.Where( x => x.MetaData.LastUpdatedTime <= to ).ToList();
 			return new GetSalesReceiptsResponse( ordersFilteredFromAndTo );
@@ -123,9 +122,7 @@ namespace QuickBooksAccess.Services
 
 		public GetInvoicesResponse GetInvoices( DateTime from, DateTime to )
 		{
-			var context = this.GetServiceContext( this.RestProfile );
-			var queryService = new QueryService< Invoice >( context );
-			var invoicesFilteredFrom = queryService.Where( x => x.MetaData.LastUpdatedTime >= from ).ToList();
+			var invoicesFilteredFrom = this._queryServiceInvoice.Where( x => x.MetaData.LastUpdatedTime >= from ).ToList();
 			//todo: try to avoid additional filter with 'to', and inject it in first query
 			var invoicesFilteredFromAndTo = invoicesFilteredFrom.Where( x => x.MetaData.LastUpdatedTime <= to ).ToList();
 			return new GetInvoicesResponse( invoicesFilteredFromAndTo );
@@ -139,9 +136,7 @@ namespace QuickBooksAccess.Services
 
 		public GetItemsResponse GetItems( params string[] skus )
 		{
-			var context = this.GetServiceContext( this.RestProfile );
-			var queryService = new QueryService< Item >( context );
-			var items = queryService.Where( x => x.Name.In( skus ) ).ToList();
+			var items = this._queryService.Where( x => x.Name.In( skus ) ).ToList();
 			var itemsConvertedToQBAccessItems = items.Select( y => y.ToQBAccessItem() ).ToList();
 			return new GetItemsResponse( itemsConvertedToQBAccessItems );
 		}

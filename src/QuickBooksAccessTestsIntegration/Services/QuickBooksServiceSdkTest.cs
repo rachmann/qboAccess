@@ -33,6 +33,7 @@ namespace QuickBooksAccessTestsIntegration.Services
 		}
 
 		[ Test ]
+		[ Ignore ]
 		public void UpdateItemQuantityOnHand_ServiceContainsItems_InfoReceived()
 		{
 			//A
