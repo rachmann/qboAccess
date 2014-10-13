@@ -54,45 +54,26 @@ namespace QuickBooksAccess.Services
 
 		public UpdateItemQuantityOnHandResponse UpdateItemQuantityOnHand( params InventoryItem[] inventoryItems )
 		{
-			//get items
-			var items = this._queryServiceItem.Where( x => x.Type == ItemTypeEnum.Inventory ).ToList();
-			var skus = inventoryItems.Select( x => x.Sku ).ToArray();
-
-			var itemsCollections = new ConcurrentBag< IEnumerable< Item > >();
-			var items2 = this._queryServiceItem.Where( x => x.Name.In( skus ) ).DoWithPagesAsync(
-				1,
-				y => ( Task.Factory.StartNew( () => itemsCollections.Add( y ) ) ) );
-			items2.Wait();
-			var itemsCollectionsMany = itemsCollections.SelectMany( x => x ).ToList();
-
-			var itemsQuery = this._queryServiceItem.Where( x => x.Name.In( skus ) ).ToIdsQuery();
-
-			var itemsQueryBatch = this._dataService.CreateNewBatch();
-			itemsQueryBatch.Add( itemsQuery, "bID1" );
-			itemsQueryBatch.Execute();
-			var queryResponse = itemsQueryBatch[ "bID1" ];
-			var customers = queryResponse.Entities.Cast< Item >().ToList();
-
 			var batch = this._dataService.CreateNewBatch();
 			var accounts = this._queryServiceAccount.Where( x => x.Name == "Cost of Goods Sold" ).ToList();
 			var accReference = accounts.FirstOrDefault();
 			var expenseAccountRef = new ReferenceType { type = accReference.AccountType.ToString(), name = accReference.Name, Value = accReference.Id };
-			foreach( var item in items )
+			foreach (var item in inventoryItems)
 			{
 				batch.Add( new Item()
 				{
-					Name = item.Name,
+					Name = item.Sku,
 					Id = item.Id,
 					//Type = ItemTypeEnum.Inventory,
 					//TypeSpecified = true,
 					SyncToken = item.SyncToken,
-					QtyOnHand = item.QtyOnHand + 1,
+					QtyOnHand = item.QtyOnHand,
 					QtyOnHandSpecified = true,
 					ExpenseAccountRef = expenseAccountRef,
 				}, item.Id, OperationEnum.update );
 			}
 
-			batch.Execute();
+			batch.ExecuteAsync();
 			return new UpdateItemQuantityOnHandResponse( new List< Customer >() );
 		}
 

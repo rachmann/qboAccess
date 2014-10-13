@@ -5,5 +5,6 @@
 		public string Name { get; set; }
 		public string Id { get; set; }
 		public decimal Qty { get; set; }
+		public string SyncToken { get; set; }
 	}
 }

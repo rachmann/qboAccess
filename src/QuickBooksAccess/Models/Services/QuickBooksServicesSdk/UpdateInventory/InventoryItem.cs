@@ -4,6 +4,8 @@
 	{
 
 		public string Sku { get; set; }
-		public decimal Qty { get; set; }
+		public decimal QtyOnHand { get; set; }
+		public string Id { get; set; }
+		public string SyncToken { get; set; }
 	}
 }
