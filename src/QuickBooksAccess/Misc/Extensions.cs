@@ -5,11 +5,36 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
+using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetItems;
+using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.UpdateInventory;
 
 namespace QuickBooksAccess.Misc
 {
 	internal static class Extensions
 	{
+		public static Item ToQBAccessItem( this Intuit.Ipp.Data.Item item )
+		{
+			var qbAccessItem = new Item
+			{
+				Id = item.Id,
+				Name = item.Name,
+				Qty = item.QtyOnHand,
+			};
+
+			return qbAccessItem;
+		}
+
+		public static InventoryItem ToInventoryItem( this Item item )
+		{
+			var inventoryItem = new InventoryItem
+			{
+				Qty = item.Qty,
+				Sku = item.Name
+			};
+
+			return inventoryItem;
+		}
+
 		public static string ToStringUtcIso8601( this DateTime dateTime )
 		{
 			var universalTime = dateTime.ToUniversalTime();

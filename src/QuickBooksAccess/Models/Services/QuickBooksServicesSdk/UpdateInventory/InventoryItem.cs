@@ -4,6 +4,6 @@
 	{
 
 		public string Sku { get; set; }
-		public long Qty { get; set; }
+		public decimal Qty { get; set; }
 	}
 }

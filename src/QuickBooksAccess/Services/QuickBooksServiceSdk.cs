@@ -9,13 +9,16 @@ using Intuit.Ipp.LinqExtender;
 using Intuit.Ipp.QueryFilter;
 using Intuit.Ipp.Security;
 using Netco.Extensions;
+using QuickBooksAccess.Misc;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.Auth;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.CreateOrders;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.CreatePurchaseOrders;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetInvoices;
+using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetItems;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetPurchaseOrders;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetSalesReceipts;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.UpdateInventory;
+using Item = Intuit.Ipp.Data.Item;
 using Task = System.Threading.Tasks.Task;
 
 namespace QuickBooksAccess.Services
@@ -133,5 +136,14 @@ namespace QuickBooksAccess.Services
 			throw new Exception();
 		}
 		#endregion
+
+		public GetItemsResponse GetItems( params string[] skus )
+		{
+			var context = this.GetServiceContext( this.RestProfile );
+			var queryService = new QueryService< Item >( context );
+			var items = queryService.Where( x => x.Name.In( skus ) ).ToList();
+			var itemsConvertedToQBAccessItems = items.Select( y => y.ToQBAccessItem() ).ToList();
+			return new GetItemsResponse( itemsConvertedToQBAccessItems );
+		}
 	}
 }

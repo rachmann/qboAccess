@@ -3,8 +3,8 @@ using System.Linq;
 using FluentAssertions;
 using Intuit.Ipp.Data;
 using NUnit.Framework;
+using QuickBooksAccess.Misc;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.Auth;
-using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.UpdateInventory;
 using QuickBooksAccess.Services;
 using QuickBooksAccessTestsIntegration.TestEnvironment;
 
@@ -33,15 +33,20 @@ namespace QuickBooksAccessTestsIntegration.Services
 		}
 
 		[ Test ]
-		public void getSomeInfo_ServiceContainsInfo_InfoReceived()
+		public void UpdateItemQuantityOnHand_ServiceContainsItems_InfoReceived()
 		{
 			//A
-			var itemsToUpdate = new InventoryItem[] { 
-				new InventoryItem() { Qty = 55, Sku = "testSku1" }, 
-				new InventoryItem() { Qty = 55, Sku = "qqq" } };
+			var ItemsSkus = new[] { "qqq", "testSku1" };
+			var items = this._quickBooksServiceSdk.GetItems( ItemsSkus );
+			items.Items.ForEach( x => x.Qty++ );
+			var inventoryItems = items.Items.Select( x => x.ToInventoryItem() ).ToArray();
+
 			//A
-			this._quickBooksServiceSdk.UpdateItemQuantityOnHand(itemsToUpdate);
+			this._quickBooksServiceSdk.UpdateItemQuantityOnHand( inventoryItems );
+
 			//A
+			var updatedItems = this._quickBooksServiceSdk.GetItems( ItemsSkus ).Items.Select( x => x.ToInventoryItem() ).ToArray();
+			updatedItems.ShouldBeEquivalentTo( inventoryItems );
 		}
 
 		[ Test ]
