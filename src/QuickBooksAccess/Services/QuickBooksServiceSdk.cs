@@ -136,9 +136,28 @@ namespace QuickBooksAccess.Services
 
 		public GetItemsResponse GetItems( params string[] skus )
 		{
-			var items = this._queryServiceItem.Where( x => x.Name.In( skus ) ).ToList();
-			var itemsConvertedToQBAccessItems = items.Select( y => y.ToQBAccessItem() ).ToList();
-			return new GetItemsResponse( itemsConvertedToQBAccessItems );
+			// simle query
+			//var items = this._queryServiceItem.Where( x => x.Name.In( skus ) ).ToList();
+			//var itemsConvertedToQBAccessItems = items.Select( y => y.ToQBAccessItem() ).ToList();
+			//return new GetItemsResponse( itemsConvertedToQBAccessItems );
+
+			// query with pages
+			//var itemsCollections = new ConcurrentBag<IEnumerable<Item>>();
+			//var getItemsWithPagesAsync = this._queryServiceItem.Where(x => x.Name.In(skus)).DoWithPagesAsync(
+			//	1,
+			//	y => (Task.Factory.StartNew(() => itemsCollections.Add(y))));
+			//getItemsWithPagesAsync.Wait();
+			//var queredItems = itemsCollections.SelectMany(x => x).ToList();
+
+			// batch query with
+			var itemsQuery = this._queryServiceItem.Where( x => x.Name.In( skus ) ).ToIdsQuery();
+			var itemsQueryBatch = this._dataService.CreateNewBatch();
+			itemsQueryBatch.Add( itemsQuery, "bID1" );
+			itemsQueryBatch.Execute();
+			var queryResponse = itemsQueryBatch[ "bID1" ];
+			var items = queryResponse.Entities.Cast< Item >().ToList();
+			var itemsConvertedToQbAccessItems = items.Select( x => x.ToQBAccessItem() ).ToList();
+			return new GetItemsResponse( itemsConvertedToQbAccessItems );
 		}
 	}
 }
