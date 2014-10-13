@@ -28,7 +28,7 @@ namespace QuickBooksAccess.Services
 		private readonly OAuthRequestValidator _requestValidator;
 		private readonly ServiceContext _serviceContext;
 		private readonly DataService _dataService;
-		private readonly QueryService< Item > _queryService;
+		private readonly QueryService< Item > _queryServiceItem;
 		private readonly QueryService< Account > _queryServiceAccount;
 		private readonly QueryService< PurchaseOrder > _queryServicePurchaseOrder;
 		private readonly QueryService< SalesReceipt > _queryServiceSalesReceipt;
@@ -45,7 +45,7 @@ namespace QuickBooksAccess.Services
 			this._requestValidator = new OAuthRequestValidator( this.RestProfile.OAuthAccessToken, this.RestProfile.OAuthAccessTokenSecret, this.ConsumerProfile.ConsumerKey, this.ConsumerProfile.ConsumerSecret );
 			this._serviceContext = new ServiceContext( this.RestProfile.AppToken, this.RestProfile.CompanyId, IntuitServicesType.QBO, this._requestValidator );
 			this._dataService = new DataService( this._serviceContext );
-			this._queryService = new QueryService< Item >( this._serviceContext );
+			this._queryServiceItem = new QueryService< Item >( this._serviceContext );
 			this._queryServiceAccount = new QueryService< Account >( this._serviceContext );
 			this._queryServicePurchaseOrder = new QueryService< PurchaseOrder >( this._serviceContext );
 			this._queryServiceSalesReceipt = new QueryService< SalesReceipt >( this._serviceContext );
@@ -55,17 +55,17 @@ namespace QuickBooksAccess.Services
 		public UpdateInventoryResponse UpdateItemQuantityOnHand( params InventoryItem[] inventoryItems )
 		{
 			//get items
-			var items = this._queryService.Where( x => x.Type == ItemTypeEnum.Inventory ).ToList();
+			var items = this._queryServiceItem.Where( x => x.Type == ItemTypeEnum.Inventory ).ToList();
 			var skus = inventoryItems.Select( x => x.Sku ).ToArray();
 
 			var itemsCollections = new ConcurrentBag< IEnumerable< Item > >();
-			var items2 = this._queryService.Where( x => x.Name.In( skus ) ).DoWithPagesAsync(
+			var items2 = this._queryServiceItem.Where( x => x.Name.In( skus ) ).DoWithPagesAsync(
 				1,
 				y => ( Task.Factory.StartNew( () => itemsCollections.Add( y ) ) ) );
 			items2.Wait();
 			var itemsCollectionsMany = itemsCollections.SelectMany( x => x ).ToList();
 
-			var itemsQuery = this._queryService.Where( x => x.Name.In( skus ) ).ToIdsQuery();
+			var itemsQuery = this._queryServiceItem.Where( x => x.Name.In( skus ) ).ToIdsQuery();
 
 			var itemsQueryBatch = this._dataService.CreateNewBatch();
 			itemsQueryBatch.Add( itemsQuery, "bID1" );
@@ -136,7 +136,7 @@ namespace QuickBooksAccess.Services
 
 		public GetItemsResponse GetItems( params string[] skus )
 		{
-			var items = this._queryService.Where( x => x.Name.In( skus ) ).ToList();
+			var items = this._queryServiceItem.Where( x => x.Name.In( skus ) ).ToList();
 			var itemsConvertedToQBAccessItems = items.Select( y => y.ToQBAccessItem() ).ToList();
 			return new GetItemsResponse( itemsConvertedToQBAccessItems );
 		}
