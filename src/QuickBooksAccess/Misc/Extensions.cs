@@ -30,7 +30,10 @@ namespace QuickBooksAccess.Misc
 			var inventoryItem = new InventoryItem
 			{
 				QtyOnHand = item.Qty,
-				Sku = item.Name
+				Sku = item.Name,
+				Id = item.Id,
+				SyncToken = item.SyncToken,
+
 			};
 
 			return inventoryItem;
