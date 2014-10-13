@@ -3,9 +3,9 @@ using Intuit.Ipp.Data;
 
 namespace QuickBooksAccess.Models.Services.QuickBooksServicesSdk.UpdateInventory
 {
-	internal class UpdateInventoryResponse
+	internal class UpdateItemQuantityOnHandResponse
 	{
-		public UpdateInventoryResponse( List< Customer > toList )
+		public UpdateItemQuantityOnHandResponse( List< Customer > toList )
 		{
 		}
 	}

@@ -52,7 +52,7 @@ namespace QuickBooksAccess.Services
 			this._queryServiceInvoice = new QueryService< Invoice >( this._serviceContext );
 		}
 
-		public UpdateInventoryResponse UpdateItemQuantityOnHand( params InventoryItem[] inventoryItems )
+		public UpdateItemQuantityOnHandResponse UpdateItemQuantityOnHand( params InventoryItem[] inventoryItems )
 		{
 			//get items
 			var items = this._queryServiceItem.Where( x => x.Type == ItemTypeEnum.Inventory ).ToList();
@@ -93,7 +93,7 @@ namespace QuickBooksAccess.Services
 			}
 
 			batch.Execute();
-			return new UpdateInventoryResponse( new List< Customer >() );
+			return new UpdateItemQuantityOnHandResponse( new List< Customer >() );
 		}
 
 		#region PurchaseOrders
