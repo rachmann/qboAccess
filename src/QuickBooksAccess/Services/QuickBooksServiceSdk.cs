@@ -73,7 +73,7 @@ namespace QuickBooksAccess.Services
 				}, item.Id, OperationEnum.update );
 			}
 
-			batch.ExecuteAsync();
+			batch.Execute();
 			return new UpdateItemQuantityOnHandResponse( new List< Customer >() );
 		}
 
