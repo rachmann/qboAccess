@@ -54,6 +54,7 @@ namespace QuickBooksAccess.Services
 			this._queryServiceInvoice = new QueryService< Invoice >( this._serviceContext );
 		}
 
+		#region Items
 		public UpdateItemQuantityOnHandResponse UpdateItemQuantityOnHand( params InventoryItem[] inventoryItems )
 		{
 			var batch = this._dataService.CreateNewBatch();
@@ -78,6 +79,33 @@ namespace QuickBooksAccess.Services
 			batch.Execute();
 			return new UpdateItemQuantityOnHandResponse( new List< Customer >() );
 		}
+
+		public GetItemsResponse GetItems( params string[] skus )
+		{
+			// simle query
+			//var items = this._queryServiceItem.Where( x => x.Name.In( skus ) ).ToList();
+			//var itemsConvertedToQBAccessItems = items.Select( y => y.ToQBAccessItem() ).ToList();
+			//return new GetItemsResponse( itemsConvertedToQBAccessItems );
+
+			// query with pages
+			//var itemsCollections = new ConcurrentBag<IEnumerable<Item>>();
+			//var getItemsWithPagesAsync = this._queryServiceItem.Where(x => x.Name.In(skus)).DoWithPagesAsync(
+			//	1,
+			//	y => (Task.Factory.StartNew(() => itemsCollections.Add(y))));
+			//getItemsWithPagesAsync.Wait();
+			//var queredItems = itemsCollections.SelectMany(x => x).ToList();
+
+			// batch query with
+			var itemsQuery = this._queryServiceItem.Where( x => x.Name.In( skus ) ).ToIdsQuery();
+			var itemsQueryBatch = this._dataService.CreateNewBatch();
+			itemsQueryBatch.Add( itemsQuery, "bID1" );
+			itemsQueryBatch.Execute();
+			var queryResponse = itemsQueryBatch[ "bID1" ];
+			var items = queryResponse.Entities.Cast< Item >().ToList();
+			var itemsConvertedToQbAccessItems = items.Select( x => x.ToQBAccessItem() ).ToList();
+			return new GetItemsResponse( itemsConvertedToQbAccessItems );
+		}
+		#endregion
 
 		#region PurchaseOrders
 		public GetPurchaseOrdersResponse GetPurchseOrders( DateTime from, DateTime to )
@@ -116,33 +144,6 @@ namespace QuickBooksAccess.Services
 		{
 			throw new Exception();
 		}
-		#endregion
-
-		public GetItemsResponse GetItems( params string[] skus )
-		{
-			// simle query
-			//var items = this._queryServiceItem.Where( x => x.Name.In( skus ) ).ToList();
-			//var itemsConvertedToQBAccessItems = items.Select( y => y.ToQBAccessItem() ).ToList();
-			//return new GetItemsResponse( itemsConvertedToQBAccessItems );
-
-			// query with pages
-			//var itemsCollections = new ConcurrentBag<IEnumerable<Item>>();
-			//var getItemsWithPagesAsync = this._queryServiceItem.Where(x => x.Name.In(skus)).DoWithPagesAsync(
-			//	1,
-			//	y => (Task.Factory.StartNew(() => itemsCollections.Add(y))));
-			//getItemsWithPagesAsync.Wait();
-			//var queredItems = itemsCollections.SelectMany(x => x).ToList();
-
-			// batch query with
-			var itemsQuery = this._queryServiceItem.Where( x => x.Name.In( skus ) ).ToIdsQuery();
-			var itemsQueryBatch = this._dataService.CreateNewBatch();
-			itemsQueryBatch.Add( itemsQuery, "bID1" );
-			itemsQueryBatch.Execute();
-			var queryResponse = itemsQueryBatch[ "bID1" ];
-			var items = queryResponse.Entities.Cast< Item >().ToList();
-			var itemsConvertedToQbAccessItems = items.Select( x => x.ToQBAccessItem() ).ToList();
-			return new GetItemsResponse( itemsConvertedToQbAccessItems );
-		}
 
 		public GetPaymentsResponse GetPayments( DateTime lastUpdateTimeFrom, DateTime lastUpdateTimeTo )
 		{
@@ -156,5 +157,6 @@ namespace QuickBooksAccess.Services
 			var itemsConvertedToQbAccessItems = items.Select( x => x.ToQBAccessPayment() ).ToList();
 			return new GetPaymentsResponse( itemsConvertedToQbAccessItems );
 		}
+		#endregion
 	}
 }
