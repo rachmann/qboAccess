@@ -87,6 +87,18 @@ namespace QuickBooksAccessTestsIntegration.Services
 		}
 
 		[ Test ]
+		public void GetPayments_ServiceContainsPayments_InvoicesReceived()
+		{
+			//A
+
+			//A
+			var paymentsResponse = this._quickBooksServiceSdk.GetPayments( DateTime.Now.AddMonths( -1 ), DateTime.Now );
+
+			//A
+			paymentsResponse.Payments.Count.Should().BeGreaterThan( 0 );
+		}
+
+		[ Test ]
 		public void GetSalesReceipts_ServiceContainsSalesReceipt_SalesReceiptReceived()
 		{
 			//A

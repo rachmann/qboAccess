@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Intuit.Ipp.Data;
+using Payment = QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetPayments.Payment;
 
 namespace QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetItems
 {

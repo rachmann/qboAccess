@@ -6,12 +6,40 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetItems;
+using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetPayments;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.UpdateInventory;
 
 namespace QuickBooksAccess.Misc
 {
 	internal static class Extensions
 	{
+		public static Payment ToQBAccessPayment( this Intuit.Ipp.Data.Payment payment )
+		{
+			var qbAccessItem = new Payment
+			{
+				Id = payment.Id,
+				DocNumber = payment.DocNumber,
+				TotalAmt = payment.TotalAmt,
+				SyncToken = payment.SyncToken,
+				Line = payment.Line.Select( x => x.ToQBAccessLine() ).ToList(),
+			};
+
+			return qbAccessItem;
+		}
+
+		public static Line ToQBAccessLine( this Intuit.Ipp.Data.Line line )
+		{
+			var qbAccessLine = new Line
+			{
+				Id = line.Id,
+				Amount = line.Amount,
+				Description = line.Description,
+				LineNum = line.LineNum,
+			};
+
+			return qbAccessLine;
+		}
+
 		public static Item ToQBAccessItem( this Intuit.Ipp.Data.Item item )
 		{
 			var qbAccessItem = new Item
@@ -33,7 +61,6 @@ namespace QuickBooksAccess.Misc
 				Sku = item.Name,
 				Id = item.Id,
 				SyncToken = item.SyncToken,
-
 			};
 
 			return inventoryItem;

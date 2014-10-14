@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Intuit.Ipp.Core;
@@ -8,18 +7,18 @@ using Intuit.Ipp.DataService;
 using Intuit.Ipp.LinqExtender;
 using Intuit.Ipp.QueryFilter;
 using Intuit.Ipp.Security;
-using Netco.Extensions;
 using QuickBooksAccess.Misc;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.Auth;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.CreateOrders;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.CreatePurchaseOrders;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetInvoices;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetItems;
+using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetPayments;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetPurchaseOrders;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetSalesReceipts;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.UpdateInventory;
 using Item = Intuit.Ipp.Data.Item;
-using Task = System.Threading.Tasks.Task;
+using Payment = Intuit.Ipp.Data.Payment;
 
 namespace QuickBooksAccess.Services
 {
@@ -29,6 +28,7 @@ namespace QuickBooksAccess.Services
 		private readonly ServiceContext _serviceContext;
 		private readonly DataService _dataService;
 		private readonly QueryService< Item > _queryServiceItem;
+		private readonly QueryService< Payment > _queryServicePayment;
 		private readonly QueryService< Account > _queryServiceAccount;
 		private readonly QueryService< PurchaseOrder > _queryServicePurchaseOrder;
 		private readonly QueryService< SalesReceipt > _queryServiceSalesReceipt;
@@ -46,6 +46,7 @@ namespace QuickBooksAccess.Services
 			this._serviceContext = new ServiceContext( this.RestProfile.AppToken, this.RestProfile.CompanyId, IntuitServicesType.QBO, this._requestValidator );
 			this._dataService = new DataService( this._serviceContext );
 			this._queryServiceItem = new QueryService< Item >( this._serviceContext );
+			this._queryServicePayment = new QueryService< Payment >( this._serviceContext );
 			this._queryServiceAccount = new QueryService< Account >( this._serviceContext );
 			this._queryServicePurchaseOrder = new QueryService< PurchaseOrder >( this._serviceContext );
 			this._queryServiceSalesReceipt = new QueryService< SalesReceipt >( this._serviceContext );
@@ -58,7 +59,7 @@ namespace QuickBooksAccess.Services
 			var accounts = this._queryServiceAccount.Where( x => x.Name == "Cost of Goods Sold" ).ToList();
 			var accReference = accounts.FirstOrDefault();
 			var expenseAccountRef = new ReferenceType { type = accReference.AccountType.ToString(), name = accReference.Name, Value = accReference.Id };
-			foreach (var item in inventoryItems)
+			foreach( var item in inventoryItems )
 			{
 				batch.Add( new Item()
 				{
@@ -139,6 +140,19 @@ namespace QuickBooksAccess.Services
 			var items = queryResponse.Entities.Cast< Item >().ToList();
 			var itemsConvertedToQbAccessItems = items.Select( x => x.ToQBAccessItem() ).ToList();
 			return new GetItemsResponse( itemsConvertedToQbAccessItems );
+		}
+
+		public GetPaymentsResponse GetPayments( DateTime lastUpdateTimeFrom, DateTime lastUpdateTimeTo )
+		{
+			//var itemsQuery = this._queryServicePayment.Where( x => x.MetaData.LastUpdatedTime >= lastUpdateTimeFrom && x.MetaData.LastUpdatedTime <= lastUpdateTimeTo ).ToIdsQuery();
+			var itemsQuery = this._queryServicePayment.Where( x => x.MetaData.LastUpdatedTime >= lastUpdateTimeFrom ).ToIdsQuery();
+			var itemsQueryBatch = this._dataService.CreateNewBatch();
+			itemsQueryBatch.Add( itemsQuery, "bID1" );
+			itemsQueryBatch.Execute();
+			var queryResponse = itemsQueryBatch[ "bID1" ];
+			var items = queryResponse.Entities.Cast< Payment >().ToList();
+			var itemsConvertedToQbAccessItems = items.Select( x => x.ToQBAccessPayment() ).ToList();
+			return new GetPaymentsResponse( itemsConvertedToQbAccessItems );
 		}
 	}
 }
