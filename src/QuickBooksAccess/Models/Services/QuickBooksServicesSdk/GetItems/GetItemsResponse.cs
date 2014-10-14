@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using Intuit.Ipp.Data;
-using Payment = QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetPayments.Payment;
 
 namespace QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetItems
 {
@@ -8,7 +6,7 @@ namespace QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetItems
 	{
 		public GetItemsResponse( List< Item > items )
 		{
-			Items = items;
+			this.Items = items;
 		}
 
 		public List< Item > Items { get; set; }

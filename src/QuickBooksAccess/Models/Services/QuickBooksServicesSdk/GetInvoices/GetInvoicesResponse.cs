@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Intuit.Ipp.Data;
 
 namespace QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetInvoices
 {

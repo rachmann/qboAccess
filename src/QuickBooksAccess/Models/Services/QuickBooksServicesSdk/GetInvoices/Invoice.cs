@@ -12,7 +12,7 @@ namespace QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetInvoices
 		public decimal TotalAmt { get; set; }
 		public string SyncToken { get; set; }
 		public string City { get; set; }
-		public string Country {		get; set; }
+		public string Country { get; set; }
 		public string CountryCode { get; set; }
 		public string PostalCode { get; set; }
 		public string PostalCodeSuffix { get; set; }

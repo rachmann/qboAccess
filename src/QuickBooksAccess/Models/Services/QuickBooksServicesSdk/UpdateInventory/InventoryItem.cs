@@ -2,7 +2,6 @@
 {
 	internal class InventoryItem
 	{
-
 		public string Sku { get; set; }
 		public decimal QtyOnHand { get; set; }
 		public string Id { get; set; }
