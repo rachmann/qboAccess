@@ -31,24 +31,24 @@ namespace QuickBooksAccess.Misc
 			return qbAccessItem;
 		}
 
-		public static Invoice ToQBAccessInvoice( this Intuit.Ipp.Data.Invoice payment )
+		public static Invoice ToQBAccessInvoice( this Intuit.Ipp.Data.Invoice invoice )
 		{
 			var qbAccessItem = new Invoice
 			{
-				Id = payment.Id,
-				DocNumber = payment.DocNumber,
-				NotAvailable = payment.CurrencyRef != null ? payment.CurrencyRef.Value : PredefinedValues.NotAvailable,
-				TotalAmt = payment.TotalAmt,
-				SyncToken = payment.SyncToken,
-				City = payment.ShipAddr != null ? payment.ShipAddr.City : PredefinedValues.NotAvailable,
-				Country = payment.ShipAddr != null ? payment.ShipAddr.Country : PredefinedValues.NotAvailable,
-				CountryCode = payment.ShipAddr != null ? payment.ShipAddr.CountryCode : PredefinedValues.NotAvailable,
-				PostalCode = payment.ShipAddr != null ? payment.ShipAddr.PostalCode : PredefinedValues.NotAvailable,
-				PostalCodeSuffix = payment.ShipAddr != null ? payment.ShipAddr.PostalCodeSuffix : PredefinedValues.NotAvailable,
-				ShipDate = payment.ShipAddr != null ? payment.ShipDate : DateTime.MinValue,
-				Deposit = payment.ShipAddr != null ? payment.Deposit : PredefinedValues.Zero,
-				TrackingNum = payment.ShipAddr != null ? payment.TrackingNum : PredefinedValues.NotAvailable,
-				Line = payment.Line.Select( x => x.ToQBAccessInvoiceLine() ).ToList(),
+				Id = invoice.Id,
+				DocNumber = invoice.DocNumber,
+				NotAvailable = invoice.CurrencyRef != null ? invoice.CurrencyRef.Value : PredefinedValues.NotAvailable,
+				TotalAmt = invoice.TotalAmt,
+				SyncToken = invoice.SyncToken,
+				City = invoice.ShipAddr != null ? invoice.ShipAddr.City : PredefinedValues.NotAvailable,
+				Country = invoice.ShipAddr != null ? invoice.ShipAddr.Country : PredefinedValues.NotAvailable,
+				CountryCode = invoice.ShipAddr != null ? invoice.ShipAddr.CountryCode : PredefinedValues.NotAvailable,
+				PostalCode = invoice.ShipAddr != null ? invoice.ShipAddr.PostalCode : PredefinedValues.NotAvailable,
+				PostalCodeSuffix = invoice.ShipAddr != null ? invoice.ShipAddr.PostalCodeSuffix : PredefinedValues.NotAvailable,
+				ShipDate = invoice.ShipDate,
+				Deposit = invoice.Deposit,
+				TrackingNum = invoice.TrackingNum,
+				Line = invoice.Line.Select( x => x.ToQBAccessInvoiceLine() ).ToList(),
 			};
 
 			return qbAccessItem;
