@@ -5,9 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
-using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetItems;
-using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetPayments;
+using Intuit.Ipp.Data;
+using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetInvoices;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.UpdateInventory;
+using Invoice = QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetInvoices.Invoice;
+using Item = QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetItems.Item;
+using Line = Intuit.Ipp.Data.Line;
+using Payment = QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetPayments.Payment;
 
 namespace QuickBooksAccess.Misc
 {
@@ -27,9 +31,46 @@ namespace QuickBooksAccess.Misc
 			return qbAccessItem;
 		}
 
-		public static Line ToQBAccessLine( this Intuit.Ipp.Data.Line line )
+		public static Invoice ToQBAccessInvoice( this Intuit.Ipp.Data.Invoice payment )
 		{
-			var qbAccessLine = new Line
+			var qbAccessItem = new Invoice
+			{
+				Id = payment.Id,
+				DocNumber = payment.DocNumber,
+				NotAvailable = payment.CurrencyRef != null ? payment.CurrencyRef.Value : PredefinedValues.NotAvailable,
+				TotalAmt = payment.TotalAmt,
+				SyncToken = payment.SyncToken,
+				City = payment.ShipAddr != null ? payment.ShipAddr.City : PredefinedValues.NotAvailable,
+				Country = payment.ShipAddr != null ? payment.ShipAddr.Country : PredefinedValues.NotAvailable,
+				CountryCode = payment.ShipAddr != null ? payment.ShipAddr.CountryCode : PredefinedValues.NotAvailable,
+				PostalCode = payment.ShipAddr != null ? payment.ShipAddr.PostalCode : PredefinedValues.NotAvailable,
+				PostalCodeSuffix = payment.ShipAddr != null ? payment.ShipAddr.PostalCodeSuffix : PredefinedValues.NotAvailable,
+				ShipDate = payment.ShipAddr != null ? payment.ShipDate : DateTime.MinValue,
+				Deposit = payment.ShipAddr != null ? payment.Deposit : PredefinedValues.Zero,
+				TrackingNum = payment.ShipAddr != null ? payment.TrackingNum : PredefinedValues.NotAvailable,
+				Line = payment.Line.Select( x => x.ToQBAccessInvoiceLine() ).ToList(),
+			};
+
+			return qbAccessItem;
+		}
+
+		public static InvoiceLine ToQBAccessInvoiceLine( this Line line )
+		{
+			var ineDetail = ( line.AnyIntuitObject as SalesItemLineDetail ) ?? new SalesItemLineDetail { Qty = 0 };
+			var qbAccessLine = new InvoiceLine
+			{
+				Id = line.Id,
+				Amount = line.Amount,
+				Description = line.Description,
+				LineNum = line.LineNum,
+				Qty = ineDetail.Qty
+			};
+			return qbAccessLine;
+		}
+
+		public static Models.Services.QuickBooksServicesSdk.GetPayments.Line ToQBAccessLine( this Line line )
+		{
+			var qbAccessLine = new Models.Services.QuickBooksServicesSdk.GetPayments.Line
 			{
 				Id = line.Id,
 				Amount = line.Amount,

@@ -17,6 +17,7 @@ using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetPayments;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetPurchaseOrders;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetSalesReceipts;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.UpdateInventory;
+using Invoice = Intuit.Ipp.Data.Invoice;
 using Item = Intuit.Ipp.Data.Item;
 using Payment = Intuit.Ipp.Data.Payment;
 
@@ -107,7 +108,8 @@ namespace QuickBooksAccess.Services
 			var invoicesFilteredFrom = this._queryServiceInvoice.Where( x => x.MetaData.LastUpdatedTime >= from ).ToList();
 			//todo: try to avoid additional filter with 'to', and inject it in first query
 			var invoicesFilteredFromAndTo = invoicesFilteredFrom.Where( x => x.MetaData.LastUpdatedTime <= to ).ToList();
-			return new GetInvoicesResponse( invoicesFilteredFromAndTo );
+			var invoicesConverted = invoicesFilteredFromAndTo.Select( x => x.ToQBAccessInvoice() ).ToList();
+			return new GetInvoicesResponse( invoicesConverted );
 		}
 
 		public CreateOrdersResponse CreateOrders( params SalesOrder[] orders )
