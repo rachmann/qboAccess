@@ -35,8 +35,23 @@ namespace QuickBooksAccessTestsIntegration.Services
 		[ Test ]
 		public void UpdateItemQuantityOnHand_ServiceContainsItems_InfoReceived()
 		{
+			////A
+			//var ItemsSkus = new[] { "testSku2", "testSku4" };
+			//var items = this._quickBooksServiceSdk.GetItems( ItemsSkus );
+			//items.Items.ForEach( x => x.Qty++ );
+			//var inventoryItems = items.Items.Select( x => x.ToInventoryItem() ).ToArray();
+
+			////A
+			//this._quickBooksServiceSdk.UpdateItemQuantityOnHand( inventoryItems );
+
+			////A
+			//var updatedItems = this._quickBooksServiceSdk.GetItems( ItemsSkus ).Items.Select( x => x.ToInventoryItem() ).ToList();
+			//updatedItems.ForEach( x => x.SyncToken = "x" );
+			//inventoryItems.ToList().ForEach( x => x.SyncToken = "x" );
+			//updatedItems.ShouldBeEquivalentTo( inventoryItems );
+
 			//A
-			var ItemsSkus = new[] { "testSku2", "testSku4" };
+			var ItemsSkus = new[] { "testSku1", "testSku2", "testSku3", "testSku4", "testSku5" };
 			var items = this._quickBooksServiceSdk.GetItems( ItemsSkus );
 			items.Items.ForEach( x => x.Qty++ );
 			var inventoryItems = items.Items.Select( x => x.ToInventoryItem() ).ToArray();

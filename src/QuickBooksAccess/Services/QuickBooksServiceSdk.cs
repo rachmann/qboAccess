@@ -58,21 +58,18 @@ namespace QuickBooksAccess.Services
 		public UpdateItemQuantityOnHandResponse UpdateItemQuantityOnHand( params InventoryItem[] inventoryItems )
 		{
 			var batch = this._dataService.CreateNewBatch();
-			var accounts = this._queryServiceAccount.Where( x => x.Name == "Cost of Goods Sold" ).ToList();
-			var accReference = accounts.FirstOrDefault();
-			var expenseAccountRef = new ReferenceType { type = accReference.AccountType.ToString(), name = accReference.Name, Value = accReference.Id };
+
 			foreach( var item in inventoryItems )
 			{
 				batch.Add( new Item()
 				{
 					Name = item.Sku,
 					Id = item.Id,
-					//Type = ItemTypeEnum.Inventory,
-					//TypeSpecified = true,
 					SyncToken = item.SyncToken,
 					QtyOnHand = item.QtyOnHand,
 					QtyOnHandSpecified = true,
-					ExpenseAccountRef = expenseAccountRef,
+					ExpenseAccountRef = new ReferenceType { Value = item.ExpenseAccRefValue, name = item.ExpenseAccRefName, type = item.ExpenseAccRefType },
+					IncomeAccountRef = new ReferenceType { Value = item.IncomeAccRefValue, name = item.IncomeAccRefName, type = item.IncomeAccRefType }
 				}, item.Id, OperationEnum.update );
 			}
 

@@ -10,13 +10,27 @@ using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetInvoices;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.UpdateInventory;
 using Invoice = QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetInvoices.Invoice;
 using Item = QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetItems.Item;
-using Line = Intuit.Ipp.Data.Line;
 using Payment = QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetPayments.Payment;
 
 namespace QuickBooksAccess.Misc
 {
 	internal static class Extensions
 	{
+		public static ReferenceType ToReferenceType( this Account account )
+		{
+			if( account == null )
+				account = new Account();
+
+			var referenceType = new ReferenceType
+			{
+				type = account.AccountType.ToString(),
+				name = account.Name,
+				Value = account.Id
+			};
+
+			return referenceType;
+		}
+
 		public static Payment ToQBAccessPayment( this Intuit.Ipp.Data.Payment payment )
 		{
 			var qbAccessItem = new Payment
@@ -89,6 +103,12 @@ namespace QuickBooksAccess.Misc
 				Name = item.Name,
 				Qty = item.QtyOnHand,
 				SyncToken = item.SyncToken,
+				IncomeAccRefValue = item.IncomeAccountRef.Value,
+				IncomeAccRefName = item.IncomeAccountRef.name,
+				IncomeAccRefType = item.IncomeAccountRef.type,
+				ExpenseAccRefValue = item.ExpenseAccountRef.Value,
+				ExpenseAccRefName = item.ExpenseAccountRef.name,
+				ExpenseAccRefType = item.ExpenseAccountRef.type,
 			};
 
 			return qbAccessItem;
@@ -102,6 +122,12 @@ namespace QuickBooksAccess.Misc
 				Sku = item.Name,
 				Id = item.Id,
 				SyncToken = item.SyncToken,
+				IncomeAccRefValue = item.IncomeAccRefValue,
+				IncomeAccRefName = item.IncomeAccRefName,
+				IncomeAccRefType = item.IncomeAccRefType,
+				ExpenseAccRefValue = item.ExpenseAccRefValue,
+				ExpenseAccRefName = item.ExpenseAccRefName,
+				ExpenseAccRefType = item.ExpenseAccRefType,
 			};
 
 			return inventoryItem;
