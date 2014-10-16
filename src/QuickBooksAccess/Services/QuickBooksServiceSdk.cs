@@ -12,12 +12,14 @@ using QuickBooksAccess.Misc;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.Auth;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.CreateOrders;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.CreatePurchaseOrders;
+using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetBills;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetInvoices;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetItems;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetPayments;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetPurchaseOrders;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetSalesReceipts;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.UpdateInventory;
+using Bill = Intuit.Ipp.Data.Bill;
 using Invoice = Intuit.Ipp.Data.Invoice;
 using Item = Intuit.Ipp.Data.Item;
 using Payment = Intuit.Ipp.Data.Payment;
@@ -34,6 +36,7 @@ namespace QuickBooksAccess.Services
 		private readonly QueryService< Payment > _queryServicePayment;
 		private readonly QueryService< Account > _queryServiceAccount;
 		private readonly QueryService< PurchaseOrder > _queryServicePurchaseOrder;
+		private readonly QueryService< Bill > _queryServiceBill;
 		private readonly QueryService< SalesReceipt > _queryServiceSalesReceipt;
 		private readonly QueryService< Invoice > _queryServiceInvoice;
 
@@ -52,6 +55,7 @@ namespace QuickBooksAccess.Services
 			this._queryServicePayment = new QueryService< Payment >( this._serviceContext );
 			this._queryServiceAccount = new QueryService< Account >( this._serviceContext );
 			this._queryServicePurchaseOrder = new QueryService< PurchaseOrder >( this._serviceContext );
+			this._queryServiceBill = new QueryService< Bill >( this._serviceContext );
 			this._queryServiceSalesReceipt = new QueryService< SalesReceipt >( this._serviceContext );
 			this._queryServiceInvoice = new QueryService< Invoice >( this._serviceContext );
 		}
@@ -100,6 +104,17 @@ namespace QuickBooksAccess.Services
 		#endregion
 
 		#region PurchaseOrders
+		public async Task< GetBillsResponse > GetBills( DateTime from, DateTime to )
+		{
+			return await Task.Factory.StartNew( () =>
+			{
+				var billsFilteredFrom = this._queryServiceBill.Where( x => x.MetaData.CreateTime >= from ).ToList();
+				var billsFilteredFromAndTo = billsFilteredFrom.Where( x => x.MetaData.CreateTime <= to ).ToList();
+				var billsFilteredFromAndToConverted = billsFilteredFromAndTo.Select( x => x.ToQBBill() ).ToList();
+				return new GetBillsResponse( billsFilteredFromAndToConverted );
+			} ).ConfigureAwait( false );
+		}
+
 		public async Task< GetPurchaseOrdersResponse > GetPurchseOrders( DateTime from, DateTime to )
 		{
 			return await Task.Factory.StartNew( () =>

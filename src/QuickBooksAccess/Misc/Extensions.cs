@@ -8,6 +8,7 @@ using System.Xml;
 using Intuit.Ipp.Data;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetInvoices;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.UpdateInventory;
+using Bill = QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetBills.Bill;
 using Invoice = QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetInvoices.Invoice;
 using Item = QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetItems.Item;
 using Payment = QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetPayments.Payment;
@@ -29,6 +30,15 @@ namespace QuickBooksAccess.Misc
 			};
 
 			return referenceType;
+		}
+
+		public static Bill ToQBBill( this Intuit.Ipp.Data.Bill payment )
+		{
+			var qbBill = new Bill
+			{
+			};
+
+			return qbBill;
 		}
 
 		public static Payment ToQBAccessPayment( this Intuit.Ipp.Data.Payment payment )

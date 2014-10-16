@@ -104,6 +104,8 @@
     <Compile Include="Models\Services\QuickBooksServicesSdk\Auth\RestProfile.cs" />
     <Compile Include="Models\Services\QuickBooksServicesSdk\CreateOrders\CreateOrdersResponse.cs" />
     <Compile Include="Models\Services\QuickBooksServicesSdk\CreatePurchaseOrders\CreatePurchaseOrdersResponse.cs" />
+    <Compile Include="Models\Services\QuickBooksServicesSdk\GetBills\Bill.cs" />
+    <Compile Include="Models\Services\QuickBooksServicesSdk\GetBills\GetBillsResponse.cs" />
     <Compile Include="Models\Services\QuickBooksServicesSdk\GetInvoices\GetInvoicesResponse.cs" />
     <Compile Include="Models\Services\QuickBooksServicesSdk\GetInvoices\Invoice.cs" />
     <Compile Include="Models\Services\QuickBooksServicesSdk\GetInvoices\Line.cs" />

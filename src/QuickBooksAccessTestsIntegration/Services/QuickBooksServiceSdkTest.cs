@@ -70,6 +70,20 @@ namespace QuickBooksAccessTestsIntegration.Services
 		}
 
 		[ Test ]
+		public void GetBills_ServiceContainsBills_BillsReceived()
+		{
+			//A
+
+			//A
+			var getPurchaseOrdersResponseTask = this._quickBooksServiceSdk.GetBills( DateTime.Now.AddMonths( -1 ), DateTime.Now );
+			getPurchaseOrdersResponseTask.Wait();
+			var getPurchaseOrdersResponse = getPurchaseOrdersResponseTask.Result;
+
+			//A
+			getPurchaseOrdersResponse.Bills.Count().Should().BeGreaterThan( 0 );
+		}
+
+		[ Test ]
 		public void CreatePurchaseOrders_ServiceDontContainsTheSamePurchaseOrders_PurchaseOrdersCreated()
 		{
 			//A
