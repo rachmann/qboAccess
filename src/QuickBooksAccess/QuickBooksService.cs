@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using QuickBooksAccess.Misc;
 using QuickBooksAccess.Models;
@@ -8,15 +8,16 @@ using QuickBooksAccess.Models.GetOrders;
 using QuickBooksAccess.Models.GetProducts;
 using QuickBooksAccess.Models.Ping;
 using QuickBooksAccess.Models.PutInventory;
+using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.Auth;
+using QuickBooksAccess.Services;
 
 namespace QuickBooksAccess
 {
 	public class QuickBooksService : IQuickBooksService
 	{
-		private void LogTraceException( Exception exception )
-		{
-			QuickBooksLogger.Log().Trace( exception, "[quickBooks] An exception occured." );
-		}
+		private QuickBooksServiceSdk quickBooksServiceSdk;
+		private RestProfile _restProfile;
+		private ConsumerProfile _consumerProfile;
 
 		public async Task< PingInfo > Ping()
 		{
@@ -27,15 +28,31 @@ namespace QuickBooksAccess
 			}
 			catch( Exception exception )
 			{
-				this.LogTraceException( exception );
-				throw;
+				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage( "qwe" ), exception );
+				QuickBooksLogger.LogTraceException( quickBooksException );
+				throw quickBooksException;
 			}
 		}
 
 		public QuickBooksService( QuickBooksAuthenticatedUserCredentials quickBooksAuthenticatedUserCredentials )
 		{
-			//todo: replace me
-			throw new NotImplementedException();
+			this._restProfile = new RestProfile()
+			{
+				AppToken = quickBooksAuthenticatedUserCredentials.AppToken,
+				CompanyId = quickBooksAuthenticatedUserCredentials.CompanyId,
+				DataSource = quickBooksAuthenticatedUserCredentials.DataSource,
+				OAuthAccessToken = quickBooksAuthenticatedUserCredentials.OAuthAccessToken,
+				OAuthAccessTokenSecret = quickBooksAuthenticatedUserCredentials.OAuthAccessTokenSecret,
+				RealmId = quickBooksAuthenticatedUserCredentials.RealmId,
+			};
+
+			this._consumerProfile = new ConsumerProfile()
+			{
+				ConsumerKey = quickBooksAuthenticatedUserCredentials.ConsumerKey,
+				ConsumerSecret = quickBooksAuthenticatedUserCredentials.ConsumerSecret,
+			};
+
+			this.quickBooksServiceSdk = new QuickBooksServiceSdk( this._restProfile, this._consumerProfile );
 		}
 
 		public async Task< IEnumerable< Order > > GetOrdersAsync( DateTime dateFrom, DateTime dateTo )
@@ -47,8 +64,9 @@ namespace QuickBooksAccess
 			}
 			catch( Exception exception )
 			{
-				this.LogTraceException( exception );
-				return Enumerable.Empty< Order >();
+				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage( "qwe" ), exception );
+				QuickBooksLogger.LogTraceException( quickBooksException );
+				throw quickBooksException;
 			}
 		}
 
@@ -61,8 +79,9 @@ namespace QuickBooksAccess
 			}
 			catch( Exception exception )
 			{
-				this.LogTraceException( exception );
-				return Enumerable.Empty< Order >();
+				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage( "qwe" ), exception );
+				QuickBooksLogger.LogTraceException( quickBooksException );
+				throw quickBooksException;
 			}
 		}
 
@@ -75,8 +94,9 @@ namespace QuickBooksAccess
 			}
 			catch( Exception exception )
 			{
-				this.LogTraceException( exception );
-				return Enumerable.Empty< Product >();
+				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage( "qwe" ), exception );
+				QuickBooksLogger.LogTraceException( quickBooksException );
+				throw quickBooksException;
 			}
 		}
 
@@ -89,8 +109,9 @@ namespace QuickBooksAccess
 			}
 			catch( Exception exception )
 			{
-				this.LogTraceException( exception );
-				return Enumerable.Empty< Product >();
+				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage( "qwe" ), exception );
+				QuickBooksLogger.LogTraceException( quickBooksException );
+				throw quickBooksException;
 			}
 		}
 
@@ -103,8 +124,20 @@ namespace QuickBooksAccess
 			}
 			catch( Exception exception )
 			{
-				this.LogTraceException( exception );
+				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage( "qwe" ), exception );
+				QuickBooksLogger.LogTraceException( quickBooksException );
+				throw quickBooksException;
 			}
+		}
+
+		private string CreateExceptionMessage( string additionalInfo = "", [ CallerMemberName ] string memberName = "" )
+		{
+			var str = string.Format(
+				"MethodName:{0}, TechInfo:{1}",
+				memberName,
+				string.IsNullOrWhiteSpace( additionalInfo ) ? PredefinedValues.NotAvailable : additionalInfo
+				);
+			return str;
 		}
 	}
 }
