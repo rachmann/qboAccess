@@ -52,7 +52,9 @@ namespace QuickBooksAccessTestsIntegration.Services
 
 			//A
 			var ItemsSkus = new[] { "testSku1", "testSku2", "testSku3", "testSku4", "testSku5" };
-			var items = this._quickBooksServiceSdk.GetItems( ItemsSkus );
+			var itemsTask = this._quickBooksServiceSdk.GetItems( ItemsSkus );
+			itemsTask.Wait();
+			var items = itemsTask.Result;
 			items.Items.ForEach( x => x.Qty++ );
 			var inventoryItems = items.Items.Select( x => x.ToInventoryItem() ).ToArray();
 
@@ -60,7 +62,10 @@ namespace QuickBooksAccessTestsIntegration.Services
 			this._quickBooksServiceSdk.UpdateItemQuantityOnHand( inventoryItems );
 
 			//A
-			var updatedItems = this._quickBooksServiceSdk.GetItems( ItemsSkus ).Items.Select( x => x.ToInventoryItem() ).ToList();
+			var updatedItemsTask = this._quickBooksServiceSdk.GetItems( ItemsSkus );
+			updatedItemsTask.Wait();
+			var updatedItems = updatedItemsTask.Result.Items.Select( x => x.ToInventoryItem() ).ToList();
+			//var updatedItems = this._quickBooksServiceSdk.GetItems( ItemsSkus ).Items.Select( x => x.ToInventoryItem() ).ToList();
 			updatedItems.ForEach( x => x.SyncToken = "x" );
 			inventoryItems.ToList().ForEach( x => x.SyncToken = "x" );
 			updatedItems.ShouldBeEquivalentTo( inventoryItems );
@@ -72,7 +77,9 @@ namespace QuickBooksAccessTestsIntegration.Services
 			//A
 
 			//A
-			var getPurchaseOrdersResponse = this._quickBooksServiceSdk.GetPurchseOrders( DateTime.Now.AddMonths( -1 ), DateTime.Now );
+			//var getPurchaseOrdersResponse = this._quickBooksServiceSdk.GetPurchseOrders( DateTime.Now.AddMonths( -1 ), DateTime.Now );
+			var getPurchaseOrdersResponseTask = this._quickBooksServiceSdk.GetPurchseOrders( DateTime.Now.AddMonths( -1 ), DateTime.Now );
+			var getPurchaseOrdersResponse = getPurchaseOrdersResponseTask.Result;
 
 			//A
 			getPurchaseOrdersResponse.PurchaseOrders.Count.Should().BeGreaterThan( 0 );
@@ -95,7 +102,9 @@ namespace QuickBooksAccessTestsIntegration.Services
 			//A
 
 			//A
-			var getSalesReceiptsResponse = this._quickBooksServiceSdk.GetInvoices( DateTime.Now.AddMonths( -1 ), DateTime.Now );
+			//var getSalesReceiptsResponse = this._quickBooksServiceSdk.GetInvoices( DateTime.Now.AddMonths( -1 ), DateTime.Now );
+			var getSalesReceiptsResponseTask = this._quickBooksServiceSdk.GetInvoices( DateTime.Now.AddMonths( -1 ), DateTime.Now );
+			var getSalesReceiptsResponse = getSalesReceiptsResponseTask.Result;
 
 			//A
 			getSalesReceiptsResponse.Invoices.Count.Should().BeGreaterThan( 0 );
@@ -107,7 +116,9 @@ namespace QuickBooksAccessTestsIntegration.Services
 			//A
 
 			//A
-			var paymentsResponse = this._quickBooksServiceSdk.GetPayments( DateTime.Now.AddMonths( -1 ), DateTime.Now );
+			//var paymentsResponse = this._quickBooksServiceSdk.GetPayments( DateTime.Now.AddMonths( -1 ), DateTime.Now );
+			var paymentsResponseTask = this._quickBooksServiceSdk.GetPayments( DateTime.Now.AddMonths( -1 ), DateTime.Now );
+			var paymentsResponse = paymentsResponseTask.Result;
 
 			//A
 			paymentsResponse.Payments.Count.Should().BeGreaterThan( 0 );
@@ -119,7 +130,9 @@ namespace QuickBooksAccessTestsIntegration.Services
 			//A
 
 			//A
-			var getSalesReceiptsResponse = this._quickBooksServiceSdk.GetSalesReceipt( DateTime.Now.AddMonths( -1 ), DateTime.Now );
+			//var getSalesReceiptsResponse = this._quickBooksServiceSdk.GetSalesReceipt( DateTime.Now.AddMonths( -1 ), DateTime.Now );
+			var getSalesReceiptsResponseTask = this._quickBooksServiceSdk.GetSalesReceipt( DateTime.Now.AddMonths( -1 ), DateTime.Now );
+			var getSalesReceiptsResponse = getSalesReceiptsResponseTask.Result;
 
 			//A
 			getSalesReceiptsResponse.Orders.Count().Should().BeGreaterThan( 0 );

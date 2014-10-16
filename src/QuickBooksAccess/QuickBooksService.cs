@@ -16,8 +16,8 @@ namespace QuickBooksAccess
 	public class QuickBooksService : IQuickBooksService
 	{
 		private QuickBooksServiceSdk quickBooksServiceSdk;
-		private RestProfile _restProfile;
-		private ConsumerProfile _consumerProfile;
+		private readonly RestProfile _restProfile;
+		private readonly ConsumerProfile _consumerProfile;
 
 		public QuickBooksService( QuickBooksAuthenticatedUserCredentials quickBooksAuthenticatedUserCredentials )
 		{
