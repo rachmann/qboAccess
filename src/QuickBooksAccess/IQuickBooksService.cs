@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using QuickBooksAccess.Models.GetOrders;
 using QuickBooksAccess.Models.GetProducts;
 using QuickBooksAccess.Models.Ping;
-using QuickBooksAccess.Models.PutInventory;
+using QuickBooksAccess.Models.UpdateInventory;
 
 namespace QuickBooksAccess
 {

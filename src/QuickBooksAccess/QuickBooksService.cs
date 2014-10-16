@@ -7,8 +7,8 @@ using QuickBooksAccess.Models;
 using QuickBooksAccess.Models.GetOrders;
 using QuickBooksAccess.Models.GetProducts;
 using QuickBooksAccess.Models.Ping;
-using QuickBooksAccess.Models.PutInventory;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.Auth;
+using QuickBooksAccess.Models.UpdateInventory;
 using QuickBooksAccess.Services;
 
 namespace QuickBooksAccess
@@ -119,8 +119,6 @@ namespace QuickBooksAccess
 		{
 			try
 			{
-				//todo: replace me
-				throw new NotImplementedException();
 			}
 			catch( Exception exception )
 			{

@@ -2,8 +2,8 @@
 using NUnit.Framework;
 using QuickBooksAccess;
 using QuickBooksAccess.Models;
-using QuickBooksAccess.Models.PutInventory;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.Auth;
+using QuickBooksAccess.Models.UpdateInventory;
 using QuickBooksAccess.Services;
 using QuickBooksAccessTestsIntegration.TestEnvironment;
 

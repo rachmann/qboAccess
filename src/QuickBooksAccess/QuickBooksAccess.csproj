@@ -116,6 +116,7 @@
     <Compile Include="Models\Services\QuickBooksServicesSdk\GetPurchaseOrders\GetPurchaseOrdersResponse.cs" />
     <Compile Include="Models\Services\QuickBooksServicesSdk\UpdateInventory\InventoryItem.cs" />
     <Compile Include="Models\Services\QuickBooksServicesSdk\UpdateInventory\UpdateItemQuantityOnHandResponse.cs" />
+    <Compile Include="Models\UpdateInventory\Inventory.cs" />
     <Compile Include="QuickBooksException.cs" />
     <Compile Include="QuickBooksAuthException.cs" />
     <Compile Include="QuickBooksFactory.cs" />
@@ -128,7 +129,6 @@
     <Compile Include="Models\Ping\PingInfo.cs" />
     <Compile Include="Models\GetOrders\Order.cs" />
     <Compile Include="Models\GetProducts\Product.cs" />
-    <Compile Include="Models\PutInventory\Inventory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\QuickBooksServiceSdk.cs" />
   </ItemGroup>

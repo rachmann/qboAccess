@@ -1,4 +1,4 @@
-﻿namespace QuickBooksAccess.Models.PutInventory
+﻿namespace QuickBooksAccess.Models.UpdateInventory
 {
 	public class Inventory
 	{
