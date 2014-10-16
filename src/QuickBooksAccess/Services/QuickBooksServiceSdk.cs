@@ -84,21 +84,6 @@ namespace QuickBooksAccess.Services
 
 		public async Task< GetItemsResponse > GetItems( params string[] skus )
 		{
-			// simle query
-			//var items = this._queryServiceItem.Where( x => x.Name.In( skus ) ).ToList();
-			//var itemsConvertedToQBAccessItems = items.Select( y => y.ToQBAccessItem() ).ToList();
-			//return new GetItemsResponse( itemsConvertedToQBAccessItems );
-
-			// query with pages
-			//var itemsCollections = new ConcurrentBag<IEnumerable<Item>>();
-			//var getItemsWithPagesAsync = this._queryServiceItem.Where(x => x.Name.In(skus)).DoWithPagesAsync(
-			//	1,
-			//	y => (Task.Factory.StartNew(() => itemsCollections.Add(y))));
-			//getItemsWithPagesAsync.Wait();
-			//var queredItems = itemsCollections.SelectMany(x => x).ToList();
-
-			// batch query with
-
 			return await Task.Factory.StartNew( () =>
 			{
 				var itemsQuery = this._queryServiceItem.Where( x => x.Name.In( skus ) ).ToIdsQuery();
@@ -119,7 +104,6 @@ namespace QuickBooksAccess.Services
 			return await Task.Factory.StartNew( () =>
 			{
 				var purchaseOrdersFilteredFrom = this._queryServicePurchaseOrder.Where( x => x.MetaData.CreateTime >= from ).ToList();
-				//todo: try to avoid additional filter with 'to', and inject it in first query
 				var purchaseOrdersFilteredFromAndTo = purchaseOrdersFilteredFrom.Where( x => x.MetaData.CreateTime <= to ).ToList();
 				return new GetPurchaseOrdersResponse( purchaseOrdersFilteredFromAndTo );
 			} ).ConfigureAwait( false );
@@ -172,7 +156,6 @@ namespace QuickBooksAccess.Services
 		{
 			return await Task.Factory.StartNew( () =>
 			{
-				//var itemsQuery = this._queryServicePayment.Where( x => x.MetaData.LastUpdatedTime >= lastUpdateTimeFrom && x.MetaData.LastUpdatedTime <= lastUpdateTimeTo ).ToIdsQuery();
 				var itemsQuery = this._queryServicePayment.Where( x => x.MetaData.LastUpdatedTime >= lastUpdateTimeFrom ).ToIdsQuery();
 				var itemsQueryBatch = this._dataService.CreateNewBatch();
 				itemsQueryBatch.Add( itemsQuery, "bID1" );
