@@ -84,9 +84,10 @@ namespace QuickBooksAccess.Services
 
 		public async Task< GetItemsResponse > GetItems( params string[] skus )
 		{
+			var itemsQuery = string.Format( "Select * FROM Item  WHERE   Name IN ({0})", string.Join( ",", skus.Select( x => "'" + x + "'" ) ) );
+
 			return await Task.Factory.StartNew( () =>
 			{
-				var itemsQuery = this._queryServiceItem.Where( x => x.Name.In( skus ) ).ToIdsQuery();
 				var itemsQueryBatch = this._dataService.CreateNewBatch();
 				itemsQueryBatch.Add( itemsQuery, "bID1" );
 				itemsQueryBatch.Execute();
