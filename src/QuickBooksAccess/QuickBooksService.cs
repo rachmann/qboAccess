@@ -49,7 +49,7 @@ namespace QuickBooksAccess
 			}
 			catch( Exception exception )
 			{
-				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage(), exception );
+				var quickBooksException = new QuickBooksException( this.CreateMethodCallInfo(), exception );
 				QuickBooksLogger.LogTraceException( quickBooksException );
 				throw quickBooksException;
 			}
@@ -64,7 +64,7 @@ namespace QuickBooksAccess
 			}
 			catch( Exception exception )
 			{
-				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage(), exception );
+				var quickBooksException = new QuickBooksException( this.CreateMethodCallInfo(), exception );
 				QuickBooksLogger.LogTraceException( quickBooksException );
 				throw quickBooksException;
 			}
@@ -79,7 +79,7 @@ namespace QuickBooksAccess
 			}
 			catch( Exception exception )
 			{
-				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage(), exception );
+				var quickBooksException = new QuickBooksException( this.CreateMethodCallInfo(), exception );
 				QuickBooksLogger.LogTraceException( quickBooksException );
 				throw quickBooksException;
 			}
@@ -94,7 +94,7 @@ namespace QuickBooksAccess
 			}
 			catch( Exception exception )
 			{
-				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage(), exception );
+				var quickBooksException = new QuickBooksException( this.CreateMethodCallInfo(), exception );
 				QuickBooksLogger.LogTraceException( quickBooksException );
 				throw quickBooksException;
 			}
@@ -109,7 +109,7 @@ namespace QuickBooksAccess
 			}
 			catch( Exception exception )
 			{
-				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage(), exception );
+				var quickBooksException = new QuickBooksException( this.CreateMethodCallInfo(), exception );
 				QuickBooksLogger.LogTraceException( quickBooksException );
 				throw quickBooksException;
 			}
@@ -124,13 +124,13 @@ namespace QuickBooksAccess
 			}
 			catch( Exception exception )
 			{
-				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage(), exception );
+				var quickBooksException = new QuickBooksException( this.CreateMethodCallInfo(), exception );
 				QuickBooksLogger.LogTraceException( quickBooksException );
 				throw quickBooksException;
 			}
 		}
 
-		private string CreateExceptionMessage( string additionalInfo = "", [ CallerMemberName ] string memberName = "" )
+		private string CreateMethodCallInfo( string additionalInfo = "", [ CallerMemberName ] string memberName = "" )
 		{
 			var str = string.Format(
 				"MethodName:{0}, ConsumerProfile:{1}, RestProfile:{2}, AdditionalInfo:{3}",
