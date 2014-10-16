@@ -19,21 +19,6 @@ namespace QuickBooksAccess
 		private RestProfile _restProfile;
 		private ConsumerProfile _consumerProfile;
 
-		public async Task< PingInfo > Ping()
-		{
-			try
-			{
-				//todo: replace me
-				throw new NotImplementedException();
-			}
-			catch( Exception exception )
-			{
-				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage(), exception );
-				QuickBooksLogger.LogTraceException( quickBooksException );
-				throw quickBooksException;
-			}
-		}
-
 		public QuickBooksService( QuickBooksAuthenticatedUserCredentials quickBooksAuthenticatedUserCredentials )
 		{
 			this._restProfile = new RestProfile()
@@ -53,6 +38,21 @@ namespace QuickBooksAccess
 			};
 
 			this.quickBooksServiceSdk = new QuickBooksServiceSdk( this._restProfile, this._consumerProfile );
+		}
+
+		public async Task< PingInfo > Ping()
+		{
+			try
+			{
+				//todo: replace me
+				throw new NotImplementedException();
+			}
+			catch( Exception exception )
+			{
+				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage(), exception );
+				QuickBooksLogger.LogTraceException( quickBooksException );
+				throw quickBooksException;
+			}
 		}
 
 		public async Task< IEnumerable< Order > > GetOrdersAsync( DateTime dateFrom, DateTime dateTo )
