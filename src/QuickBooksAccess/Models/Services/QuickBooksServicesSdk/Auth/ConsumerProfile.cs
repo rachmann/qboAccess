@@ -16,5 +16,16 @@
 			get { return this._consumerSecret; }
 			set { this._consumerSecret = value; }
 		}
+
+		public string ToJson()
+		{
+			var str = string.Format(
+				"{{ConsumerKey:{0},ConsumerSecret:{1}}}",
+				this.ConsumerKey,
+				this.ConsumerSecret
+				);
+
+			return str;
+		}
 	}
 }

@@ -51,5 +51,20 @@
 			}
 			set { this._dataSource = value; }
 		}
+
+		public string ToJson()
+		{
+			var str = string.Format(
+				"{{AppToken:{0},CompanyId:{1},DataSource{2},OAuthAccessToken{3},OAuthAccessTokenSecret{4},RealmId{5}}}",
+				this.AppToken,
+				this.CompanyId,
+				this.DataSource,
+				this.OAuthAccessToken,
+				this.OAuthAccessTokenSecret,
+				this.RealmId
+				);
+
+			return str;
+		}
 	}
 }

@@ -28,7 +28,7 @@ namespace QuickBooksAccess
 			}
 			catch( Exception exception )
 			{
-				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage( "qwe" ), exception );
+				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage(), exception );
 				QuickBooksLogger.LogTraceException( quickBooksException );
 				throw quickBooksException;
 			}
@@ -64,7 +64,7 @@ namespace QuickBooksAccess
 			}
 			catch( Exception exception )
 			{
-				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage( "qwe" ), exception );
+				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage(), exception );
 				QuickBooksLogger.LogTraceException( quickBooksException );
 				throw quickBooksException;
 			}
@@ -79,7 +79,7 @@ namespace QuickBooksAccess
 			}
 			catch( Exception exception )
 			{
-				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage( "qwe" ), exception );
+				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage(), exception );
 				QuickBooksLogger.LogTraceException( quickBooksException );
 				throw quickBooksException;
 			}
@@ -94,7 +94,7 @@ namespace QuickBooksAccess
 			}
 			catch( Exception exception )
 			{
-				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage( "qwe" ), exception );
+				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage(), exception );
 				QuickBooksLogger.LogTraceException( quickBooksException );
 				throw quickBooksException;
 			}
@@ -109,7 +109,7 @@ namespace QuickBooksAccess
 			}
 			catch( Exception exception )
 			{
-				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage( "qwe" ), exception );
+				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage(), exception );
 				QuickBooksLogger.LogTraceException( quickBooksException );
 				throw quickBooksException;
 			}
@@ -124,7 +124,7 @@ namespace QuickBooksAccess
 			}
 			catch( Exception exception )
 			{
-				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage( "qwe" ), exception );
+				var quickBooksException = new QuickBooksException( this.CreateExceptionMessage(), exception );
 				QuickBooksLogger.LogTraceException( quickBooksException );
 				throw quickBooksException;
 			}
@@ -133,8 +133,10 @@ namespace QuickBooksAccess
 		private string CreateExceptionMessage( string additionalInfo = "", [ CallerMemberName ] string memberName = "" )
 		{
 			var str = string.Format(
-				"MethodName:{0}, TechInfo:{1}",
+				"MethodName:{0}, ConsumerProfile:{1}, RestProfile:{2}, AdditionalInfo:{3}",
 				memberName,
+				this._consumerProfile.ToJson(),
+				this._restProfile.ToJson(),
 				string.IsNullOrWhiteSpace( additionalInfo ) ? PredefinedValues.NotAvailable : additionalInfo
 				);
 			return str;
