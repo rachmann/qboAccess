@@ -1,4 +1,4 @@
-﻿namespace QuickBooksAccess.Models.Services.QuickBooksServicesSdk.UpdateInventory
+﻿namespace QuickBooksAccess.Models.Services.QuickBooksServicesSdk.UpdateItemQuantityOnHand
 {
 	internal class InventoryItem
 	{

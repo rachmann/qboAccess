@@ -18,11 +18,13 @@ using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetItems;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetPayments;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetPurchaseOrders;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetSalesReceipts;
-using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.UpdateInventory;
+using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.UpdateItemQuantityOnHand;
 using Bill = Intuit.Ipp.Data.Bill;
 using Invoice = Intuit.Ipp.Data.Invoice;
 using Item = Intuit.Ipp.Data.Item;
 using Payment = Intuit.Ipp.Data.Payment;
+using PurchaseOrder = Intuit.Ipp.Data.PurchaseOrder;
+using SalesReceipt = Intuit.Ipp.Data.SalesReceipt;
 using Task = System.Threading.Tasks.Task;
 
 namespace QuickBooksAccess.Services
@@ -121,7 +123,7 @@ namespace QuickBooksAccess.Services
 			{
 				var purchaseOrdersFilteredFrom = this._queryServicePurchaseOrder.Where( x => x.MetaData.CreateTime >= from ).ToList();
 				var purchaseOrdersFilteredFromAndTo = purchaseOrdersFilteredFrom.Where( x => x.MetaData.CreateTime <= to ).ToList();
-				return new GetPurchaseOrdersResponse( purchaseOrdersFilteredFromAndTo );
+				return new GetPurchaseOrdersResponse( purchaseOrdersFilteredFromAndTo.Select( x => x.ToQBPurchaseOrder() ) );
 			} ).ConfigureAwait( false );
 		}
 
@@ -143,7 +145,7 @@ namespace QuickBooksAccess.Services
 				var ordersFilteredFrom = this._queryServiceSalesReceipt.Where( x => x.MetaData.LastUpdatedTime >= from ).ToList();
 				//todo: try to avoid additional filter with 'to', and inject it in first query
 				var ordersFilteredFromAndTo = ordersFilteredFrom.Where( x => x.MetaData.LastUpdatedTime <= to ).ToList();
-				return new GetSalesReceiptsResponse( ordersFilteredFromAndTo );
+				return new GetSalesReceiptsResponse( ordersFilteredFromAndTo.Select( x => x.ToQBSalesReceipt() ) );
 			} ).ConfigureAwait( false );
 		}
 

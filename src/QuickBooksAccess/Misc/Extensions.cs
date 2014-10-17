@@ -7,11 +7,13 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
 using Intuit.Ipp.Data;
 using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetInvoices;
-using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.UpdateInventory;
+using QuickBooksAccess.Models.Services.QuickBooksServicesSdk.UpdateItemQuantityOnHand;
 using Bill = QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetBills.Bill;
 using Invoice = QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetInvoices.Invoice;
 using Item = QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetItems.Item;
 using Payment = QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetPayments.Payment;
+using PurchaseOrder = QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetPurchaseOrders.PurchaseOrder;
+using SalesReceipt = QuickBooksAccess.Models.Services.QuickBooksServicesSdk.GetSalesReceipts.SalesReceipt;
 
 namespace QuickBooksAccess.Misc
 {
@@ -30,6 +32,24 @@ namespace QuickBooksAccess.Misc
 			};
 
 			return referenceType;
+		}
+
+		public static PurchaseOrder ToQBPurchaseOrder( this Intuit.Ipp.Data.PurchaseOrder purchaseOrder )
+		{
+			var qbPurchaseOrder = new PurchaseOrder
+			{
+			};
+
+			return qbPurchaseOrder;
+		}
+
+		public static SalesReceipt ToQBSalesReceipt( this Intuit.Ipp.Data.SalesReceipt salesReceipt )
+		{
+			var qbSalesReceipt = new SalesReceipt
+			{
+			};
+
+			return qbSalesReceipt;
 		}
 
 		public static Bill ToQBBill( this Intuit.Ipp.Data.Bill payment )

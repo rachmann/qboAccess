@@ -66,7 +66,7 @@ namespace QuickBooksAccessTestsIntegration.Services
 			var getPurchaseOrdersResponse = getPurchaseOrdersResponseTask.Result;
 
 			//A
-			getPurchaseOrdersResponse.PurchaseOrders.Count.Should().BeGreaterThan( 0 );
+			getPurchaseOrdersResponse.PurchaseOrders.Count().Should().BeGreaterThan( 0 );
 		}
 
 		[ Test ]

@@ -114,10 +114,12 @@
     <Compile Include="Models\Services\QuickBooksServicesSdk\GetPayments\GetPaymentsResponse.cs" />
     <Compile Include="Models\Services\QuickBooksServicesSdk\GetPayments\Line.cs" />
     <Compile Include="Models\Services\QuickBooksServicesSdk\GetPayments\Payment.cs" />
+    <Compile Include="Models\Services\QuickBooksServicesSdk\GetPurchaseOrders\PurchaseOrder.cs" />
     <Compile Include="Models\Services\QuickBooksServicesSdk\GetSalesReceipts\GetSalesReceiptsResponse.cs" />
     <Compile Include="Models\Services\QuickBooksServicesSdk\GetPurchaseOrders\GetPurchaseOrdersResponse.cs" />
-    <Compile Include="Models\Services\QuickBooksServicesSdk\UpdateInventory\InventoryItem.cs" />
-    <Compile Include="Models\Services\QuickBooksServicesSdk\UpdateInventory\UpdateItemQuantityOnHandResponse.cs" />
+    <Compile Include="Models\Services\QuickBooksServicesSdk\GetSalesReceipts\SalesReceipt.cs" />
+    <Compile Include="Models\Services\QuickBooksServicesSdk\UpdateItemQuantityOnHand\InventoryItem.cs" />
+    <Compile Include="Models\Services\QuickBooksServicesSdk\UpdateItemQuantityOnHand\UpdateItemQuantityOnHandResponse.cs" />
     <Compile Include="Models\UpdateInventory\Inventory.cs" />
     <Compile Include="QuickBooksException.cs" />
     <Compile Include="QuickBooksAuthException.cs" />
