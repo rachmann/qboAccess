@@ -35,14 +35,16 @@ namespace QuickBooksAccessAuthExample.Controllers
 			this.Response.Redirect( oauthEndpoint );
 		}
 
-		public void CallBack()
+		public string CallBack()
 		{
 			if( !this.Request.QueryString.HasKeys() )
-				return;
+				return "none";
+
+			var quickBooksAuthenticatedUserCredentials = new QuickBooksAuthenticatedUserCredentials();
 
 			var oauthVerifyer = this.Request.QueryString[ "oauth_verifier" ].ToString();
 
-			var profile__RealmId = this.Request.QueryString[ "realmId" ].ToString();
+			quickBooksAuthenticatedUserCredentials.RealmId = this.Request.QueryString[ "realmId" ].ToString();
 
 			int profile__DataSource;
 			switch( this.Request.QueryString[ "dataSource" ].ToString().ToLower() )
@@ -70,12 +72,14 @@ namespace QuickBooksAccessAuthExample.Controllers
 			try
 			{
 				var accessToken = clientSession.ExchangeRequestTokenForAccessToken( ( IToken )this.Session[ "requestToken" ], oauthVerifyer );
-				var profile__OAuthAccessToken = accessToken.Token;
-				var profile__OAuthAccessTokenSecret = accessToken.TokenSecret;
+				quickBooksAuthenticatedUserCredentials.OAuthAccessToken = accessToken.Token;
+				quickBooksAuthenticatedUserCredentials.OAuthAccessTokenSecret = accessToken.TokenSecret;
 			}
 			catch
 			{
 			}
+
+			return "Success";
 		}
 
 		protected IOAuthSession CreateSession( string consumerKey, string consumerSecret, string oauthEndpoint )
