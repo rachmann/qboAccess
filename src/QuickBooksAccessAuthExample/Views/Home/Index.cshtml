@@ -1,0 +1,23 @@
+﻿@model  dynamic 
+
+@{
+	ViewBag.Title = "title";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>title</h2>
+
+<script type="text/javascript" src="https://appcenter.intuit.com/Content/IA/intuit.ipp.anywhere.js">
+
+
+</script>
+
+<script>
+	intuit.ipp.anywhere.setup( {
+		menuProxy: '',
+		grantUrl: 'http://example.com/myapp/RequestOAuthToken'
+	} );
+</script>
+
+<h3>Press Button to link QuickBooks Account to SkuVaultApp</h3>
+<ipp:connecttointuit></ipp:connecttointuit>
