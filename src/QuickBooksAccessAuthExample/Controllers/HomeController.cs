@@ -24,17 +24,14 @@ namespace QuickBooksAccessAuthExample.Controllers
 
 		public void Grant()
 		{
-			var oauth_callback_url = _quickBooksNonAuthenticatedUserCredentials.CallbackUrl;
-			var consumerKey = _quickBooksNonAuthenticatedUserCredentials.ConsumerKey;
-			var consumerSecret = _quickBooksNonAuthenticatedUserCredentials.ConsumerSecret;
-			var oauthEndpoint = _quickBooksNonAuthenticatedUserCredentials.OauthEndPoint; //Constants.OauthEndPoints.IdFedOAuthBaseUrl;
+			var oauthEndpoint = _quickBooksNonAuthenticatedUserCredentials.OauthEndPoint;
 			var token = ( IToken )System.Web.HttpContext.Current.Session[ "requestToken" ];
-			var session = this.CreateSession( consumerKey, consumerSecret, oauthEndpoint );
+			var session = this.CreateSession( _quickBooksNonAuthenticatedUserCredentials.ConsumerKey, _quickBooksNonAuthenticatedUserCredentials.ConsumerSecret, oauthEndpoint );
 			var requestToken = session.GetRequestToken();
 			System.Web.HttpContext.Current.Session[ "requestToken" ] = requestToken;
 			var RequestToken = requestToken.Token;
 			var TokenSecret = requestToken.TokenSecret;
-			oauthEndpoint = _quickBooksNonAuthenticatedUserCredentials.AuthorizeUrl + "?oauth_token=" + RequestToken + "&oauth_callback=" + UriUtility.UrlEncode( oauth_callback_url );
+			oauthEndpoint = _quickBooksNonAuthenticatedUserCredentials.AuthorizeUrl + "?oauth_token=" + RequestToken + "&oauth_callback=" + UriUtility.UrlEncode( _quickBooksNonAuthenticatedUserCredentials.CallbackUrl );
 			this.Response.Redirect( oauthEndpoint );
 		}
 
