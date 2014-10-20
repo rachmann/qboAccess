@@ -1,18 +1,22 @@
-﻿using System;
-using System.Configuration;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using DevDefined.OAuth.Consumer;
 using DevDefined.OAuth.Framework;
 using Intuit.Ipp.Core;
-using QuickBooksAccessAuthExample.Infrastructure;
+using QuickBooksAccess.Models;
 
 namespace QuickBooksAccessAuthExample.Controllers
 {
 	public class HomeController : Controller
 	{
+		private static readonly QuickBooksNonAuthenticatedUserCredentials _quickBooksNonAuthenticatedUserCredentials = new QuickBooksNonAuthenticatedUserCredentials(
+			"7190f64ab6dd1b4419babf0b779eb888360e",
+			"qyprdVavNNKgsUWjF2Dmblss4mTJYL",
+			"FaVbor7GtvylsgzcRdrPnvR58GKkEqNXu2FItp1i",
+			"http://localhost:27286/home/Callback"
+			);
+
 		//
 		// GET: /Home/
-
 		public ActionResult Index()
 		{
 			return this.View();
@@ -20,17 +24,17 @@ namespace QuickBooksAccessAuthExample.Controllers
 
 		public void Grant()
 		{
-			var oauth_callback_url = this.Request.Url.GetLeftPart( UriPartial.Authority ) + this.Request.ApplicationPath + ConfigurationManager.AppSettings[ "oauth_callback_url" ];
-			var consumerKey = ConfigurationManager.AppSettings[ "consumerKey" ];
-			var consumerSecret = ConfigurationManager.AppSettings[ "consumerSecret" ];
-			var oauthEndpoint = "https://oauth.intuit.com/oauth/v1"; //Constants.OauthEndPoints.IdFedOAuthBaseUrl;
+			var oauth_callback_url = _quickBooksNonAuthenticatedUserCredentials.CallbackUrl;
+			var consumerKey = _quickBooksNonAuthenticatedUserCredentials.ConsumerKey;
+			var consumerSecret = _quickBooksNonAuthenticatedUserCredentials.ConsumerSecret;
+			var oauthEndpoint = _quickBooksNonAuthenticatedUserCredentials.OauthEndPoint; //Constants.OauthEndPoints.IdFedOAuthBaseUrl;
 			var token = ( IToken )System.Web.HttpContext.Current.Session[ "requestToken" ];
 			var session = this.CreateSession( consumerKey, consumerSecret, oauthEndpoint );
 			var requestToken = session.GetRequestToken();
 			System.Web.HttpContext.Current.Session[ "requestToken" ] = requestToken;
 			var RequestToken = requestToken.Token;
 			var TokenSecret = requestToken.TokenSecret;
-			oauthEndpoint = Constants.OauthEndPoints.AuthorizeUrl + "?oauth_token=" + RequestToken + "&oauth_callback=" + UriUtility.UrlEncode( oauth_callback_url );
+			oauthEndpoint = _quickBooksNonAuthenticatedUserCredentials.AuthorizeUrl + "?oauth_token=" + RequestToken + "&oauth_callback=" + UriUtility.UrlEncode( oauth_callback_url );
 			this.Response.Redirect( oauthEndpoint );
 		}
 
@@ -56,15 +60,15 @@ namespace QuickBooksAccessAuthExample.Controllers
 
 			var consumerContext = new OAuthConsumerContext
 			{
-				ConsumerKey = ConfigurationManager.AppSettings[ "consumerKey" ].ToString(),
-				ConsumerSecret = ConfigurationManager.AppSettings[ "consumerSecret" ].ToString(),
+				ConsumerKey = _quickBooksNonAuthenticatedUserCredentials.ConsumerKey,
+				ConsumerSecret = _quickBooksNonAuthenticatedUserCredentials.ConsumerSecret,
 				SignatureMethod = SignatureMethod.HmacSha1
 			};
 
 			IOAuthSession clientSession = new OAuthSession( consumerContext,
-				Constants.OauthEndPoints.IdFedOAuthBaseUrl + Constants.OauthEndPoints.UrlRequestToken,
-				Constants.OauthEndPoints.IdFedOAuthBaseUrl,
-				Constants.OauthEndPoints.IdFedOAuthBaseUrl + Constants.OauthEndPoints.UrlAccessToken );
+				_quickBooksNonAuthenticatedUserCredentials.GetRequestTokenUrl,
+				_quickBooksNonAuthenticatedUserCredentials.OauthEndPoint,
+				_quickBooksNonAuthenticatedUserCredentials.GetAccessTokenUrl );
 
 			try
 			{
@@ -86,9 +90,9 @@ namespace QuickBooksAccessAuthExample.Controllers
 				SignatureMethod = SignatureMethod.HmacSha1
 			};
 			return new OAuthSession( consumerContext,
-				Constants.OauthEndPoints.IdFedOAuthBaseUrl + Constants.OauthEndPoints.UrlRequestToken,
+				_quickBooksNonAuthenticatedUserCredentials.GetRequestTokenUrl,
 				oauthEndpoint,
-				Constants.OauthEndPoints.IdFedOAuthBaseUrl + Constants.OauthEndPoints.UrlAccessToken );
+				_quickBooksNonAuthenticatedUserCredentials.GetAccessTokenUrl );
 		}
 	}
 }
