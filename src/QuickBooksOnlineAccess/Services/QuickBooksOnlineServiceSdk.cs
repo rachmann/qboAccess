@@ -123,7 +123,7 @@ namespace QuickBooksOnlineAccess.Services
 			{
 				var purchaseOrdersFilteredFrom = this._queryServicePurchaseOrder.Where( x => x.MetaData.CreateTime >= from ).ToList();
 				var purchaseOrdersFilteredFromAndTo = purchaseOrdersFilteredFrom.Where( x => x.MetaData.CreateTime <= to ).ToList();
-				return new GetPurchaseOrdersResponse( purchaseOrdersFilteredFromAndTo.Select( x => x.ToQBPurchaseOrder() ) );
+				return new GetPurchaseOrdersResponse( purchaseOrdersFilteredFromAndTo.Select( x => x.ToQBServicePurchaseOrder() ) );
 			} ).ConfigureAwait( false );
 		}
 
@@ -185,5 +185,11 @@ namespace QuickBooksOnlineAccess.Services
 			} ).ConfigureAwait( false );
 		}
 		#endregion
+
+		public string ToJson()
+		{
+			var res = string.Format( "{{RestProfile:{0},ConsumerProfile:{1}}}", this.RestProfile.ToJson(), this.ConsumerProfile.ToJson() );
+			return res;
+		}
 	}
 }

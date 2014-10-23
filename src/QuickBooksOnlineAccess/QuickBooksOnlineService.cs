@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using QuickBooksOnlineAccess.Misc;
 using QuickBooksOnlineAccess.Models;
 using QuickBooksOnlineAccess.Models.GetOrders;
 using QuickBooksOnlineAccess.Models.GetProducts;
+using QuickBooksOnlineAccess.Models.GetPurchaseOrders;
 using QuickBooksOnlineAccess.Models.Ping;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Auth;
 using QuickBooksOnlineAccess.Models.UpdateInventory;
@@ -15,7 +17,7 @@ namespace QuickBooksOnlineAccess
 {
 	public class QuickBooksOnlineService : IQuickBooksOnlineService
 	{
-		private QuickBooksOnlineServiceSdk _quickBooksOnlineServiceSdk;
+		private readonly QuickBooksOnlineServiceSdk _quickBooksOnlineServiceSdk;
 		private readonly RestProfile _restProfile;
 		private readonly ConsumerProfile _consumerProfile;
 
@@ -52,6 +54,30 @@ namespace QuickBooksOnlineAccess
 				var quickBooksException = new QuickBooksOnlineException( this.CreateMethodCallInfo(), exception );
 				QuickBooksOnlineLogger.LogTraceException( quickBooksException );
 				throw quickBooksException;
+			}
+		}
+
+		public async Task< IEnumerable< PurchaseOrder > > GetPurchaseOrdersOrdersAsync( DateTime dateFrom, DateTime dateTo )
+		{
+			var methodParameters = string.Format( "{{dateFrom:{0},dateTo:{1}}}", dateFrom, dateTo );
+			var mark = Guid.NewGuid().ToString();
+			try
+			{
+				QuickBooksOnlineLogger.LogTraceStarted( this.CreateMethodCallInfo( methodParameters, mark ) );
+
+				var getPurchaseOrdersResponse = await this._quickBooksOnlineServiceSdk.GetPurchseOrders( dateFrom, dateTo ).ConfigureAwait( false );
+
+				var result = getPurchaseOrdersResponse.PurchaseOrders.ToQBPurchaseOrder().ToList();
+
+				QuickBooksOnlineLogger.LogTraceEnded( this.CreateMethodCallInfo( methodParameters, mark, methodResult : result.ToJson() ) );
+
+				return result;
+			}
+			catch( Exception exception )
+			{
+				var ebayException = new QuickBooksOnlineException( string.Format( "Error. Was called:{0}", this.CreateMethodCallInfo( methodParameters, mark ) ), exception );
+				LogTraceException( ebayException.Message, ebayException );
+				throw ebayException;
 			}
 		}
 
@@ -128,16 +154,25 @@ namespace QuickBooksOnlineAccess
 			}
 		}
 
-		private string CreateMethodCallInfo( string additionalInfo = "", [ CallerMemberName ] string memberName = "" )
+		private string CreateMethodCallInfo( string methodParameters = "", string mark = "", string errors = "", string methodResult = "", string additionalInfo = "", [ CallerMemberName ] string memberName = "" )
 		{
+			var restInfo = this._quickBooksOnlineServiceSdk.ToJson();
 			var str = string.Format(
-				"MethodName:{0}, ConsumerProfile:{1}, RestProfile:{2}, AdditionalInfo:{3}",
+				"{{MethodName:{0}, ConnectionInfo:{1}, MethodParameters:{2}, Mark:{3}{4}{5}{6}}}",
 				memberName,
-				this._consumerProfile.ToJson(),
-				this._restProfile.ToJson(),
-				string.IsNullOrWhiteSpace( additionalInfo ) ? PredefinedValues.NotAvailable : additionalInfo
+				restInfo,
+				methodParameters,
+				mark,
+				string.IsNullOrWhiteSpace( errors ) ? string.Empty : ", Errors:" + errors,
+				string.IsNullOrWhiteSpace( methodResult ) ? string.Empty : ", Result:" + methodResult,
+				string.IsNullOrWhiteSpace( additionalInfo ) ? string.Empty : ", " + additionalInfo
 				);
 			return str;
+		}
+
+		private static void LogTraceException( string message, QuickBooksOnlineException ebayException )
+		{
+			QuickBooksOnlineLogger.Log().Trace( ebayException, message );
 		}
 	}
 }

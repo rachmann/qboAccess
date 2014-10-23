@@ -100,6 +100,7 @@
     </Compile>
     <Compile Include="IQuickBooksOnlineFactory.cs" />
     <Compile Include="IQuickBooksOnlineService.cs" />
+    <Compile Include="Models\GetPurchaseOrders\PurchaseOrder.cs" />
     <Compile Include="Models\QuickBooksOnlineNonAuthenticatedUserCredentials.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\Auth\ConsumerProfile.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\Auth\RestProfile.cs" />

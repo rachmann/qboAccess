@@ -12,13 +12,30 @@ using Bill = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.
 using Invoice = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetInvoices.Invoice;
 using Item = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetItems.Item;
 using Payment = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetPayments.Payment;
-using PurchaseOrder = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders.PurchaseOrder;
+using PurchaseOrder = QuickBooksOnlineAccess.Models.GetPurchaseOrders.PurchaseOrder;
 using SalesReceipt = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetSalesReceipts.SalesReceipt;
 
 namespace QuickBooksOnlineAccess.Misc
 {
 	internal static class Extensions
 	{
+		public static string ToJson( this IEnumerable< PurchaseOrder > source )
+		{
+			var resultUrl = string.Empty;
+			try
+			{
+				var purchaseOrders = source as IList< PurchaseOrder > ?? source.ToList();
+				var items = string.Join( ",", purchaseOrders.Select( x => string.Format( "" ) ) );
+				var res = string.Format( "{{Count:{0}, Items:[{1}]}}", purchaseOrders.Count(), items );
+				return res;
+			}
+			catch
+			{
+			}
+
+			return resultUrl;
+		}
+
 		public static ReferenceType ToReferenceType( this Account account )
 		{
 			if( account == null )
@@ -34,13 +51,30 @@ namespace QuickBooksOnlineAccess.Misc
 			return referenceType;
 		}
 
-		public static PurchaseOrder ToQBPurchaseOrder( this Intuit.Ipp.Data.PurchaseOrder purchaseOrder )
+		public static Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders.PurchaseOrder ToQBServicePurchaseOrder( this Intuit.Ipp.Data.PurchaseOrder purchaseOrder )
+		{
+			var qbPurchaseOrder = new Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders.PurchaseOrder
+			{
+			};
+
+			return qbPurchaseOrder;
+		}
+
+		public static PurchaseOrder ToQBPurchaseOrder( this Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders.PurchaseOrder purchaseOrder )
 		{
 			var qbPurchaseOrder = new PurchaseOrder
 			{
 			};
 
 			return qbPurchaseOrder;
+		}
+
+		public static IEnumerable< PurchaseOrder > ToQBPurchaseOrder( this IEnumerable< Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders.PurchaseOrder > purchaseOrder )
+		{
+			if( purchaseOrder == null )
+				purchaseOrder = new List< Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders.PurchaseOrder >();
+			var res = purchaseOrder.Select( x => x.ToQBPurchaseOrder() );
+			return res;
 		}
 
 		public static SalesReceipt ToQBSalesReceipt( this Intuit.Ipp.Data.SalesReceipt salesReceipt )
