@@ -19,5 +19,6 @@ namespace QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Get
 		public DateTime ShipDate { get; set; }
 		public decimal Deposit { get; set; }
 		public string TrackingNum { get; set; }
+		public DateTime CreateTime { get; set; }
 	}
 }

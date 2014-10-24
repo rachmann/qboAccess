@@ -131,6 +131,7 @@ namespace QuickBooksOnlineAccess.Misc
 				Line = source.Line.ToQBOrderLine(),
 				ShipDate = source.ShipDate,
 				TotalAmt = source.TotalAmt,
+				CreateTime = source.CreateTime,
 			};
 
 			return qbOrder;
@@ -154,6 +155,7 @@ namespace QuickBooksOnlineAccess.Misc
 				Line = source.Line.ToQBOrderLine(),
 				ShipDate = source.ShipDate,
 				TotalAmt = source.TotalAmt,
+				CreateTime = source.CreateTime,
 			};
 
 			return qbOrder;
@@ -173,19 +175,6 @@ namespace QuickBooksOnlineAccess.Misc
 				purchaseOrder = new List< Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders.PurchaseOrder >();
 			var res = purchaseOrder.Select( x => x.ToQBPurchaseOrder() );
 			return res;
-		}
-
-		public static Line ToQBAccessLine( this Intuit.Ipp.Data.Line line )
-		{
-			var qbAccessLine = new Line
-			{
-				Id = line.Id,
-				Amount = line.Amount,
-				Description = line.Description,
-				LineNum = line.LineNum,
-			};
-
-			return qbAccessLine;
 		}
 
 		public static InventoryItem ToInventoryItem( this Item item )
@@ -208,6 +197,19 @@ namespace QuickBooksOnlineAccess.Misc
 		}
 
 		#region FromQBSdk
+		public static Line ToQBAccessLine( this Intuit.Ipp.Data.Line line )
+		{
+			var qbAccessLine = new Line
+			{
+				Id = line.Id,
+				Amount = line.Amount,
+				Description = line.Description,
+				LineNum = line.LineNum,
+			};
+
+			return qbAccessLine;
+		}
+
 		public static InvoiceLine ToQBAccessInvoiceLine( this Intuit.Ipp.Data.Line line )
 		{
 			var ineDetail = ( line.AnyIntuitObject as SalesItemLineDetail ) ?? new SalesItemLineDetail { Qty = 0 };
@@ -263,6 +265,7 @@ namespace QuickBooksOnlineAccess.Misc
 				ShipPostalCode = salesReceipt.ShipAddr != null ? salesReceipt.ShipAddr.PostalCode : PredefinedValues.NotAvailable,
 				ShipPostalCodeSuffix = salesReceipt.ShipAddr != null ? salesReceipt.ShipAddr.PostalCodeSuffix : PredefinedValues.NotAvailable,
 				ShipDate = salesReceipt.ShipDate,
+				CreateTime = salesReceipt.MetaData.CreateTime,
 				TrackingNum = salesReceipt.TrackingNum,
 			};
 
@@ -295,6 +298,7 @@ namespace QuickBooksOnlineAccess.Misc
 				ShipDate = invoice.ShipDate,
 				Deposit = invoice.Deposit,
 				TrackingNum = invoice.TrackingNum,
+				CreateTime = invoice.MetaData.CreateTime,
 				Line = invoice.Line.Select( x => x.ToQBAccessInvoiceLine() ).ToList(),
 			};
 

@@ -20,5 +20,6 @@ namespace QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Get
 		public decimal Balance { get; set; }
 		public string PONumber { get; set; }
 		public List< SalesReceiptLine > Line { get; set; }
+		public DateTime CreateTime { get; set; }
 	}
 }
