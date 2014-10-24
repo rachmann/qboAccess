@@ -2,6 +2,13 @@
 {
 	public class QuickBooksOnlineAuthenticatedUserCredentials
 	{
+		public QuickBooksOnlineAuthenticatedUserCredentials(
+			string realmId,
+			string accessToken,
+			string consumerTokenSecret )
+		{
+		}
+
 		public string AppToken { get; set; }
 		public string CompanyId { get; set; }
 		public int DataSource { get; set; }
