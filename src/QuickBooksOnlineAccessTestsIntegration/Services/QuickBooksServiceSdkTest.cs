@@ -21,7 +21,7 @@ namespace QuickBooksOnlineAccessTestsIntegration.Services
 		[ TestFixtureSetUp ]
 		public void TestFixtureSetup()
 		{
-			this._testDataReader = new TestDataReader( @"..\..\Files\quickbooks_consumerprofile.csv", @"..\..\Files\quickbooks_restprofile.csv" );
+			this._testDataReader = new TestDataReader( @"..\..\Files\quickbooksOnline_consumerprofile.csv", @"..\..\Files\quickbooksOnline_restprofile.csv" );
 		}
 
 		[ SetUp ]
