@@ -26,7 +26,6 @@ namespace QuickBooksOnlineAccess
 			this._restProfile = new RestProfile()
 			{
 				AppToken = quickBooksAuthenticatedUserCredentials.AppToken,
-				CompanyId = quickBooksAuthenticatedUserCredentials.CompanyId,
 				DataSource = quickBooksAuthenticatedUserCredentials.DataSource,
 				OAuthAccessToken = quickBooksAuthenticatedUserCredentials.OAuthAccessToken,
 				OAuthAccessTokenSecret = quickBooksAuthenticatedUserCredentials.OAuthAccessTokenSecret,
@@ -85,8 +84,13 @@ namespace QuickBooksOnlineAccess
 		{
 			try
 			{
-				//todo: replace me
-				throw new NotImplementedException();
+				var invoices = await this._quickBooksOnlineServiceSdk.GetInvoices( dateFrom, dateTo ).ConfigureAwait( false );
+				var salesReceipts = await this._quickBooksOnlineServiceSdk.GetSalesReceipt( dateFrom, dateTo ).ConfigureAwait( false );
+
+				var invoicesConverted = invoices.Invoices.ToQBOrder().ToList();
+				var salesReceiptsConverted = salesReceipts.Orders.ToQBOrder().ToList();
+
+				return invoicesConverted.Concat( salesReceiptsConverted );
 			}
 			catch( Exception exception )
 			{

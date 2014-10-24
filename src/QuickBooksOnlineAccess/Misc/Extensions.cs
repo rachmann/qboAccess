@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
 using Intuit.Ipp.Data;
+using QuickBooksOnlineAccess.Models.GetOrders;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetInvoices;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.UpdateItemQuantityOnHand;
 using Bill = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetBills.Bill;
@@ -68,6 +69,42 @@ namespace QuickBooksOnlineAccess.Misc
 
 			return qbPurchaseOrder;
 		}
+
+		#region ToQBOrder
+		public static Order ToQBOrder( this Invoice source )
+		{
+			var qbOrder = new Order
+			{
+				OrderType = OrderType.Invoice
+			};
+
+			return qbOrder;
+		}
+
+		public static IEnumerable< Order > ToQBOrder( this IEnumerable< Invoice > source )
+		{
+			var orders = source.Select( x => x.ToQBOrder() );
+
+			return orders;
+		}
+
+		public static Order ToQBOrder( this SalesReceipt source )
+		{
+			var qbOrder = new Order
+			{
+				OrderType = OrderType.SalesReceipt
+			};
+
+			return qbOrder;
+		}
+
+		public static IEnumerable< Order > ToQBOrder( this IEnumerable< SalesReceipt > source )
+		{
+			var orders = source.Select( x => x.ToQBOrder() );
+
+			return orders;
+		}
+		#endregion
 
 		public static IEnumerable< PurchaseOrder > ToQBPurchaseOrder( this IEnumerable< Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders.PurchaseOrder > purchaseOrder )
 		{
