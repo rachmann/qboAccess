@@ -40,7 +40,7 @@ namespace QuickBooksOnlineAccessAuthExample.Controllers
 			if( !this.Request.QueryString.HasKeys() )
 				return "none";
 
-			var quickBooksAuthenticatedUserCredentials = new QuickBooksOnlineAuthenticatedUserCredentials();
+			var quickBooksAuthenticatedUserCredentials = new QuickBooksOnlineAuthenticatedUserCredentials( "", "", "" );
 
 			var oauthVerifyer = this.Request.QueryString[ "oauth_verifier" ].ToString();
 

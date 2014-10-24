@@ -31,7 +31,7 @@ namespace QuickBooksOnlineAccessTestsIntegration
 			this._consumerProfile = this._testDataReader.ConsumerProfile;
 			this._restProfile = this._testDataReader.RestProfile;
 			this._quickBooksOnlineServiceSdk = new QuickBooksOnlineServiceSdk( this._restProfile, this._consumerProfile );
-			this._quickBooksAuthenticatedUserCredentials = new QuickBooksOnlineAuthenticatedUserCredentials()
+			this._quickBooksAuthenticatedUserCredentials = new QuickBooksOnlineAuthenticatedUserCredentials( "", "", "" )
 			{
 				ConsumerKey = this._consumerProfile.ConsumerKey,
 				ConsumerSecret = this._consumerProfile.ConsumerSecret,

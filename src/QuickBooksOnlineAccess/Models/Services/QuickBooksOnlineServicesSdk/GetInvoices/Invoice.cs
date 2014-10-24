@@ -8,14 +8,14 @@ namespace QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Get
 		public IEnumerable< InvoiceLine > Line { get; set; }
 		public string Id { get; set; }
 		public string DocNumber { get; set; }
-		public string NotAvailable { get; set; }
+		public string Currency { get; set; }
 		public decimal TotalAmt { get; set; }
 		public string SyncToken { get; set; }
-		public string City { get; set; }
-		public string Country { get; set; }
-		public string CountryCode { get; set; }
-		public string PostalCode { get; set; }
-		public string PostalCodeSuffix { get; set; }
+		public string ShipCity { get; set; }
+		public string ShipCountry { get; set; }
+		public string ShipCountryCode { get; set; }
+		public string ShipPostalCode { get; set; }
+		public string ShipPostalCodeSuffix { get; set; }
 		public DateTime ShipDate { get; set; }
 		public decimal Deposit { get; set; }
 		public string TrackingNum { get; set; }

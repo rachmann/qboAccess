@@ -7,6 +7,9 @@
 			string accessToken,
 			string consumerTokenSecret )
 		{
+			this.RealmId = realmId;
+			this.OAuthAccessToken = accessToken;
+			this.OAuthAccessTokenSecret = this.OAuthAccessTokenSecret;
 		}
 
 		public string AppToken { get; set; }
