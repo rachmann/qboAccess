@@ -219,7 +219,7 @@ namespace QuickBooksOnlineAccess.Misc
 				Amount = line.Amount,
 				Description = line.Description,
 				LineNum = line.LineNum,
-				Qty = ineDetail.Qty
+				Qty = ineDetail.Qty,
 			};
 			return qbAccessLine;
 		}

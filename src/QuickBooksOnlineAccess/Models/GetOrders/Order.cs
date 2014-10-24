@@ -21,6 +21,18 @@ namespace QuickBooksOnlineAccess.Models.GetOrders
 		public decimal TotalAmt { get; set; }
 		public IEnumerable< OrderLine > Line { get; set; }
 		public DateTime CreateTime { get; set; }
+
+		public OrderStatus GetOrderStatus()
+		{
+			//todo: implement
+			return OrderStatus.Unknown;
+		}
+	}
+
+	public enum OrderStatus
+	{
+		Unknown,
+		Paid
 	}
 
 	public enum OrderType
