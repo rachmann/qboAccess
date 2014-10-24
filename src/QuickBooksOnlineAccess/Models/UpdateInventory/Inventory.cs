@@ -3,6 +3,7 @@
 	public class Inventory
 	{
 		public string ProductId { get; set; }
-		public long Qty { get; set; }
+		public long Quantity { get; set; }
+		public string NameOrSku { get; set; }
 	}
 }
