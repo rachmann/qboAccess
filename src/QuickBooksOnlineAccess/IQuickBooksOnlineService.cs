@@ -22,5 +22,6 @@ namespace QuickBooksOnlineAccess
 		Task< IEnumerable< Product > > GetProductsAsync();
 
 		Task< PingInfo > Ping();
+		Func< string > AdditionalLogInfo { get; set; }
 	}
 }

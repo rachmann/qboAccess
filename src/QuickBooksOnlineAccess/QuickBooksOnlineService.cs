@@ -20,6 +20,7 @@ namespace QuickBooksOnlineAccess
 		private readonly QuickBooksOnlineServiceSdk _quickBooksOnlineServiceSdk;
 		private readonly RestProfile _restProfile;
 		private readonly ConsumerProfile _consumerProfile;
+		public Func< string > AdditionalLogInfo { get; set; }
 
 		public QuickBooksOnlineService( QuickBooksOnlineAuthenticatedUserCredentials quickBooksAuthenticatedUserCredentials )
 		{
