@@ -51,7 +51,7 @@ namespace QuickBooksOnlineAccess.Services
 			this.RestProfile = restProfile;
 			this.ConsumerProfile = consumerProfile;
 			this._requestValidator = new OAuthRequestValidator( this.RestProfile.OAuthAccessToken, this.RestProfile.OAuthAccessTokenSecret, this.ConsumerProfile.ConsumerKey, this.ConsumerProfile.ConsumerSecret );
-			this._serviceContext = new ServiceContext( this.RestProfile.AppToken, this.RestProfile.CompanyId, IntuitServicesType.QBO, this._requestValidator );
+			this._serviceContext = new ServiceContext( this.RestProfile.AppToken, this.RestProfile.RealmId, IntuitServicesType.QBO, this._requestValidator );
 			this._dataService = new DataService( this._serviceContext );
 			this._queryServiceItem = new QueryService< Item >( this._serviceContext );
 			this._queryServicePayment = new QueryService< Payment >( this._serviceContext );

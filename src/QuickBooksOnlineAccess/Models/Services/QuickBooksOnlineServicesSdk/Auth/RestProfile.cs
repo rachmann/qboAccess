@@ -15,12 +15,6 @@
 			set { this._appToken = value; }
 		}
 
-		public string CompanyId
-		{
-			get { return this._companyId; }
-			set { this._companyId = value; }
-		}
-
 		public string RealmId
 		{
 			get { return this._realmId; }
@@ -55,9 +49,8 @@
 		public string ToJson()
 		{
 			var str = string.Format(
-				"{{AppToken:{0},CompanyId:{1},DataSource{2},OAuthAccessToken{3},OAuthAccessTokenSecret{4},RealmId{5}}}",
+				"{{AppToken:{0},DataSource{1},OAuthAccessToken{2},OAuthAccessTokenSecret{3},RealmId{4}}}",
 				this.AppToken,
-				this.CompanyId,
 				this.DataSource,
 				this.OAuthAccessToken,
 				this.OAuthAccessTokenSecret,

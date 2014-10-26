@@ -31,7 +31,6 @@ namespace QuickBooksOnlineAccessTestsIntegration.TestEnvironment
 				return new RestProfile()
 				{
 					AppToken = this._flatCsvLineAppKeys.AppToken,
-					CompanyId = this._flatCsvLineAppKeys.CompanyId,
 					DataSource = this._flatCsvLineAppKeys.DataSource.ToIntOrDefault(),
 					OAuthAccessToken = this._flatCsvLineAppKeys.OAuthAccessToken,
 					OAuthAccessTokenSecret = this._flatCsvLineAppKeys.OAuthAccessTokenSecret,

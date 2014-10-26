@@ -17,13 +17,10 @@ namespace QuickBooksOnlineAccessTestsIntegration.TestEnvironment
 		[ CsvColumn( Name = "AppToken", FieldIndex = 3 ) ]
 		public string AppToken { get; set; }
 
-		[ CsvColumn( Name = "CompanyId", FieldIndex = 4 ) ]
-		public string CompanyId { get; set; }
-
-		[ CsvColumn( Name = "OAuthAccessToken", FieldIndex = 5 ) ]
+		[ CsvColumn( Name = "OAuthAccessToken", FieldIndex = 4 ) ]
 		public string OAuthAccessToken { get; set; }
 
-		[ CsvColumn( Name = "OAuthAccessTokenSecret", FieldIndex = 6 ) ]
+		[ CsvColumn( Name = "OAuthAccessTokenSecret", FieldIndex = 5 ) ]
 		public string OAuthAccessTokenSecret { get; set; }
 	}
 }
