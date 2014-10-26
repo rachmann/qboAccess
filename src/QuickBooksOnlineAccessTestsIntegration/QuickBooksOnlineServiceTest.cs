@@ -18,6 +18,7 @@ namespace QuickBooksOnlineAccessTestsIntegration
 		private QuickBooksOnlineServiceSdk _quickBooksOnlineServiceSdk;
 		private QuickBooksOnlineService _quickBooksService;
 		private QuickBooksOnlineAuthenticatedUserCredentials _quickBooksAuthenticatedUserCredentials;
+		private QuickBooksOnlineNonAuthenticatedUserCredentials _quickBooksNonAuthenticatedUserCredentials;
 
 		[ TestFixtureSetUp ]
 		public void TestFixtureSetup()
@@ -31,18 +32,20 @@ namespace QuickBooksOnlineAccessTestsIntegration
 			this._consumerProfile = this._testDataReader.ConsumerProfile;
 			this._restProfile = this._testDataReader.RestProfile;
 			this._quickBooksOnlineServiceSdk = new QuickBooksOnlineServiceSdk( this._restProfile, this._consumerProfile );
-			this._quickBooksAuthenticatedUserCredentials = new QuickBooksOnlineAuthenticatedUserCredentials( "", "", "" )
-			{
-				ConsumerKey = this._consumerProfile.ConsumerKey,
-				ConsumerSecret = this._consumerProfile.ConsumerSecret,
-				AppToken = this._restProfile.AppToken,
-				CompanyId = this._restProfile.CompanyId,
-				OAuthAccessToken = this._restProfile.OAuthAccessToken,
-				OAuthAccessTokenSecret = this._restProfile.OAuthAccessTokenSecret,
-				RealmId = this._restProfile.RealmId,
-				DataSource = this._restProfile.DataSource,
-			};
-			this._quickBooksService = new QuickBooksOnlineService( this._quickBooksAuthenticatedUserCredentials );
+
+			this._quickBooksAuthenticatedUserCredentials = new QuickBooksOnlineAuthenticatedUserCredentials(
+				this._restProfile.RealmId,
+				this._restProfile.OAuthAccessToken,
+				this._restProfile.OAuthAccessTokenSecret,
+				this._restProfile.DataSource );
+
+			this._quickBooksNonAuthenticatedUserCredentials = new QuickBooksOnlineNonAuthenticatedUserCredentials(
+				this._restProfile.AppToken,
+				this._consumerProfile.ConsumerKey,
+				this._consumerProfile.ConsumerSecret,
+				"http://localhost:27286/home/Callback" );
+
+			this._quickBooksService = new QuickBooksOnlineService( this._quickBooksAuthenticatedUserCredentials, this._quickBooksNonAuthenticatedUserCredentials );
 		}
 
 		[ Test ]

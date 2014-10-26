@@ -22,11 +22,11 @@ namespace QuickBooksOnlineAccess
 		private readonly ConsumerProfile _consumerProfile;
 		public Func< string > AdditionalLogInfo { get; set; }
 
-		public QuickBooksOnlineService( QuickBooksOnlineAuthenticatedUserCredentials quickBooksAuthenticatedUserCredentials )
+		public QuickBooksOnlineService( QuickBooksOnlineAuthenticatedUserCredentials quickBooksAuthenticatedUserCredentials, QuickBooksOnlineNonAuthenticatedUserCredentials quickBooksNonAuthenticatedUserCredentials )
 		{
 			this._restProfile = new RestProfile()
 			{
-				AppToken = quickBooksAuthenticatedUserCredentials.AppToken,
+				AppToken = quickBooksNonAuthenticatedUserCredentials.AppToken,
 				DataSource = quickBooksAuthenticatedUserCredentials.DataSource,
 				OAuthAccessToken = quickBooksAuthenticatedUserCredentials.OAuthAccessToken,
 				OAuthAccessTokenSecret = quickBooksAuthenticatedUserCredentials.OAuthAccessTokenSecret,
@@ -35,8 +35,8 @@ namespace QuickBooksOnlineAccess
 
 			this._consumerProfile = new ConsumerProfile()
 			{
-				ConsumerKey = quickBooksAuthenticatedUserCredentials.ConsumerKey,
-				ConsumerSecret = quickBooksAuthenticatedUserCredentials.ConsumerSecret,
+				ConsumerKey = quickBooksNonAuthenticatedUserCredentials.ConsumerKey,
+				ConsumerSecret = quickBooksNonAuthenticatedUserCredentials.ConsumerSecret,
 			};
 
 			this._quickBooksOnlineServiceSdk = new QuickBooksOnlineServiceSdk( this._restProfile, this._consumerProfile );

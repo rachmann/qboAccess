@@ -5,20 +5,19 @@
 		public QuickBooksOnlineAuthenticatedUserCredentials(
 			string realmId,
 			string accessToken,
-			string consumerTokenSecret )
+			string accessTokenSecret,
+			int dataSource = 1
+			)
 		{
 			this.RealmId = realmId;
 			this.OAuthAccessToken = accessToken;
-			this.OAuthAccessTokenSecret = this.OAuthAccessTokenSecret;
+			this.OAuthAccessTokenSecret = accessTokenSecret;
+			this.DataSource = dataSource;
 		}
 
-		public string AppToken { get; set; }
-		public string CompanyId { get; set; }
 		public int DataSource { get; set; }
 		public string OAuthAccessToken { get; set; }
 		public string OAuthAccessTokenSecret { get; set; }
 		public string RealmId { get; set; }
-		public string ConsumerSecret { get; set; }
-		public string ConsumerKey { get; set; }
 	}
 }
