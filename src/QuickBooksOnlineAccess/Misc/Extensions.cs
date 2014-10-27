@@ -78,7 +78,8 @@ namespace QuickBooksOnlineAccess.Misc
 				Description = source.Description,
 				Id = source.Id,
 				LineNum = source.LineNum,
-				Qty = source.Qty
+				Qty = source.Qty,
+				Sku = source.Sku
 			};
 
 			return line;
@@ -92,7 +93,8 @@ namespace QuickBooksOnlineAccess.Misc
 				Description = source.Description,
 				Id = source.Id,
 				LineNum = source.LineNum,
-				Qty = source.Qty
+				Qty = source.Qty,
+				Sku = source.Sku
 			};
 
 			return line;
@@ -212,7 +214,7 @@ namespace QuickBooksOnlineAccess.Misc
 
 		public static InvoiceLine ToQBAccessInvoiceLine( this Intuit.Ipp.Data.Line line )
 		{
-			var ineDetail = ( line.AnyIntuitObject as SalesItemLineDetail ) ?? new SalesItemLineDetail { Qty = 0 };
+			var ineDetail = ( line.AnyIntuitObject as SalesItemLineDetail ) ?? new SalesItemLineDetail { Qty = 0, ItemRef = new ReferenceType() { name = "" } };
 			var qbAccessLine = new InvoiceLine
 			{
 				Id = line.Id,
@@ -220,20 +222,22 @@ namespace QuickBooksOnlineAccess.Misc
 				Description = line.Description,
 				LineNum = line.LineNum,
 				Qty = ineDetail.Qty,
+				Sku = ineDetail.ItemRef.name,
 			};
 			return qbAccessLine;
 		}
 
 		public static SalesReceiptLine ToQBAccessSalesReceiptLine( this Intuit.Ipp.Data.Line line )
 		{
-			var ineDetail = ( line.AnyIntuitObject as SalesItemLineDetail ) ?? new SalesItemLineDetail { Qty = 0 };
+			var ineDetail = ( line.AnyIntuitObject as SalesItemLineDetail ) ?? new SalesItemLineDetail { Qty = 0, ItemRef = new ReferenceType() { name = "" } };
 			var qbAccessLine = new SalesReceiptLine
 			{
 				Id = line.Id,
 				Amount = line.Amount,
 				Description = line.Description,
 				LineNum = line.LineNum,
-				Qty = ineDetail.Qty
+				Qty = ineDetail.Qty,
+				Sku = ineDetail.ItemRef.name,
 			};
 			return qbAccessLine;
 		}

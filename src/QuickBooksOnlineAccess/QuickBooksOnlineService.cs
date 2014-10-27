@@ -85,6 +85,9 @@ namespace QuickBooksOnlineAccess
 		{
 			try
 			{
+				dateFrom = dateFrom.ToUniversalTime();
+				dateTo = dateTo.ToUniversalTime();
+
 				var invoices = await this._quickBooksOnlineServiceSdk.GetInvoices( dateFrom, dateTo ).ConfigureAwait( false );
 				var salesReceipts = await this._quickBooksOnlineServiceSdk.GetSalesReceipt( dateFrom, dateTo ).ConfigureAwait( false );
 

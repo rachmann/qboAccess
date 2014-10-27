@@ -7,5 +7,6 @@
 		public string Id { get; set; }
 		public string LineNum { get; set; }
 		public decimal Qty { get; set; }
+		public string Sku { get; set; }
 	}
 }

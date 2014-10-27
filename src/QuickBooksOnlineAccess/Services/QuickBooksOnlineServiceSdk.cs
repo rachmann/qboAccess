@@ -144,7 +144,7 @@ namespace QuickBooksOnlineAccess.Services
 			{
 				var ordersFilteredFrom = this._queryServiceSalesReceipt.Where( x => x.MetaData.LastUpdatedTime >= from ).ToList();
 				//todo: try to avoid additional filter with 'to', and inject it in first query
-				var ordersFilteredFromAndTo = ordersFilteredFrom.Where( x => x.MetaData.LastUpdatedTime <= to ).ToList();
+				var ordersFilteredFromAndTo = ordersFilteredFrom.Where( x => x.MetaData.LastUpdatedTime.ToUniversalTime() <= to ).ToList();
 				return new GetSalesReceiptsResponse( ordersFilteredFromAndTo.Select( x => x.ToQBSalesReceipt() ) );
 			} ).ConfigureAwait( false );
 		}
