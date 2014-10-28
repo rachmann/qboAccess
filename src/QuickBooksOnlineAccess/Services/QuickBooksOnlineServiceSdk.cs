@@ -103,6 +103,15 @@ namespace QuickBooksOnlineAccess.Services
 				return new GetItemsResponse( itemsConvertedToQbAccessItems );
 			} ).ConfigureAwait( false );
 		}
+
+		public async Task< GetItemsResponse > GetTrackingItems()
+		{
+			return await Task.Factory.StartNew( () =>
+			{
+				var items = this._queryServiceItem.Where( x => x.TrackQtyOnHand ).ToList();
+				return new GetItemsResponse( items.Select( x => x.ToQBAccessItem() ).ToList() );
+			} ).ConfigureAwait( false );
+		}
 		#endregion
 
 		#region PurchaseOrders

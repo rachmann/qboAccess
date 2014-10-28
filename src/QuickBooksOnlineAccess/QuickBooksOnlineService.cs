@@ -138,8 +138,8 @@ namespace QuickBooksOnlineAccess
 		{
 			try
 			{
-				//todo: replace me
-				throw new NotImplementedException();
+				var itemsResponse =  await _quickBooksOnlineServiceSdk.GetItems().ConfigureAwait(false);
+				return itemsResponse.Items.ToQBProduct();
 			}
 			catch( Exception exception )
 			{
@@ -153,6 +153,7 @@ namespace QuickBooksOnlineAccess
 		{
 			try
 			{
+				var response = await _quickBooksOnlineServiceSdk.UpdateItemQuantityOnHand(products.ToQBInventoryItem().ToArray()).ConfigureAwait(false);
 			}
 			catch( Exception exception )
 			{
