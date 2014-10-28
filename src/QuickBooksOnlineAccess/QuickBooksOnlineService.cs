@@ -138,7 +138,7 @@ namespace QuickBooksOnlineAccess
 		{
 			try
 			{
-				var itemsResponse = await this._quickBooksOnlineServiceSdk.GetItems().ConfigureAwait( false );
+				var itemsResponse = await this._quickBooksOnlineServiceSdk.GetTrackingItems().ConfigureAwait( false );
 				return itemsResponse.Items.ToQBProduct();
 			}
 			catch( Exception exception )

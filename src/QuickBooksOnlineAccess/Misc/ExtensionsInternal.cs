@@ -237,6 +237,16 @@ namespace QuickBooksOnlineAccess.Misc
 		{
 			var order = new InventoryItem()
 			{
+				QtyOnHand = source.Quantity,
+				Sku = source.NameOrSku,
+				Id = source.ProductId,
+				SyncToken = source.SyncToken,
+				IncomeAccRefValue = source.IncomeAccRefValue,
+				IncomeAccRefName = source.IncomeAccRefName,
+				IncomeAccRefType = source.IncomeAccRefType,
+				ExpenseAccRefValue = source.ExpenseAccRefValue,
+				ExpenseAccRefName = source.ExpenseAccRefName,
+				ExpenseAccRefType = source.ExpenseAccRefType,
 			};
 			return order;
 		}
