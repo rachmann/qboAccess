@@ -9,9 +9,9 @@ namespace QuickBooksOnlineAccessAuthExample.Controllers
 	public class HomeController : Controller
 	{
 		private static readonly QuickBooksOnlineNonAuthenticatedUserCredentials _quickBooksNonAuthenticatedUserCredentials = new QuickBooksOnlineNonAuthenticatedUserCredentials(
-			"547e7e3cb2f9cb4631ba170b0ee9dd0ccdf6",
-			"qyprdEgRawOHz9cCVwd1BYycdxDKWW",
-			"FcscErCzmVSNKwQDM1NNo7Qyrq5oRtOc6Q2BLTmH",
+			"apptoken",
+			"consumerkey",
+			"consumer secret",
 			"http://localhost:27286/home/Callback"
 			);
 
