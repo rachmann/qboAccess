@@ -1,4 +1,6 @@
-﻿namespace QuickBooksOnlineAccess.Models
+﻿using Intuit.Ipp.Core;
+
+namespace QuickBooksOnlineAccess.Models
 {
 	public class QuickBooksOnlineNonAuthenticatedUserCredentials
 	{
@@ -50,5 +52,27 @@
 		public string GetRequestTokenUrl { get; private set; }
 		public string GetAccessTokenUrl { get; private set; }
 		public string AuthorizeUrl { get; private set; }
+
+		public static int ParseQBDataSource(string str)
+		{
+			int res;
+			switch (str.ToLower())
+			{
+				case "qbo":
+					res = (int)IntuitServicesType.QBO;
+					break;
+				case "qbd":
+					res = (int)IntuitServicesType.QBD;
+					break;
+				case "ips":
+					res = (int)IntuitServicesType.IPS;
+					break;
+				default:
+					res = (int)IntuitServicesType.None;
+					break;
+			}
+
+			return res;
+		}
 	}
 }

@@ -46,16 +46,8 @@ namespace QuickBooksOnlineAccessAuthExample.Controllers
 
 			quickBooksAuthenticatedUserCredentials.RealmId = this.Request.QueryString[ "realmId" ].ToString();
 
-			int profile__DataSource;
-			switch( this.Request.QueryString[ "dataSource" ].ToString().ToLower() )
-			{
-				case "qbo":
-					profile__DataSource = ( int )IntuitServicesType.QBO;
-					break;
-				case "qbd":
-					profile__DataSource = ( int )IntuitServicesType.QBD;
-					break;
-			}
+			var dataSourceStr = this.Request.QueryString[ "dataSource" ].ToString();
+			var qbDataSource = QuickBooksOnlineNonAuthenticatedUserCredentials.ParseQBDataSource(dataSourceStr);
 
 			var consumerContext = new OAuthConsumerContext
 			{
