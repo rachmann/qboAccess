@@ -67,6 +67,9 @@ namespace QuickBooksOnlineAccess.Services
 		{
 			return await Task.Factory.StartNew( () =>
 			{
+				if( inventoryItems == null || inventoryItems.Length == 0 )
+					return new UpdateItemQuantityOnHandResponse( new List< Customer >() );
+
 				var batch = this._dataService.CreateNewBatch();
 
 				foreach( var item in inventoryItems )
@@ -140,6 +143,9 @@ namespace QuickBooksOnlineAccess.Services
 		{
 			return await Task.Factory.StartNew( () =>
 			{
+				if( purchaseOrders == null || purchaseOrders.Length == 0 )
+					return new CreatePurchaseOrdersResponse();
+
 				throw new Exception();
 				return new CreatePurchaseOrdersResponse();
 			} ).ConfigureAwait( false );
@@ -174,6 +180,9 @@ namespace QuickBooksOnlineAccess.Services
 		{
 			return await Task.Factory.StartNew( () =>
 			{
+				if (orders == null || orders.Length == 0)
+					return new CreateOrdersResponse();
+
 				throw new Exception();
 				return new CreateOrdersResponse();
 			} ).ConfigureAwait( false );
