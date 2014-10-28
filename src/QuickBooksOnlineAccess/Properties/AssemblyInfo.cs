@@ -6,10 +6,10 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[ assembly : AssemblyTitle( "QuickBooksAccess" ) ]
+[ assembly : AssemblyTitle( "QuickBooksOnlineAccess" ) ]
 [ assembly : AssemblyConfiguration( "" ) ]
-[ assembly : InternalsVisibleTo( "QuickBooksAccessTestsIntegration" ) ]
-[ assembly : InternalsVisibleTo( "QuickBooksAccessTests" ) ]
+[ assembly : InternalsVisibleTo( "QuickBooksOnlineAccessTestsIntegration" ) ]
+[ assembly : InternalsVisibleTo( "QuickBooksOnlineAccessTests" ) ]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 

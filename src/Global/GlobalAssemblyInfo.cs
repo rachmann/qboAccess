@@ -3,10 +3,10 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 
 [ assembly : ComVisible( false ) ]
-[ assembly : AssemblyProduct( "MagentoAccess" ) ]
+[ assembly : AssemblyProduct( "QuickBooksOnlineAccess" ) ]
 [ assembly : AssemblyCompany( "Agile Harbor, LLC" ) ]
 [ assembly : AssemblyCopyright( "Copyright (C) 2014 Agile Harbor, LLC" ) ]
-[ assembly : AssemblyDescription( "Magento webservices API wrapper." ) ]
+[ assembly : AssemblyDescription( "QuickBooksOnline webservices API wrapper." ) ]
 [ assembly : AssemblyTrademark( "" ) ]
 [ assembly : AssemblyCulture( "" ) ]
 [ assembly : CLSCompliant( false ) ]
