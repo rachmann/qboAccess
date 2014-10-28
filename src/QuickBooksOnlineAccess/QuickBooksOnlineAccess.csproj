@@ -131,7 +131,7 @@
     <Compile Include="QuickBooksOnlineFactory.cs" />
     <Compile Include="QuickBooksOnlineService.cs" />
     <Compile Include="Misc\ActionPolicies.cs" />
-    <Compile Include="Misc\Extensions.cs" />
+    <Compile Include="Misc\ExtensionsInternal.cs" />
     <Compile Include="Misc\QuickBooksOnlineLogger.cs" />
     <Compile Include="Misc\PredefinedValues.cs" />
     <Compile Include="Models\QuickBooksOnlineAuthenticatedUserCredentials.cs" />

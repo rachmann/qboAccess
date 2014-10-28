@@ -7,9 +7,11 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
 using Intuit.Ipp.Data;
 using QuickBooksOnlineAccess.Models.GetOrders;
+using QuickBooksOnlineAccess.Models.GetProducts;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetInvoices;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetSalesReceipts;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.UpdateItemQuantityOnHand;
+using QuickBooksOnlineAccess.Models.UpdateInventory;
 using Bill = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetBills.Bill;
 using Invoice = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetInvoices.Invoice;
 using Item = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetItems.Item;
@@ -20,7 +22,7 @@ using SalesReceipt = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServ
 
 namespace QuickBooksOnlineAccess.Misc
 {
-	internal static class Extensions
+	internal static class ExtensionsInternal
 	{
 		public static string ToJson( this IEnumerable< PurchaseOrder > source )
 		{
@@ -171,6 +173,7 @@ namespace QuickBooksOnlineAccess.Misc
 		}
 		#endregion
 
+		#region FromIQuickBooksOnlineServiceInternal
 		public static IEnumerable< PurchaseOrder > ToQBPurchaseOrder( this IEnumerable< Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders.PurchaseOrder > purchaseOrder )
 		{
 			if( purchaseOrder == null )
@@ -197,6 +200,47 @@ namespace QuickBooksOnlineAccess.Misc
 
 			return inventoryItem;
 		}
+
+		public static IEnumerable< Product > ToQBProduct( this IEnumerable< Item > source )
+		{
+			var orders = source.Select( ToQBProduct );
+			return orders;
+		}
+
+		public static Product ToQBProduct( this Item source )
+		{
+			var order = new Product()
+			{
+				ExpenseAccRefName = source.ExpenseAccRefName,
+				ExpenseAccRefType = source.ExpenseAccRefType,
+				ExpenseAccRefValue = source.ExpenseAccRefValue,
+				Id = source.Id,
+				IncomeAccRefName = source.IncomeAccRefName,
+				IncomeAccRefType = source.IncomeAccRefType,
+				IncomeAccRefValue = source.IncomeAccRefValue,
+				Name = source.Name,
+				QtyOnHand = source.Qty,
+				SyncToken = source.SyncToken
+			};
+			return order;
+		}
+		#endregion
+
+		#region FromPublicService
+		public static IEnumerable< InventoryItem > ToQBInventoryItem( this IEnumerable< Inventory > source )
+		{
+			var orders = source.Select( x => ToQBInventoryItem( ( Inventory )x ) );
+			return orders;
+		}
+
+		public static InventoryItem ToQBInventoryItem( this Inventory source )
+		{
+			var order = new InventoryItem()
+			{
+			};
+			return order;
+		}
+		#endregion
 
 		#region FromQBSdk
 		public static Line ToQBAccessLine( this Intuit.Ipp.Data.Line line )
