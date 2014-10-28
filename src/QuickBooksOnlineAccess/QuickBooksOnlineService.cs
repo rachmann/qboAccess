@@ -138,7 +138,7 @@ namespace QuickBooksOnlineAccess
 		{
 			try
 			{
-				var itemsResponse =  await _quickBooksOnlineServiceSdk.GetItems().ConfigureAwait(false);
+				var itemsResponse = await this._quickBooksOnlineServiceSdk.GetItems().ConfigureAwait( false );
 				return itemsResponse.Items.ToQBProduct();
 			}
 			catch( Exception exception )
@@ -153,7 +153,7 @@ namespace QuickBooksOnlineAccess
 		{
 			try
 			{
-				var response = await _quickBooksOnlineServiceSdk.UpdateItemQuantityOnHand(products.ToQBInventoryItem().ToArray()).ConfigureAwait(false);
+				var response = await this._quickBooksOnlineServiceSdk.UpdateItemQuantityOnHand( products.ToQBInventoryItem().ToArray() ).ConfigureAwait( false );
 			}
 			catch( Exception exception )
 			{
