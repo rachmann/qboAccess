@@ -108,7 +108,7 @@ namespace QuickBooksOnlineAccess.Services
 		{
 			return await Task.Factory.StartNew( () =>
 			{
-				var items = this._queryServiceItem.Where( x => x.TrackQtyOnHand ).ToList();
+				var items = this._queryServiceItem.Where( x => x.Type == ItemTypeEnum.Inventory ).ToList();
 				return new GetItemsResponse( items.Select( x => x.ToQBAccessItem() ).ToList() );
 			} ).ConfigureAwait( false );
 		}

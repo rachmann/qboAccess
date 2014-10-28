@@ -133,6 +133,19 @@ namespace QuickBooksOnlineAccessTestsIntegration.Services
 			getSalesReceiptsResponse.Orders.Count().Should().BeGreaterThan( 0 );
 		}
 
+		[Test]
+		public void GetTrackingItems_ServiceContainsTrackingItems_ItemsReceived()
+		{
+			//A
+
+			//A
+			var getSalesReceiptsResponseTask = this._quickBooksOnlineServiceSdk.GetTrackingItems();
+			var getSalesReceiptsResponse = getSalesReceiptsResponseTask.Result;
+
+			//A
+			getSalesReceiptsResponse.Items.Count().Should().BeGreaterThan(0);
+		}
+
 		[ Test ]
 		public void CreateOrders_ServiceDontContainsTheSameOrders_OrdersCreated()
 		{
