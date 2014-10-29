@@ -4,5 +4,6 @@
 	{
 		public static string NotAvailable = "N/A";
 		public static decimal Zero = 0;
+		public static decimal Eps = 0.0000000000000000000000000001m; //28 digits
 	}
 }
