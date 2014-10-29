@@ -1,6 +1,9 @@
-﻿namespace QuickBooksOnlineAccess.Models.UpdateInventory
+﻿using System;
+using QuickBooksOnlineAccess.Misc;
+
+namespace QuickBooksOnlineAccess.Models.UpdateInventory
 {
-	public class Inventory
+	public class Inventory : IManualSerializable
 	{
 		public string ProductId { get; set; }
 		public decimal Quantity { get; set; }
@@ -12,5 +15,18 @@
 		public string ExpenseAccRefValue { get; set; }
 		public string ExpenseAccRefName { get; set; }
 		public string ExpenseAccRefType { get; set; }
+
+		public string ToJson()
+		{
+			try
+			{
+				var result = String.Format( "{{Id:{0},NameOrSku:{1},Quantity:{2}}}", this.ProductId, this.NameOrSku, this.Quantity );
+				return result;
+			}
+			catch( Exception )
+			{
+				return PredefinedValues.EmptyJsonObject;
+			}
+		}
 	}
 }

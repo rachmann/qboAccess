@@ -4,7 +4,7 @@ using QuickBooksOnlineAccess.Misc;
 
 namespace QuickBooksOnlineAccess.Models.GetOrders
 {
-	public class Order
+	public class Order : IManualSerializable
 	{
 		public OrderType OrderType { get; set; }
 		public string OrderId { get; set; }
@@ -47,6 +47,12 @@ namespace QuickBooksOnlineAccess.Models.GetOrders
 				return OrderPaymentStatus.FullyPaid;
 
 			return OrderPaymentStatus.Unknown;
+		}
+
+		public string ToJson()
+		{
+			var res = string.Format( "{{OrderId:{0},DocNumber:{1},OrderType:{2}}}", this.OrderId, this.DocNumber, this.OrderType );
+			return res;
 		}
 	}
 

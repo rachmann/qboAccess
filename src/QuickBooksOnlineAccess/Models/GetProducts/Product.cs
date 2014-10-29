@@ -1,6 +1,8 @@
-﻿namespace QuickBooksOnlineAccess.Models.GetProducts
+﻿using QuickBooksOnlineAccess.Misc;
+
+namespace QuickBooksOnlineAccess.Models.GetProducts
 {
-	public class Product
+	public class Product : IManualSerializable
 	{
 		public decimal QtyOnHand { get; set; }
 		public string Name { get; set; }
@@ -12,5 +14,11 @@
 		public string ExpenseAccRefValue { get; set; }
 		public string ExpenseAccRefName { get; set; }
 		public string ExpenseAccRefType { get; set; }
+
+		public string ToJson()
+		{
+			var res = string.Format( "{{Id:{0},Name:{1},QtyOnHand:{2}}}", this.Id, this.Name, this.QtyOnHand );
+			return res;
+		}
 	}
 }

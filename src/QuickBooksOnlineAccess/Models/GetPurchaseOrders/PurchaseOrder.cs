@@ -3,7 +3,7 @@ using QuickBooksOnlineAccess.Misc;
 
 namespace QuickBooksOnlineAccess.Models.GetPurchaseOrders
 {
-	public class PurchaseOrder:IManualSerializable
+	public class PurchaseOrder : IManualSerializable
 	{
 		public string ToJson()
 		{
