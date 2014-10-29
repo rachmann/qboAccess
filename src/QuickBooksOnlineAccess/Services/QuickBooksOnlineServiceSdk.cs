@@ -145,8 +145,8 @@ namespace QuickBooksOnlineAccess.Services
 				if( purchaseOrders == null || purchaseOrders.Length == 0 )
 					return new CreatePurchaseOrdersResponse();
 
-				throw new Exception();
-				return new CreatePurchaseOrdersResponse();
+				//todo: implemet
+				throw new NotImplementedException();
 			} ).ConfigureAwait( false );
 		}
 		#endregion
@@ -221,8 +221,7 @@ namespace QuickBooksOnlineAccess.Services
 				if( orders == null || orders.Length == 0 )
 					return new CreateOrdersResponse();
 
-				throw new Exception();
-				return new CreateOrdersResponse();
+				throw new NotImplementedException();
 			} ).ConfigureAwait( false );
 		}
 
