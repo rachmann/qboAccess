@@ -101,6 +101,7 @@
     <Compile Include="IQuickBooksOnlineFactory.cs" />
     <Compile Include="IQuickBooksOnlineService.cs" />
     <Compile Include="Misc\ExtensionsPublic.cs" />
+    <Compile Include="Misc\IManualSerializable.cs" />
     <Compile Include="Models\GetOrders\OrderLine.cs" />
     <Compile Include="Models\GetPurchaseOrders\PurchaseOrder.cs" />
     <Compile Include="Models\QuickBooksOnlineNonAuthenticatedUserCredentials.cs" />

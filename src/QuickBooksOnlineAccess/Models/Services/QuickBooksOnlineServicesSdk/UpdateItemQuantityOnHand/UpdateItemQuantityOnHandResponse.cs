@@ -5,7 +5,7 @@ namespace QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Upd
 {
 	internal class UpdateItemQuantityOnHandResponse
 	{
-		public UpdateItemQuantityOnHandResponse( List< Customer > toList )
+		public UpdateItemQuantityOnHandResponse( )
 		{
 		}
 	}

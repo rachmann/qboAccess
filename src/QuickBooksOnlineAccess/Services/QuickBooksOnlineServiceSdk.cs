@@ -68,7 +68,7 @@ namespace QuickBooksOnlineAccess.Services
 			return await Task.Factory.StartNew( () =>
 			{
 				if( inventoryItems == null || inventoryItems.Length == 0 )
-					return new UpdateItemQuantityOnHandResponse( new List< Customer >() );
+					return new UpdateItemQuantityOnHandResponse();
 
 				var batch = this._dataService.CreateNewBatch();
 
@@ -87,7 +87,7 @@ namespace QuickBooksOnlineAccess.Services
 				}
 
 				batch.Execute();
-				return new UpdateItemQuantityOnHandResponse( new List< Customer >() );
+				return new UpdateItemQuantityOnHandResponse( );
 			} ).ConfigureAwait( false );
 		}
 

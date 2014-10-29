@@ -24,22 +24,76 @@ namespace QuickBooksOnlineAccess.Misc
 {
 	internal static class ExtensionsInternal
 	{
+		#region ToJson
+		public static string ToJson(this IEnumerable<IManualSerializable> source)
+		{
+			try
+			{
+				var objects = source as IList<IManualSerializable> ?? source.ToList();
+				var items = string.Join(",", objects.Where(x => x != null).Select(x => x.ToJson()));
+				var res = string.Format("{{Count:{0}, Items:[{1}]}}", objects.Count(), items);
+				return res;
+			}
+			catch
+			{
+				return PredefinedValues.EmptyJsonList;
+			}
+		}
+
 		public static string ToJson( this IEnumerable< PurchaseOrder > source )
 		{
-			var resultUrl = string.Empty;
 			try
 			{
 				var purchaseOrders = source as IList< PurchaseOrder > ?? source.ToList();
-				var items = string.Join( ",", purchaseOrders.Select( x => string.Format( "" ) ) );
+				var items = string.Join( ",", purchaseOrders.Select( x => x.ToJson() ) );
 				var res = string.Format( "{{Count:{0}, Items:[{1}]}}", purchaseOrders.Count(), items );
 				return res;
 			}
 			catch
 			{
+				return PredefinedValues.EmptyJsonList;
 			}
-
-			return resultUrl;
 		}
+
+		public static string ToJson( this IEnumerable< string > source )
+		{
+			try
+			{
+				var result = string.Format( "[\"{0}\"]", string.Join( ",", source ) );
+				return result;
+			}
+			catch( Exception )
+			{
+				return PredefinedValues.EmptyJsonList;
+			}
+		}
+
+		public static string ToJson( this Inventory source )
+		{
+			try
+			{
+				var result = string.Format( "{{Id:{0},NameOrSku:{1},Quantity:{2}}}", source.ProductId, source.NameOrSku, source.Quantity );
+				return result;
+			}
+			catch( Exception )
+			{
+				return PredefinedValues.EmptyJsonObject;
+			}
+		}
+
+		public static string ToJson( this IEnumerable< Inventory > source )
+		{
+			try
+			{
+				var result = string.Format( "[{0}]", source.Select( x => x.ToJson() ) );
+				return result;
+			}
+			catch( Exception )
+			{
+				return PredefinedValues.EmptyJsonList;
+			}
+		}
+		#endregion
 
 		public static ReferenceType ToReferenceType( this Account account )
 		{

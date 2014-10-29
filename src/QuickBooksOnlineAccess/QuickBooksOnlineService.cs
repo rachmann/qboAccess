@@ -83,8 +83,12 @@ namespace QuickBooksOnlineAccess
 
 		public async Task< IEnumerable< Order > > GetOrdersAsync( DateTime dateFrom, DateTime dateTo )
 		{
+			var methodParameters = string.Format( "{{dateFrom:{0},dateTo:{1}}}", dateFrom, dateTo );
+			var mark = Guid.NewGuid().ToString();
 			try
 			{
+				QuickBooksOnlineLogger.LogTraceStarted( this.CreateMethodCallInfo( methodParameters, mark ) );
+
 				dateFrom = dateFrom.ToUniversalTime();
 				dateTo = dateTo.ToUniversalTime();
 
@@ -94,7 +98,11 @@ namespace QuickBooksOnlineAccess
 				var invoicesConverted = invoices.Invoices.ToQBOrder().ToList();
 				var salesReceiptsConverted = salesReceipts.Orders.ToQBOrder().ToList();
 
-				return invoicesConverted.Concat( salesReceiptsConverted );
+				var result = invoicesConverted.Concat( salesReceiptsConverted );
+
+				QuickBooksOnlineLogger.LogTraceEnded( this.CreateMethodCallInfo( methodParameters, mark, methodResult : result.ToJson() ) );
+
+				return result;
 			}
 			catch( Exception exception )
 			{
@@ -106,15 +114,24 @@ namespace QuickBooksOnlineAccess
 
 		public async Task< IEnumerable< Order > > GetOrdersAsync( params string[] docNumbers )
 		{
+			var methodParameters = string.Format( "{{docNumbers:{0}}}", docNumbers.ToJson() );
+			var mark = Guid.NewGuid().ToString();
+
 			try
 			{
+				QuickBooksOnlineLogger.LogTraceStarted( this.CreateMethodCallInfo( methodParameters, mark ) );
+
 				var invoices = await this._quickBooksOnlineServiceSdk.GetInvoices( docNumbers ).ConfigureAwait( false );
 				var salesReceipts = await this._quickBooksOnlineServiceSdk.GetSalesReceipt( docNumbers ).ConfigureAwait( false );
 
 				var invoicesConverted = invoices.Invoices.ToQBOrder().ToList();
 				var salesReceiptsConverted = salesReceipts.Orders.ToQBOrder().ToList();
 
-				return invoicesConverted.Concat( salesReceiptsConverted );
+				var result = invoicesConverted.Concat( salesReceiptsConverted );
+
+				QuickBooksOnlineLogger.LogTraceEnded( this.CreateMethodCallInfo( methodParameters, mark, methodResult : result.ToJson() ) );
+
+				return result;
 			}
 			catch( Exception exception )
 			{
@@ -156,10 +173,19 @@ namespace QuickBooksOnlineAccess
 
 		public async Task< IEnumerable< Product > > GetProductsAsync()
 		{
+			var methodParameters = string.Format( "{{{0}}}", PredefinedValues.NotAvailable );
+			var mark = Guid.NewGuid().ToString();
 			try
 			{
+				QuickBooksOnlineLogger.LogTraceStarted( this.CreateMethodCallInfo( methodParameters, mark ) );
+
 				var itemsResponse = await this._quickBooksOnlineServiceSdk.GetTrackingItems().ConfigureAwait( false );
-				return itemsResponse.Items.ToQBProduct();
+
+				var result = itemsResponse.Items.ToQBProduct();
+
+				QuickBooksOnlineLogger.LogTraceEnded( this.CreateMethodCallInfo( methodParameters, mark, methodResult : result.ToJson() ) );
+
+				return result;
 			}
 			catch( Exception exception )
 			{
@@ -171,12 +197,18 @@ namespace QuickBooksOnlineAccess
 
 		public async Task UpdateInventoryAsync( IEnumerable< Inventory > products )
 		{
+			var methodParameters = string.Format( "{{products:{0}}}", products.ToJson() );
+			var mark = Guid.NewGuid().ToString();
 			try
 			{
+				QuickBooksOnlineLogger.LogTraceStarted( this.CreateMethodCallInfo( methodParameters, mark ) );
+
 				if( products == null || !products.Any() )
 					return;
 
 				var response = await this._quickBooksOnlineServiceSdk.UpdateItemQuantityOnHand( products.ToQBInventoryItem().ToArray() ).ConfigureAwait( false );
+
+				QuickBooksOnlineLogger.LogTraceEnded( this.CreateMethodCallInfo( methodParameters, mark, methodResult : PredefinedValues.NotAvailable ) );
 			}
 			catch( Exception exception )
 			{
