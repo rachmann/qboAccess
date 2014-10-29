@@ -7,7 +7,7 @@ namespace QuickBooksOnlineAccess.Misc
 	{
 		public static ILogger Log()
 		{
-			return NetcoLogger.GetLogger( "QBOLogger" );
+			return NetcoLogger.GetLogger( "QuickBooksOnlineLogger" );
 		}
 
 		public static void LogTraceException( Exception exception )
