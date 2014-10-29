@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using NUnit.Framework;
 using QuickBooksOnlineAccess;
 using QuickBooksOnlineAccess.Models;
@@ -54,7 +54,7 @@ namespace QuickBooksOnlineAccessTestsIntegration
 			//A
 
 			//A
-			this._quickBooksService.UpdateInventoryAsync( new ArraySegment< Inventory >() ).Wait();
+			this._quickBooksService.UpdateInventoryAsync( new List< Inventory >() ).Wait();
 			//A
 		}
 	}

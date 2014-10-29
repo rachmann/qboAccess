@@ -173,6 +173,9 @@ namespace QuickBooksOnlineAccess
 		{
 			try
 			{
+				if( products == null || !products.Any() )
+					return;
+
 				var response = await this._quickBooksOnlineServiceSdk.UpdateItemQuantityOnHand( products.ToQBInventoryItem().ToArray() ).ConfigureAwait( false );
 			}
 			catch( Exception exception )
