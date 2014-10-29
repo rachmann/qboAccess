@@ -8,5 +8,6 @@
 		public string LineNum { get; set; }
 		public decimal Qty { get; set; }
 		public string Sku { get; set; }
+		public double UnitPrice { get; set; }
 	}
 }

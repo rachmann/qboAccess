@@ -20,5 +20,6 @@ namespace QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Get
 		public decimal Deposit { get; set; }
 		public string TrackingNum { get; set; }
 		public DateTime CreateTime { get; set; }
+		public decimal Balance { get; set; }
 	}
 }

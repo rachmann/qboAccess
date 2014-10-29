@@ -81,7 +81,8 @@ namespace QuickBooksOnlineAccess.Misc
 				Id = source.Id,
 				LineNum = source.LineNum,
 				Qty = source.Qty,
-				Sku = source.Sku
+				Sku = source.Sku,
+				UnitPrice = source.UnitPrice
 			};
 
 			return line;
@@ -96,7 +97,8 @@ namespace QuickBooksOnlineAccess.Misc
 				Id = source.Id,
 				LineNum = source.LineNum,
 				Qty = source.Qty,
-				Sku = source.Sku
+				Sku = source.Sku,
+				UnitPrice = source.UnitPrice
 			};
 
 			return line;
@@ -122,6 +124,7 @@ namespace QuickBooksOnlineAccess.Misc
 			{
 				OrderType = OrderType.Invoice,
 				OrderId = source.Id,
+				Balance = source.Balance,
 				Currency = source.Currency,
 				DocNumber = source.DocNumber,
 				ShipCity = source.ShipCity,
@@ -147,6 +150,7 @@ namespace QuickBooksOnlineAccess.Misc
 			{
 				OrderType = OrderType.SalesReceipt,
 				OrderId = source.Id,
+				Balance = source.Balance,
 				Currency = source.Currency,
 				DocNumber = source.DocNumber,
 				ShipCity = source.ShipCity,
@@ -278,6 +282,9 @@ namespace QuickBooksOnlineAccess.Misc
 				Qty = ineDetail.Qty,
 				Sku = ineDetail.ItemRef.name,
 			};
+
+			if( ineDetail.ItemElementName == ItemChoiceType.UnitPrice && ( ineDetail.AnyIntuitObject is double ) )
+				qbAccessLine.UnitPrice = ( double )ineDetail.AnyIntuitObject;
 			return qbAccessLine;
 		}
 
@@ -293,6 +300,10 @@ namespace QuickBooksOnlineAccess.Misc
 				Qty = ineDetail.Qty,
 				Sku = ineDetail.ItemRef.name,
 			};
+
+			if( ineDetail.ItemElementName == ItemChoiceType.UnitPrice && ( ineDetail.AnyIntuitObject is double ) )
+				qbAccessLine.UnitPrice = ( double )ineDetail.AnyIntuitObject;
+
 			return qbAccessLine;
 		}
 
@@ -345,6 +356,7 @@ namespace QuickBooksOnlineAccess.Misc
 			{
 				Id = invoice.Id,
 				DocNumber = invoice.DocNumber,
+				Balance = invoice.Balance,
 				Currency = invoice.CurrencyRef != null ? invoice.CurrencyRef.Value : PredefinedValues.NotAvailable,
 				TotalAmt = invoice.TotalAmt,
 				SyncToken = invoice.SyncToken,
