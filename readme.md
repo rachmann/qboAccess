@@ -1,0 +1,1 @@
+QuickBooksOnlineAccess is .NET wrapper around [QuickBooksOnline API](https://developer.intuit.com/apiexplorer?apiname=V3QBO) was created to simplify and speed up working with it.
