@@ -1,7 +1,6 @@
 ﻿using System.Web.Mvc;
 using DevDefined.OAuth.Consumer;
 using DevDefined.OAuth.Framework;
-using Intuit.Ipp.Core;
 using QuickBooksOnlineAccess.Models;
 
 namespace QuickBooksOnlineAccessAuthExample.Controllers
@@ -47,7 +46,7 @@ namespace QuickBooksOnlineAccessAuthExample.Controllers
 			quickBooksAuthenticatedUserCredentials.RealmId = this.Request.QueryString[ "realmId" ].ToString();
 
 			var dataSourceStr = this.Request.QueryString[ "dataSource" ].ToString();
-			var qbDataSource = QuickBooksOnlineNonAuthenticatedUserCredentials.ParseQBDataSource(dataSourceStr);
+			var qbDataSource = QuickBooksOnlineNonAuthenticatedUserCredentials.ParseQBDataSource( dataSourceStr );
 
 			var consumerContext = new OAuthConsumerContext
 			{

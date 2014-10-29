@@ -42,9 +42,9 @@ namespace QuickBooksOnlineAccess.Services
 		private readonly QueryService< SalesReceipt > _queryServiceSalesReceipt;
 		private readonly QueryService< Invoice > _queryServiceInvoice;
 
-		public ConsumerProfile ConsumerProfile{ get; set; }
+		public ConsumerProfile ConsumerProfile { get; set; }
 
-		public RestProfile RestProfile{ get; set; }
+		public RestProfile RestProfile { get; set; }
 
 		public QuickBooksOnlineServiceSdk( RestProfile restProfile, ConsumerProfile consumerProfile )
 		{
@@ -180,7 +180,7 @@ namespace QuickBooksOnlineAccess.Services
 		{
 			return await Task.Factory.StartNew( () =>
 			{
-				if (orders == null || orders.Length == 0)
+				if( orders == null || orders.Length == 0 )
 					return new CreateOrdersResponse();
 
 				throw new Exception();

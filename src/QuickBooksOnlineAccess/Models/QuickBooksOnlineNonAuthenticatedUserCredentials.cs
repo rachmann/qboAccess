@@ -53,22 +53,22 @@ namespace QuickBooksOnlineAccess.Models
 		public string GetAccessTokenUrl { get; private set; }
 		public string AuthorizeUrl { get; private set; }
 
-		public static int ParseQBDataSource(string str)
+		public static int ParseQBDataSource( string str )
 		{
 			int res;
-			switch (str.ToLower())
+			switch( str.ToLower() )
 			{
 				case "qbo":
-					res = (int)IntuitServicesType.QBO;
+					res = ( int )IntuitServicesType.QBO;
 					break;
 				case "qbd":
-					res = (int)IntuitServicesType.QBD;
+					res = ( int )IntuitServicesType.QBD;
 					break;
 				case "ips":
-					res = (int)IntuitServicesType.IPS;
+					res = ( int )IntuitServicesType.IPS;
 					break;
 				default:
-					res = (int)IntuitServicesType.None;
+					res = ( int )IntuitServicesType.None;
 					break;
 			}
 
