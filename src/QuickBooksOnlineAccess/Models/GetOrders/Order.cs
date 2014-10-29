@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using QuickBooksOnlineAccess.Misc;
 
 namespace QuickBooksOnlineAccess.Models.GetOrders
 {
@@ -15,6 +16,7 @@ namespace QuickBooksOnlineAccess.Models.GetOrders
 		public string ShipPostalCode { get; set; }
 		public string ShipPostalCodeSuffix { get; set; }
 		public decimal Deposit { get; set; }
+		public decimal Balance { get; set; }
 		public string TrackingNum { get; set; }
 		public string SyncToken { get; set; }
 		public DateTime ShipDate { get; set; }
@@ -27,12 +29,39 @@ namespace QuickBooksOnlineAccess.Models.GetOrders
 			//todo: implement
 			return OrderStatus.Unknown;
 		}
+
+		public OrderPaymentStatus GetOrderPaymentStatus()
+		{
+			if( this.OrderType == OrderType.Invoice )
+			{
+				if( this.Balance < PredefinedValues.Eps )
+					return OrderPaymentStatus.FullyPaid;
+				if( this.TotalAmt - this.Balance < PredefinedValues.Eps )
+					return OrderPaymentStatus.Unpaid;
+				if( this.Balance > PredefinedValues.Eps )
+					return OrderPaymentStatus.PartiallyPaid;
+				return OrderPaymentStatus.Unknown;
+			}
+
+			if( this.OrderType == OrderType.SalesReceipt )
+				return OrderPaymentStatus.FullyPaid;
+
+			return OrderPaymentStatus.Unknown;
+		}
 	}
 
 	public enum OrderStatus
 	{
 		Unknown,
 		Paid
+	}
+
+	public enum OrderPaymentStatus
+	{
+		Unknown,
+		FullyPaid,
+		Unpaid,
+		PartiallyPaid,
 	}
 
 	public enum OrderType
