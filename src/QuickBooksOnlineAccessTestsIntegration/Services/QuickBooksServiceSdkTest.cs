@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using Intuit.Ipp.Data;
@@ -133,7 +134,43 @@ namespace QuickBooksOnlineAccessTestsIntegration.Services
 			getSalesReceiptsResponse.Orders.Count().Should().BeGreaterThan( 0 );
 		}
 
-		[Test]
+		[ Test ]
+		public void GetInvoices_GettingByIdsServiceContainsInvoices_InvoicesReceived()
+		{
+			//A
+			var invoicesTask = this._quickBooksOnlineServiceSdk.GetInvoices( DateTime.Now.AddMonths( -1 ), DateTime.Now );
+			invoicesTask.Wait();
+
+			var realInvoicesIds = invoicesTask.Result.Invoices.Select( x => x.DocNumber ).ToList();
+			var fakeInvoices = new List< string >() { "1000" };
+
+			//A
+			var filteredInvoicesTask = this._quickBooksOnlineServiceSdk.GetInvoices( realInvoicesIds.Concat( fakeInvoices ).ToArray() );
+			var filteredInvoicesResponse = filteredInvoicesTask.Result;
+
+			//A
+			realInvoicesIds.Count.Should().BeGreaterThan( 0 );
+			filteredInvoicesResponse.Invoices.Count.Should().Be( realInvoicesIds.Count );
+		}
+
+		[ Test ]
+		public void GetSalesReceipts_GettingByIdsServiceContainsSalesReceipt_SalesReceiptReceived()
+		{
+			//A
+			var getAllSalesReceiptsResponseTask = this._quickBooksOnlineServiceSdk.GetSalesReceipt( DateTime.Now.AddMonths( -1 ), DateTime.Now );
+			var realReceiptsIds = getAllSalesReceiptsResponseTask.Result.Orders.Select( x => x.DocNumber ).ToList();
+			var fakeIds = new List< string >() { "1000" };
+
+			//A
+			var getSalesReceiptsResponseTask = this._quickBooksOnlineServiceSdk.GetSalesReceipt( realReceiptsIds.Concat( fakeIds ).ToArray() );
+			var getSalesReceiptsResponse = getSalesReceiptsResponseTask.Result;
+
+			//A
+			realReceiptsIds.Count.Should().BeGreaterThan( 0 );
+			getSalesReceiptsResponse.Orders.Count().Should().Be( realReceiptsIds.Count );
+		}
+
+		[ Test ]
 		public void GetTrackingItems_ServiceContainsTrackingItems_ItemsReceived()
 		{
 			//A
@@ -143,7 +180,7 @@ namespace QuickBooksOnlineAccessTestsIntegration.Services
 			var getSalesReceiptsResponse = getSalesReceiptsResponseTask.Result;
 
 			//A
-			getSalesReceiptsResponse.Items.Count().Should().BeGreaterThan(0);
+			getSalesReceiptsResponse.Items.Count().Should().BeGreaterThan( 0 );
 		}
 
 		[ Test ]

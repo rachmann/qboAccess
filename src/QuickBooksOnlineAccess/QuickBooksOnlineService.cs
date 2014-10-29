@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Intuit.Ipp.Core;
 using QuickBooksOnlineAccess.Misc;
 using QuickBooksOnlineAccess.Models;
 using QuickBooksOnlineAccess.Models.GetOrders;
@@ -91,6 +90,26 @@ namespace QuickBooksOnlineAccess
 
 				var invoices = await this._quickBooksOnlineServiceSdk.GetInvoices( dateFrom, dateTo ).ConfigureAwait( false );
 				var salesReceipts = await this._quickBooksOnlineServiceSdk.GetSalesReceipt( dateFrom, dateTo ).ConfigureAwait( false );
+
+				var invoicesConverted = invoices.Invoices.ToQBOrder().ToList();
+				var salesReceiptsConverted = salesReceipts.Orders.ToQBOrder().ToList();
+
+				return invoicesConverted.Concat( salesReceiptsConverted );
+			}
+			catch( Exception exception )
+			{
+				var quickBooksException = new QuickBooksOnlineException( this.CreateMethodCallInfo(), exception );
+				QuickBooksOnlineLogger.LogTraceException( quickBooksException );
+				throw quickBooksException;
+			}
+		}
+
+		public async Task< IEnumerable< Order > > GetOrdersAsync( params string[] docNumbers )
+		{
+			try
+			{
+				var invoices = await this._quickBooksOnlineServiceSdk.GetInvoices( docNumbers ).ConfigureAwait( false );
+				var salesReceipts = await this._quickBooksOnlineServiceSdk.GetSalesReceipt( docNumbers ).ConfigureAwait( false );
 
 				var invoicesConverted = invoices.Invoices.ToQBOrder().ToList();
 				var salesReceiptsConverted = salesReceipts.Orders.ToQBOrder().ToList();

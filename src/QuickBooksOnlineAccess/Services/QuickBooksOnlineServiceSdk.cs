@@ -176,6 +176,45 @@ namespace QuickBooksOnlineAccess.Services
 			} ).ConfigureAwait( false );
 		}
 
+		public async Task< GetSalesReceiptsResponse > GetSalesReceipt( params string[] docNumbers )
+		{
+			var itemsQuery = string.Format( "Select * FROM SalesReceipt WHERE DocNumber IN ({0})", string.Join( ",", docNumbers.Select( x => "'" + x + "'" ) ) );
+
+			return await Task.Factory.StartNew( () =>
+			{
+				var itemsQueryBatch = this._dataService.CreateNewBatch();
+				itemsQueryBatch.Add( itemsQuery, "bID1" );
+				itemsQueryBatch.Execute();
+				var queryResponse = itemsQueryBatch[ "bID1" ];
+				var items = queryResponse.Entities.Cast< SalesReceipt >().ToList();
+				var itemsConvertedToQbAccessItems = items.Select( x => x.ToQBSalesReceipt() ).ToList();
+				return new GetSalesReceiptsResponse( itemsConvertedToQbAccessItems );
+
+				//var salesReceipts = this._queryServiceSalesReceipt.Where( x => x.DocNumber.In( docNumbers ) ).ToList();
+				//return new GetSalesReceiptsResponse( salesReceipts.Select( x => x.ToQBSalesReceipt() ) );
+			} ).ConfigureAwait( false );
+		}
+
+		public async Task< GetInvoicesResponse > GetInvoices( params string[] docNumbers )
+		{
+			var itemsQuery = string.Format( "Select * FROM Invoice WHERE DocNumber IN ({0})", string.Join( ",", docNumbers.Select( x => "'" + x + "'" ) ) );
+
+			return await Task.Factory.StartNew( () =>
+			{
+				var itemsQueryBatch = this._dataService.CreateNewBatch();
+				itemsQueryBatch.Add( itemsQuery, "bID1" );
+				itemsQueryBatch.Execute();
+				var queryResponse = itemsQueryBatch[ "bID1" ];
+				var items = queryResponse.Entities.Cast< Invoice >().ToList();
+				var itemsConvertedToQbAccessItems = items.Select( x => x.ToQBAccessInvoice() ).ToList();
+				return new GetInvoicesResponse( itemsConvertedToQbAccessItems );
+
+				//var invoices = this._queryServiceInvoice.Where( x => x.DocNumber.In( docNumbers ) ).ToList();
+				//var invoicesConverted = invoices.Select( x => x.ToQBAccessInvoice() ).ToList();
+				//return new GetInvoicesResponse( invoicesConverted );
+			} ).ConfigureAwait( false );
+		}
+
 		public async Task< CreateOrdersResponse > CreateOrders( params SalesOrder[] orders )
 		{
 			return await Task.Factory.StartNew( () =>
