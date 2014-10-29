@@ -45,7 +45,7 @@ namespace QuickBooksOnlineAccess.Misc
 			try
 			{
 				var enumerable = source as IList< string > ?? source.ToList();
-				var strSerialized = string.Format( "[\"{0}\"]", string.Join( ",", enumerable ) );
+				var strSerialized = string.Format( "[{0}]", string.Join( ",", "\"" + enumerable + "\"" ) );
 				var res = string.Format( "{{Count:{0}, Items:[{1}]}}", enumerable.Count(), strSerialized );
 				return res;
 			}

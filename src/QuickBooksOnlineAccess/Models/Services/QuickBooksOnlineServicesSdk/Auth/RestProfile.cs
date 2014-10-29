@@ -49,7 +49,7 @@
 		public string ToJson()
 		{
 			var str = string.Format(
-				"{{AppToken:{0},DataSource{1},OAuthAccessToken{2},OAuthAccessTokenSecret{3},RealmId{4}}}",
+				"{{AppToken:{0},DataSource:{1},OAuthAccessToken:{2},OAuthAccessTokenSecret:{3},RealmId:{4}}}",
 				this.AppToken,
 				this.DataSource,
 				this.OAuthAccessToken,
