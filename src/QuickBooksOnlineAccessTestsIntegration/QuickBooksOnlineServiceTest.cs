@@ -1,4 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using FluentAssertions;
+using Netco.Logging;
+using Netco.Logging.NLogIntegration;
 using NUnit.Framework;
 using QuickBooksOnlineAccess;
 using QuickBooksOnlineAccess.Models;
@@ -24,6 +29,7 @@ namespace QuickBooksOnlineAccessTestsIntegration
 		public void TestFixtureSetup()
 		{
 			this._testDataReader = new TestDataReader( @"..\..\Files\quickBooksOnline_consumerprofile.csv", @"..\..\Files\quickBooksOnline_restprofile.csv" );
+			NetcoLogger.LoggerFactory = new NLogLoggerFactory();
 		}
 
 		[ SetUp ]
@@ -52,10 +58,21 @@ namespace QuickBooksOnlineAccessTestsIntegration
 		public void test()
 		{
 			//A
+			var invoicesTask = this._quickBooksService.GetOrdersAsync(DateTime.Now.AddMonths(-1), DateTime.Now);
+			invoicesTask.Wait();
+
+			var realInvoicesIds = invoicesTask.Result.Select(x => x.DocNumber).ToList();
+			var fakeInvoices = new List<string>() { "1000" };
 
 			//A
-			this._quickBooksService.UpdateInventoryAsync( new List< Inventory >() ).Wait();
+			var filteredInvoicesTask = this._quickBooksService.GetOrdersAsync(realInvoicesIds.Concat(fakeInvoices).ToArray());
+			var filteredInvoicesResponse = filteredInvoicesTask.Result;
+
 			//A
+			realInvoicesIds.Count.Should().BeGreaterThan(0);
+			filteredInvoicesResponse.Count().Should().Be(realInvoicesIds.Count);
 		}
+
+
 	}
 }
