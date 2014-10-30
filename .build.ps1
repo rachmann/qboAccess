@@ -89,7 +89,7 @@ task NuGet Package, Version, {
 			<group targetFramework="net45">
 				<dependency id="Netco" version="1.4.3" />
 				<dependency id="CuttingEdge.Conditions" version="1.2.0.0" />
-				<dependency id="DotNetOpenAuth.OAuth.Consumer" version="4.3.4.13329" />
+				<dependency id="IppDotNetSdkForQuickBooksApiV3" version="2.1.1" />
 			</group>
 		</dependencies>
 	</metadata>
