@@ -62,15 +62,15 @@ namespace QuickBooksOnlineAccessAuthExample.Controllers
 
 			try
 			{
-				var accessToken = clientSession.ExchangeRequestTokenForAccessToken( ( IToken )this.Session[ "requestToken" ], oauthVerifyer );
+				var requestToken = ( IToken )System.Web.HttpContext.Current.Session[ "requestToken" ];
+				var accessToken = clientSession.ExchangeRequestTokenForAccessToken( requestToken, oauthVerifyer );
 				quickBooksAuthenticatedUserCredentials.OAuthAccessToken = accessToken.Token;
 				quickBooksAuthenticatedUserCredentials.OAuthAccessTokenSecret = accessToken.TokenSecret;
 			}
 			catch
 			{
 			}
-
-			return "Success";
+			return "Success." + string.Format( "AccessToken: {0}, AccessTokenSecret: {1}, RealmId: {2}", quickBooksAuthenticatedUserCredentials.OAuthAccessToken, quickBooksAuthenticatedUserCredentials.OAuthAccessTokenSecret, quickBooksAuthenticatedUserCredentials.RealmId );
 		}
 
 		protected IOAuthSession CreateSession( string consumerKey, string consumerSecret, string oauthEndpoint )
