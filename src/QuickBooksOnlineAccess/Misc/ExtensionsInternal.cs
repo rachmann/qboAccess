@@ -8,7 +8,9 @@ using System.Xml;
 using Intuit.Ipp.Data;
 using QuickBooksOnlineAccess.Models.GetOrders;
 using QuickBooksOnlineAccess.Models.GetProducts;
+using QuickBooksOnlineAccess.Models.GetPurchaseOrders;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetInvoices;
+using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetSalesReceipts;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.UpdateItemQuantityOnHand;
 using QuickBooksOnlineAccess.Models.UpdateInventory;
@@ -75,6 +77,11 @@ namespace QuickBooksOnlineAccess.Misc
 		{
 			var qbPurchaseOrder = new PurchaseOrder
 			{
+				DocNumber = purchaseOrder.DocNumber,
+				PoStatus = purchaseOrder.PoStatus.ToQBPurchaseOrderStatusEnum(),
+				VendorName = purchaseOrder.VendorName,
+				VendorId = purchaseOrder.VendorId,
+				LineItems = purchaseOrder.LineItems.ToQBPurchaseOrderLineItem(),
 			};
 
 			return qbPurchaseOrder;
@@ -193,6 +200,40 @@ namespace QuickBooksOnlineAccess.Misc
 		#endregion
 
 		#region FromIQuickBooksOnlineServiceInternal
+		public static PoStatusEnum ToQBPurchaseOrderStatusEnum( this QBPurchaseOrderStatusEnum purchaseOrder )
+		{
+			switch( purchaseOrder )
+			{
+				case QBPurchaseOrderStatusEnum.Open:
+					return PoStatusEnum.Open;
+				case QBPurchaseOrderStatusEnum.Closed:
+					return PoStatusEnum.Closed;
+				default:
+					return PoStatusEnum.Unknown;
+			}
+		}
+
+		public static OrderLineItem ToQBPurchaseOrderLineItem( this PurchaseOrdeLineItem purchaseOrder )
+		{
+			var orderLineItem = new OrderLineItem
+			{
+				Amount = purchaseOrder.Amount,
+				Qty = purchaseOrder.Qty,
+				Id = purchaseOrder.Id,
+				LineNum = purchaseOrder.LineNum,
+			};
+			return orderLineItem;
+		}
+
+		public static IEnumerable< OrderLineItem > ToQBPurchaseOrderLineItem( this IEnumerable< PurchaseOrdeLineItem > purchaseOrder )
+		{
+			var purchaseOrdeLineItems = purchaseOrder as IList< PurchaseOrdeLineItem > ?? purchaseOrder.ToList();
+			if( purchaseOrder == null || !purchaseOrdeLineItems.Any() )
+				return Enumerable.Empty< OrderLineItem >();
+
+			return purchaseOrdeLineItems.Select( x => x.ToQBPurchaseOrderLineItem() );
+		}
+
 		public static IEnumerable< PurchaseOrder > ToQBPurchaseOrder( this IEnumerable< Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders.PurchaseOrder > purchaseOrder )
 		{
 			if( purchaseOrder == null )
@@ -322,10 +363,42 @@ namespace QuickBooksOnlineAccess.Misc
 			return qbAccessLine;
 		}
 
+		public static PurchaseOrdeLineItem ToQBServicePurchaseOrderLineItem( this Intuit.Ipp.Data.Line line )
+		{
+			var ordeLineItem = new PurchaseOrdeLineItem
+			{
+				Amount = line.Amount,
+				Id = line.Id,
+				LineNum = line.LineNum,
+			};
+
+			return ordeLineItem;
+		}
+
+		public static QBPurchaseOrderStatusEnum ToQBServicePurchaseOrderStatusEnum( this PurchaseOrderStatusEnum orderStatusEnum )
+		{
+			switch( orderStatusEnum )
+			{
+				case PurchaseOrderStatusEnum.Open:
+					return QBPurchaseOrderStatusEnum.Open;
+				case PurchaseOrderStatusEnum.Closed:
+					return QBPurchaseOrderStatusEnum.Closed;
+				default:
+					return QBPurchaseOrderStatusEnum.Unknown;
+			}
+		}
+
 		public static Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders.PurchaseOrder ToQBServicePurchaseOrder( this Intuit.Ipp.Data.PurchaseOrder purchaseOrder )
 		{
 			var qbPurchaseOrder = new Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders.PurchaseOrder
 			{
+				DocNumber = purchaseOrder.DocNumber,
+				TnxDate = purchaseOrder.TxnDate,
+				LineItems = purchaseOrder.Line.ToList().Select( x => x.ToQBServicePurchaseOrderLineItem() ).ToList(),
+				SyncToken = purchaseOrder.SyncToken,
+				VendorName = purchaseOrder.VendorRef.Value,
+				VendorId = purchaseOrder.VendorRef.name,
+				PoStatus = purchaseOrder.POStatus.ToQBServicePurchaseOrderStatusEnum()
 			};
 
 			return qbPurchaseOrder;

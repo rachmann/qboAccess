@@ -117,6 +117,7 @@
     <Compile Include="Misc\ExtensionsPublic.cs" />
     <Compile Include="Misc\IManualSerializable.cs" />
     <Compile Include="Models\GetOrders\OrderLine.cs" />
+    <Compile Include="Models\GetPurchaseOrders\OrderLineItem.cs" />
     <Compile Include="Models\GetPurchaseOrders\PurchaseOrder.cs" />
     <Compile Include="Models\QuickBooksOnlineNonAuthenticatedUserCredentials.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\Auth\ConsumerProfile.cs" />
@@ -133,6 +134,7 @@
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\GetPayments\GetPaymentsResponse.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\GetPayments\Line.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\GetPayments\Payment.cs" />
+    <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\GetPurchaseOrders\PurchaseOrdeLineItem.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\GetPurchaseOrders\PurchaseOrder.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\GetSalesReceipts\GetSalesReceiptsResponse.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\GetPurchaseOrders\GetPurchaseOrdersResponse.cs" />
