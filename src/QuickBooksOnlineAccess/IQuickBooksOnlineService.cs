@@ -24,6 +24,7 @@ namespace QuickBooksOnlineAccess
 		Task< PingInfo > Ping();
 
 		Func< string > AdditionalLogInfo { get; set; }
+
 		Task< IEnumerable< Order > > GetOrdersAsync( params string[] docNumbers );
 	}
 }

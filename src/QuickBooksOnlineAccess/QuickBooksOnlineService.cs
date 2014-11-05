@@ -156,21 +156,6 @@ namespace QuickBooksOnlineAccess
 			}
 		}
 
-		public async Task< IEnumerable< Product > > GetProductsSimpleAsync()
-		{
-			try
-			{
-				//todo: replace me
-				throw new NotImplementedException();
-			}
-			catch( Exception exception )
-			{
-				var quickBooksException = new QuickBooksOnlineException( this.CreateMethodCallInfo(), exception );
-				QuickBooksOnlineLogger.LogTraceException( quickBooksException );
-				throw quickBooksException;
-			}
-		}
-
 		public async Task< IEnumerable< Product > > GetProductsAsync()
 		{
 			var methodParameters = string.Format( "{{{0}}}", PredefinedValues.NotAvailable );

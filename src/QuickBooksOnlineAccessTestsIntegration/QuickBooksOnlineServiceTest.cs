@@ -8,7 +8,6 @@ using NUnit.Framework;
 using QuickBooksOnlineAccess;
 using QuickBooksOnlineAccess.Models;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Auth;
-using QuickBooksOnlineAccess.Models.UpdateInventory;
 using QuickBooksOnlineAccess.Services;
 using QuickBooksOnlineAccessTestsIntegration.TestEnvironment;
 
@@ -58,21 +57,19 @@ namespace QuickBooksOnlineAccessTestsIntegration
 		public void test()
 		{
 			//A
-			var invoicesTask = this._quickBooksService.GetOrdersAsync(DateTime.Now.AddMonths(-1), DateTime.Now);
+			var invoicesTask = this._quickBooksService.GetOrdersAsync( DateTime.Now.AddMonths( -1 ), DateTime.Now );
 			invoicesTask.Wait();
 
-			var realInvoicesIds = invoicesTask.Result.Select(x => x.DocNumber).ToList();
-			var fakeInvoices = new List<string>() { "1000" };
+			var realInvoicesIds = invoicesTask.Result.Select( x => x.DocNumber ).ToList();
+			var fakeInvoices = new List< string >() { "1000" };
 
 			//A
-			var filteredInvoicesTask = this._quickBooksService.GetOrdersAsync(realInvoicesIds.Concat(fakeInvoices).ToArray());
+			var filteredInvoicesTask = this._quickBooksService.GetOrdersAsync( realInvoicesIds.Concat( fakeInvoices ).ToArray() );
 			var filteredInvoicesResponse = filteredInvoicesTask.Result;
 
 			//A
-			realInvoicesIds.Count.Should().BeGreaterThan(0);
-			filteredInvoicesResponse.Count().Should().Be(realInvoicesIds.Count);
+			realInvoicesIds.Count.Should().BeGreaterThan( 0 );
+			filteredInvoicesResponse.Count().Should().Be( realInvoicesIds.Count );
 		}
-
-
 	}
 }
