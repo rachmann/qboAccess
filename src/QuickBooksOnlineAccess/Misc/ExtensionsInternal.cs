@@ -219,8 +219,10 @@ namespace QuickBooksOnlineAccess.Misc
 			{
 				Amount = purchaseOrder.Amount,
 				Qty = purchaseOrder.Qty,
+				Rate = purchaseOrder.Rate,
 				Id = purchaseOrder.Id,
 				LineNum = purchaseOrder.LineNum,
+				ItemName = purchaseOrder.ItemName,
 			};
 			return orderLineItem;
 		}
@@ -372,6 +374,14 @@ namespace QuickBooksOnlineAccess.Misc
 				LineNum = line.LineNum,
 			};
 
+			var intuitObj = line.AnyIntuitObject as ItemBasedExpenseLineDetail;
+
+			if( intuitObj != null )
+			{
+				ordeLineItem.Qty = intuitObj.Qty;
+				ordeLineItem.ItemName = intuitObj.ItemRef.name;
+			}
+
 			return ordeLineItem;
 		}
 
@@ -396,8 +406,8 @@ namespace QuickBooksOnlineAccess.Misc
 				TnxDate = purchaseOrder.TxnDate,
 				LineItems = purchaseOrder.Line.ToList().Select( x => x.ToQBServicePurchaseOrderLineItem() ).ToList(),
 				SyncToken = purchaseOrder.SyncToken,
-				VendorName = purchaseOrder.VendorRef.Value,
-				VendorId = purchaseOrder.VendorRef.name,
+				VendorName = purchaseOrder.VendorRef.name,
+				VendorId = purchaseOrder.VendorRef.Value,
 				PoStatus = purchaseOrder.POStatus.ToQBServicePurchaseOrderStatusEnum()
 			};
 

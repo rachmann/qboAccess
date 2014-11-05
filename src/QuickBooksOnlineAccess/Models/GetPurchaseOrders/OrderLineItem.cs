@@ -7,5 +7,6 @@
 		public decimal Amount { get; set; }
 		public string ItemName { get; set; }
 		public string LineNum { get; set; }
+		public decimal Rate { get; set; }
 	}
 }
