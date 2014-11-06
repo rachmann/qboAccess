@@ -130,7 +130,7 @@ namespace QuickBooksOnlineAccess.Services
 
 		public async Task< GetPurchaseOrdersResponse > GetPurchseOrders( DateTime from, DateTime to )
 		{
-			var itemsQuery = string.Format( "Select * FROM PurchaseOrder  WHERE MetaData.CreateTime >= '{0}' && MetaData.CreateTime <= '{1}'", from.ToStringUtcIso8601(), to.ToStringUtcIso8601() );
+			var itemsQuery = string.Format("Select * FROM PurchaseOrder  WHERE MetaData.LastUpdatedTime >= '{0}' && MetaData.LastUpdatedTime <= '{1}'", from.ToStringUtcIso8601(), to.ToStringUtcIso8601());
 
 			return await Task.Factory.StartNew( () =>
 			{
