@@ -130,12 +130,25 @@ namespace QuickBooksOnlineAccess.Services
 
 		public async Task< GetPurchaseOrdersResponse > GetPurchseOrders( DateTime from, DateTime to )
 		{
+			var itemsQuery = string.Format( "Select * FROM PurchaseOrder  WHERE MetaData.CreateTime >= '{0}' && MetaData.CreateTime <= '{1}'", from.ToStringUtcIso8601(), to.ToStringUtcIso8601() );
+
 			return await Task.Factory.StartNew( () =>
 			{
-				var purchaseOrdersFilteredFrom = this._queryServicePurchaseOrder.Where( x => x.MetaData.CreateTime >= from ).ToList();
-				var purchaseOrdersFilteredFromAndTo = purchaseOrdersFilteredFrom.Where( x => x.MetaData.CreateTime <= to ).ToList();
-				return new GetPurchaseOrdersResponse( purchaseOrdersFilteredFromAndTo.Select( x => x.ToQBServicePurchaseOrder() ) );
+				var itemsQueryBatch = this._dataService.CreateNewBatch();
+				itemsQueryBatch.Add( itemsQuery, "bID1" );
+				itemsQueryBatch.Execute();
+				var queryResponse = itemsQueryBatch[ "bID1" ];
+				var items = queryResponse.Entities.Cast< PurchaseOrder >().ToList();
+				var itemsConvertedToQbAccessItems = items.Select( x => x.ToQBServicePurchaseOrder() ).ToList();
+				return new GetPurchaseOrdersResponse( itemsConvertedToQbAccessItems );
 			} ).ConfigureAwait( false );
+
+			//return await Task.Factory.StartNew( () =>
+			//{
+			//	var purchaseOrdersFilteredFrom = this._queryServicePurchaseOrder.Where( x => x.MetaData.LastUpdatedTime >= from ).ToList();
+			//	var purchaseOrdersFilteredFromAndTo = purchaseOrdersFilteredFrom.Where( x => x.MetaData.LastUpdatedTime <= to ).ToList();
+			//	return new GetPurchaseOrdersResponse( purchaseOrdersFilteredFromAndTo.Select( x => x.ToQBServicePurchaseOrder() ) );
+			//} ).ConfigureAwait( false );
 		}
 
 		public async Task< CreatePurchaseOrdersResponse > CreatePurchaseOrders( params PurchaseOrder[] purchaseOrders )
