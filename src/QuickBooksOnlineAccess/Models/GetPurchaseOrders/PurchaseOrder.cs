@@ -10,12 +10,12 @@ namespace QuickBooksOnlineAccess.Models.GetPurchaseOrders
 		{
 			try
 			{
-				var res = String.Format( "{{}}" );
+				var res = String.Format( "{{DocNumber:{0}, VendorId:{1}, TnxDate:{2}, PoStatus:{3}, LineItems:{4}}}", this.DocNumber, this.VendorId, this.TnxDate, this.PoStatus, this.LineItems.ToJson() );
 				return res;
 			}
 			catch
 			{
-				return PredefinedValues.EmptyJsonList;
+				return PredefinedValues.EmptyJsonObject;
 			}
 		}
 
