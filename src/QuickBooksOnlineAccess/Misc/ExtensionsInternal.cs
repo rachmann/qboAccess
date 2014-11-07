@@ -73,19 +73,6 @@ namespace QuickBooksOnlineAccess.Misc
 			return referenceType;
 		}
 
-		public static PurchaseOrder ToQBPurchaseOrder( this Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders.PurchaseOrder purchaseOrder )
-		{
-			var qbPurchaseOrder = new PurchaseOrder
-			{
-				DocNumber = purchaseOrder.DocNumber,
-				PoStatus = purchaseOrder.PoStatus.ToQBPurchaseOrderStatusEnum(),
-				VendorName = purchaseOrder.VendorName,
-				VendorId = purchaseOrder.VendorId,
-				LineItems = purchaseOrder.LineItems.ToQBPurchaseOrderLineItem(),
-			};
-
-			return qbPurchaseOrder;
-		}
 
 		#region ToQBOrder
 		public static IEnumerable< Order > ToQBOrder( this IEnumerable< Invoice > source )
@@ -199,7 +186,22 @@ namespace QuickBooksOnlineAccess.Misc
 		}
 		#endregion
 
-		#region FromIQuickBooksOnlineServiceInternal
+		#region FromIQuickBooksOnlineServiceInternal		
+		public static PurchaseOrder ToQBPurchaseOrder( this Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders.PurchaseOrder purchaseOrder )
+		{
+			var qbPurchaseOrder = new PurchaseOrder
+			{
+				DocNumber = purchaseOrder.DocNumber,
+				PoStatus = purchaseOrder.PoStatus.ToQBPurchaseOrderStatusEnum(),
+				VendorName = purchaseOrder.VendorName,
+				VendorId = purchaseOrder.VendorId,
+				TnxDate = purchaseOrder.TnxDate,
+				LineItems = purchaseOrder.LineItems.ToQBPurchaseOrderLineItem(),
+			};
+
+			return qbPurchaseOrder;
+		}
+
 		public static PoStatusEnum ToQBPurchaseOrderStatusEnum( this QBPurchaseOrderStatusEnum purchaseOrder )
 		{
 			switch( purchaseOrder )
