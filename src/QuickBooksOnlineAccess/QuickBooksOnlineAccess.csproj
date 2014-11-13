@@ -142,7 +142,10 @@
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\GetSalesReceipts\SalesReceipt.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\UpdateItemQuantityOnHand\InventoryItem.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\UpdateItemQuantityOnHand\UpdateItemQuantityOnHandResponse.cs" />
+    <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\UpdatePurchaseOrders\QBInternalPurchaseOrdeLineItem.cs" />
     <Compile Include="Models\UpdateInventory\Inventory.cs" />
+    <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\UpdatePurchaseOrders\PurchaseOrder.cs" />
+    <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\UpdatePurchaseOrders\UpdatePurchaseOrdersResponse.cs" />
     <Compile Include="QuickBooksOnlineException.cs" />
     <Compile Include="QuickBooksOnlineAuthException.cs" />
     <Compile Include="QuickBooksOnlineFactory.cs" />

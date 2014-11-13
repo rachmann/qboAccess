@@ -10,7 +10,7 @@ namespace QuickBooksOnlineAccess.Models.GetPurchaseOrders
 		{
 			try
 			{
-				var res = String.Format( "{{DocNumber:{0}, VendorId:{1}, TnxDate:{2}, PoStatus:{3}, LineItems:{4}}}", this.DocNumber, this.VendorId, this.TnxDate, this.PoStatus, this.LineItems.ToJson() );
+				var res = String.Format( "{{DocNumber:{0}, VendorId:{1}, TnxDate:{2}, PoStatus:{3}, LineItems:{4}}}", this.DocNumber, this.VendorValue, this.TnxDate, this.PoStatus, this.LineItems.ToJson() );
 				return res;
 			}
 			catch
@@ -24,7 +24,7 @@ namespace QuickBooksOnlineAccess.Models.GetPurchaseOrders
 		public DateTime TnxDate { get; set; }
 		public PoStatusEnum PoStatus { get; set; }
 		public IEnumerable< OrderLineItem > LineItems { get; set; }
-		public string VendorId { get; set; }
+		public string VendorValue { get; set; }
 	}
 
 	public enum PoStatusEnum

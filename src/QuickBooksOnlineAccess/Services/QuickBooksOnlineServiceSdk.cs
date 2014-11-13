@@ -18,6 +18,7 @@ using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetPaym
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetSalesReceipts;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.UpdateItemQuantityOnHand;
+using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.UpdatePurchaseOrders;
 using Bill = Intuit.Ipp.Data.Bill;
 using Invoice = Intuit.Ipp.Data.Invoice;
 using Item = Intuit.Ipp.Data.Item;
@@ -130,7 +131,7 @@ namespace QuickBooksOnlineAccess.Services
 
 		public async Task< GetPurchaseOrdersResponse > GetPurchseOrders( DateTime from, DateTime to )
 		{
-			var itemsQuery = string.Format("Select * FROM PurchaseOrder  WHERE MetaData.LastUpdatedTime >= '{0}' && MetaData.LastUpdatedTime <= '{1}'", from.ToStringUtcIso8601(), to.ToStringUtcIso8601());
+			var itemsQuery = string.Format( "Select * FROM PurchaseOrder  WHERE MetaData.LastUpdatedTime >= '{0}' && MetaData.LastUpdatedTime <= '{1}'", from.ToStringUtcIso8601(), to.ToStringUtcIso8601() );
 
 			return await Task.Factory.StartNew( () =>
 			{
@@ -160,6 +161,25 @@ namespace QuickBooksOnlineAccess.Services
 
 				//todo: implemet
 				throw new NotImplementedException();
+			} ).ConfigureAwait( false );
+		}
+
+		public async Task< UpdatePurchaseOrdersResponse > UpdatePurchaseOrders( params Models.Services.QuickBooksOnlineServicesSdk.UpdatePurchaseOrders.PurchaseOrder[] purchaseOrders )
+		{
+			return await Task.Factory.StartNew( () =>
+			{
+				if( purchaseOrders == null || purchaseOrders.Length == 0 )
+					return new UpdatePurchaseOrdersResponse();
+
+				var batch = this._dataService.CreateNewBatch();
+
+				foreach( var item in purchaseOrders )
+				{
+					batch.Add( item.ToIppPurchaseOrder(), item.Id, OperationEnum.update );
+				}
+
+				batch.Execute();
+				return new UpdatePurchaseOrdersResponse();
 			} ).ConfigureAwait( false );
 		}
 		#endregion

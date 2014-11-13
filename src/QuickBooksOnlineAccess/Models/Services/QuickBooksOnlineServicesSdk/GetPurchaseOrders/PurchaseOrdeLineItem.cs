@@ -8,5 +8,6 @@ namespace QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Get
 		public string LineNum { get; set; }
 		public decimal Rate { get; set; }
 		public string ItemName { get; set; }
+		public string ItemValue { get; set; }
 	}
 }

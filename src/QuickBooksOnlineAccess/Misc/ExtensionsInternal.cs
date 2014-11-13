@@ -13,13 +13,13 @@ using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetInvo
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetSalesReceipts;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.UpdateItemQuantityOnHand;
+using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.UpdatePurchaseOrders;
 using QuickBooksOnlineAccess.Models.UpdateInventory;
 using Bill = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetBills.Bill;
 using Invoice = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetInvoices.Invoice;
 using Item = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetItems.Item;
-using Line = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetPayments.Line;
 using Payment = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetPayments.Payment;
-using PurchaseOrder = QuickBooksOnlineAccess.Models.GetPurchaseOrders.PurchaseOrder;
+using PurchaseOrder = Intuit.Ipp.Data.PurchaseOrder;
 using SalesReceipt = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetSalesReceipts.SalesReceipt;
 
 namespace QuickBooksOnlineAccess.Misc
@@ -72,7 +72,6 @@ namespace QuickBooksOnlineAccess.Misc
 
 			return referenceType;
 		}
-
 
 		#region ToQBOrder
 		public static IEnumerable< Order > ToQBOrder( this IEnumerable< Invoice > source )
@@ -186,15 +185,110 @@ namespace QuickBooksOnlineAccess.Misc
 		}
 		#endregion
 
-		#region FromIQuickBooksOnlineServiceInternal		
-		public static PurchaseOrder ToQBPurchaseOrder( this Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders.PurchaseOrder purchaseOrder )
+		#region FromIQuickBooksOnlineServiceInternal
+		public static PurchaseOrder ToIppPurchaseOrder( this Models.Services.QuickBooksOnlineServicesSdk.UpdatePurchaseOrders.PurchaseOrder purchaseOrder )
 		{
 			var qbPurchaseOrder = new PurchaseOrder
 			{
 				DocNumber = purchaseOrder.DocNumber,
+				Id = purchaseOrder.Id,
+				SyncToken = purchaseOrder.SyncToken,
+				Line = purchaseOrder.LineItems.Select(x => x.ToIppPurchaseOrderLineItem()).ToArray(),
+				POStatus = purchaseOrder.POStatus.ToIppPurchaseOrderStatusEnum(),
+				POStatusSpecified = true,
+				VendorRef = new ReferenceType {
+					name = purchaseOrder.VendorName,
+					Value = purchaseOrder.VendorValue,
+				}
+			};
+
+			return qbPurchaseOrder;
+		}
+
+		public static Line ToIppPurchaseOrderLineItem( this QBInternalPurchaseOrdeLineItem qbInternalPurchaseOrdeLineItem )
+		{
+			var ippPurchaseOrderLineItem = new Line
+			{
+				Amount = qbInternalPurchaseOrdeLineItem.Amount,
+				AmountSpecified = true,
+				Id = qbInternalPurchaseOrdeLineItem.Id,
+				LineNum = qbInternalPurchaseOrdeLineItem.LineNum,
+			};
+
+			var basedExpenseLineDetail = new ItemBasedExpenseLineDetail{
+				Qty = qbInternalPurchaseOrdeLineItem.Qty,
+				QtySpecified = true,
+			};
+
+			basedExpenseLineDetail.ItemRef = new Intuit.Ipp.Data.ReferenceType { 
+				name = qbInternalPurchaseOrdeLineItem.ItemName,
+				Value = qbInternalPurchaseOrdeLineItem.ItemValue,
+			};
+
+			ippPurchaseOrderLineItem.AnyIntuitObject = basedExpenseLineDetail;
+			//ippPurchaseOrderLineItem.DetailType = LineDetailTypeEnum.PurchaseOrderItemLineDetail;
+			ippPurchaseOrderLineItem.DetailType = LineDetailTypeEnum.ItemBasedExpenseLineDetail;
+			ippPurchaseOrderLineItem.DetailTypeSpecified = true;
+
+			return ippPurchaseOrderLineItem;
+		}
+
+		public static PurchaseOrderStatusEnum ToIppPurchaseOrderStatusEnum( this QBInternalPurchaseOrderStatusEnum purchaseOrder )
+		{
+			var res = PurchaseOrderStatusEnum.Closed;
+			switch( purchaseOrder )
+			{
+				case QBInternalPurchaseOrderStatusEnum.Open:
+					res = PurchaseOrderStatusEnum.Open;
+					break;
+				case QBInternalPurchaseOrderStatusEnum.Closed:
+					res = PurchaseOrderStatusEnum.Closed;
+					break;
+			}
+
+			return res;
+		}
+
+		public static Models.Services.QuickBooksOnlineServicesSdk.UpdatePurchaseOrders.PurchaseOrder ToQBInternalPurchaseOrder( this Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders.PurchaseOrder purchaseOrder )
+		{
+			var qbPurchaseOrder = new Models.Services.QuickBooksOnlineServicesSdk.UpdatePurchaseOrders.PurchaseOrder
+			{
+				DocNumber = purchaseOrder.DocNumber,
+				Id = purchaseOrder.Id,
+				SyncToken = purchaseOrder.SyncToken,
+				LineItems = purchaseOrder.LineItems.Select( x => x.ToQBInternalPurchaseOrderLineItem() ),
+				POStatus = ( QBInternalPurchaseOrderStatusEnum )Enum.Parse( typeof( QBPurchaseOrderStatusEnum ), purchaseOrder.PoStatus.ToString() ),
+				VendorValue = purchaseOrder.VendorValue,
+				VendorName = purchaseOrder.VendorName,
+			};
+
+			return qbPurchaseOrder;
+		}
+
+		public static QBInternalPurchaseOrdeLineItem ToQBInternalPurchaseOrderLineItem( this PurchaseOrdeLineItem purchaseOrder )
+		{
+			var internalPurchaseOrdeLineItem = new QBInternalPurchaseOrdeLineItem
+			{
+				ItemName = purchaseOrder.ItemName,
+				ItemValue = purchaseOrder.ItemValue,
+				Id = purchaseOrder.Id,
+				Qty = purchaseOrder.Qty,
+				Rate = purchaseOrder.Rate,
+				LineNum = purchaseOrder.LineNum,
+				Amount = purchaseOrder.Amount,
+			};
+
+			return internalPurchaseOrdeLineItem;
+		}
+
+		public static Models.GetPurchaseOrders.PurchaseOrder ToQBPurchaseOrder( this Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders.PurchaseOrder purchaseOrder )
+		{
+			var qbPurchaseOrder = new Models.GetPurchaseOrders.PurchaseOrder
+			{
+				DocNumber = purchaseOrder.DocNumber,
 				PoStatus = purchaseOrder.PoStatus.ToQBPurchaseOrderStatusEnum(),
 				VendorName = purchaseOrder.VendorName,
-				VendorId = purchaseOrder.VendorId,
+				VendorValue = purchaseOrder.VendorValue,
 				TnxDate = purchaseOrder.TnxDate,
 				LineItems = purchaseOrder.LineItems.ToQBPurchaseOrderLineItem(),
 			};
@@ -238,7 +332,7 @@ namespace QuickBooksOnlineAccess.Misc
 			return purchaseOrdeLineItems.Select( x => x.ToQBPurchaseOrderLineItem() );
 		}
 
-		public static IEnumerable< PurchaseOrder > ToQBPurchaseOrder( this IEnumerable< Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders.PurchaseOrder > purchaseOrder )
+		public static IEnumerable< Models.GetPurchaseOrders.PurchaseOrder > ToQBPurchaseOrder( this IEnumerable< Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders.PurchaseOrder > purchaseOrder )
 		{
 			if( purchaseOrder == null )
 				purchaseOrder = new List< Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders.PurchaseOrder >();
@@ -317,9 +411,9 @@ namespace QuickBooksOnlineAccess.Misc
 		#endregion
 
 		#region FromQBSdk
-		public static Line ToQBAccessLine( this Intuit.Ipp.Data.Line line )
+		public static Models.Services.QuickBooksOnlineServicesSdk.GetPayments.Line ToQBAccessLine( this Line line )
 		{
-			var qbAccessLine = new Line
+			var qbAccessLine = new Models.Services.QuickBooksOnlineServicesSdk.GetPayments.Line
 			{
 				Id = line.Id,
 				Amount = line.Amount,
@@ -330,7 +424,7 @@ namespace QuickBooksOnlineAccess.Misc
 			return qbAccessLine;
 		}
 
-		public static InvoiceLine ToQBAccessInvoiceLine( this Intuit.Ipp.Data.Line line )
+		public static InvoiceLine ToQBAccessInvoiceLine( this Line line )
 		{
 			var ineDetail = ( line.AnyIntuitObject as SalesItemLineDetail ) ?? new SalesItemLineDetail { Qty = 0, ItemRef = new ReferenceType() { name = "" } };
 			var qbAccessLine = new InvoiceLine
@@ -348,7 +442,7 @@ namespace QuickBooksOnlineAccess.Misc
 			return qbAccessLine;
 		}
 
-		public static SalesReceiptLine ToQBAccessSalesReceiptLine( this Intuit.Ipp.Data.Line line )
+		public static SalesReceiptLine ToQBAccessSalesReceiptLine( this Line line )
 		{
 			var ineDetail = ( line.AnyIntuitObject as SalesItemLineDetail ) ?? new SalesItemLineDetail { Qty = 0, ItemRef = new ReferenceType() { name = "" } };
 			var qbAccessLine = new SalesReceiptLine
@@ -367,7 +461,7 @@ namespace QuickBooksOnlineAccess.Misc
 			return qbAccessLine;
 		}
 
-		public static PurchaseOrdeLineItem ToQBServicePurchaseOrderLineItem( this Intuit.Ipp.Data.Line line )
+		public static PurchaseOrdeLineItem ToQBServicePurchaseOrderLineItem( this Line line )
 		{
 			var ordeLineItem = new PurchaseOrdeLineItem
 			{
@@ -382,6 +476,7 @@ namespace QuickBooksOnlineAccess.Misc
 			{
 				ordeLineItem.Qty = intuitObj.Qty;
 				ordeLineItem.ItemName = intuitObj.ItemRef.name;
+				ordeLineItem.ItemValue = intuitObj.ItemRef.Value;
 			}
 
 			return ordeLineItem;
@@ -400,16 +495,17 @@ namespace QuickBooksOnlineAccess.Misc
 			}
 		}
 
-		public static Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders.PurchaseOrder ToQBServicePurchaseOrder( this Intuit.Ipp.Data.PurchaseOrder purchaseOrder )
+		public static Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders.PurchaseOrder ToQBServicePurchaseOrder( this PurchaseOrder purchaseOrder )
 		{
 			var qbPurchaseOrder = new Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders.PurchaseOrder
 			{
+				Id = purchaseOrder.Id,
 				DocNumber = purchaseOrder.DocNumber,
 				TnxDate = purchaseOrder.TxnDate,
 				LineItems = purchaseOrder.Line.ToList().Select( x => x.ToQBServicePurchaseOrderLineItem() ).ToList(),
 				SyncToken = purchaseOrder.SyncToken,
 				VendorName = purchaseOrder.VendorRef.name,
-				VendorId = purchaseOrder.VendorRef.Value,
+				VendorValue = purchaseOrder.VendorRef.Value,
 				PoStatus = purchaseOrder.POStatus.ToQBServicePurchaseOrderStatusEnum()
 			};
 

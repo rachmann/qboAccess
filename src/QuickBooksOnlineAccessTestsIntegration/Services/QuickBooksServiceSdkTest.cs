@@ -6,8 +6,11 @@ using Intuit.Ipp.Data;
 using NUnit.Framework;
 using QuickBooksOnlineAccess.Misc;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Auth;
+using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders;
+using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.UpdatePurchaseOrders;
 using QuickBooksOnlineAccess.Services;
 using QuickBooksOnlineAccessTestsIntegration.TestEnvironment;
+using PurchaseOrder = Intuit.Ipp.Data.PurchaseOrder;
 
 namespace QuickBooksOnlineAccessTestsIntegration.Services
 {
@@ -68,6 +71,39 @@ namespace QuickBooksOnlineAccessTestsIntegration.Services
 
 			//A
 			getPurchaseOrdersResponse.PurchaseOrders.Count().Should().BeGreaterThan( 0 );
+		}
+
+		[ Test ]
+		public void UpdatePurchaseOrders_ServiceContainsPurchaseOrders_PurchaseOrdersUpdated()
+		{
+			//A
+			//#1
+			//todo: create instead of pull
+			var getPurchaseOrders1 = this._quickBooksOnlineServiceSdk.GetPurchseOrders( DateTime.Now.AddMonths( -1 ), DateTime.Now );
+
+			var ordersToUpdate1 = getPurchaseOrders1.Result.PurchaseOrders.Select( x => x.ToQBInternalPurchaseOrder() ).ToList();
+			ordersToUpdate1.ForEach( x => x.POStatus = QBInternalPurchaseOrderStatusEnum.Closed );
+
+			var updatePurchaseOrders1 = this._quickBooksOnlineServiceSdk.UpdatePurchaseOrders( ordersToUpdate1.ToArray() );
+			updatePurchaseOrders1.Wait();
+
+			//#2
+			var getPurchaseOrders2 = this._quickBooksOnlineServiceSdk.GetPurchseOrders( DateTime.Now.AddMonths( -1 ), DateTime.Now.AddMinutes( 5 ) );
+
+			var ordersToUpdate2 = getPurchaseOrders2.Result.PurchaseOrders.Select( x => x.ToQBInternalPurchaseOrder() ).ToList();
+			ordersToUpdate2.ForEach( x => x.POStatus = QBInternalPurchaseOrderStatusEnum.Open );
+
+			//A
+			var updatePurchaseOrders2 = this._quickBooksOnlineServiceSdk.UpdatePurchaseOrders( ordersToUpdate2.ToArray() );
+			updatePurchaseOrders2.Wait();
+
+			var getPurchaseOrders3 = this._quickBooksOnlineServiceSdk.GetPurchseOrders( DateTime.Now.AddMonths( -1 ), DateTime.Now.AddMinutes( 5 ) );
+			//A
+			getPurchaseOrders1.Result.PurchaseOrders.Should().HaveCount( x => x > 0 );
+			getPurchaseOrders2.Result.PurchaseOrders.Should().HaveSameCount( getPurchaseOrders1.Result.PurchaseOrders );
+			getPurchaseOrders3.Result.PurchaseOrders.Should().HaveSameCount( getPurchaseOrders2.Result.PurchaseOrders );
+			getPurchaseOrders2.Result.PurchaseOrders.Should().OnlyContain( x => x.PoStatus == QBPurchaseOrderStatusEnum.Closed );
+			getPurchaseOrders3.Result.PurchaseOrders.Should().OnlyContain( x => x.PoStatus == QBPurchaseOrderStatusEnum.Open );
 		}
 
 		[ Test ]
