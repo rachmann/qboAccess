@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
-using Intuit.Ipp.Data;
 using NUnit.Framework;
 using QuickBooksOnlineAccess.Misc;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Auth;
@@ -113,18 +112,19 @@ namespace QuickBooksOnlineAccessTestsIntegration.Services
 			//A
 			var invoice = new Invoicek
 			{
-				DocNumber = "1-1-5-54-28400-101", Line = new List< Linek >
+				DocNumber = "1-1-5-54-28400-101",
+				Line = new List< Linek >
 				{
 					new Linek()
 					{
 						Qty = 3,
 						ItemValue = "21",
 						ItemName = "testSku1",
-						Amount = 35.0,
-						CustomerValue = "3",
-						CustomerName = "Francine"
+						Amount = 35.0m,
 					}
-				}
+				},
+				CustomerValue = "3",
+				CustomerName = "Francine"
 			};
 
 			//A
@@ -253,7 +253,7 @@ namespace QuickBooksOnlineAccessTestsIntegration.Services
 			//A
 
 			//A
-			var getOrdersResponse = this._quickBooksOnlineServiceSdk.CreateOrders( );
+			var getOrdersResponse = this._quickBooksOnlineServiceSdk.CreateOrders();
 
 			//A
 		}

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders;
 
 namespace QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.UpdatePurchaseOrders
 {

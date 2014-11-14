@@ -9,6 +9,7 @@ using Intuit.Ipp.Data;
 using QuickBooksOnlineAccess.Models.GetOrders;
 using QuickBooksOnlineAccess.Models.GetProducts;
 using QuickBooksOnlineAccess.Models.GetPurchaseOrders;
+using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreateInvoice;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetInvoices;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetSalesReceipts;
@@ -186,6 +187,42 @@ namespace QuickBooksOnlineAccess.Misc
 		#endregion
 
 		#region FromIQuickBooksOnlineServiceInternal
+		public static Intuit.Ipp.Data.Invoice ToIppInvoice( this Invoicek invoice )
+		{
+			var qbPurchaseOrder = new Intuit.Ipp.Data.Invoice
+			{
+				DocNumber = invoice.DocNumber,
+				Line = invoice.Line.Select( x => x.ToIppInvoiceLine() ).ToArray(),
+				CustomerRef = new ReferenceType { Value = invoice.CustomerValue, name = invoice.CustomerName }
+			};
+
+			return qbPurchaseOrder;
+		}
+
+		public static Line ToIppInvoiceLine( this Linek invoice )
+		{
+			var ippInvoiceLine = new Line();
+
+			var lineDetail = new SalesItemLineDetail()
+			{
+				Qty = invoice.Qty,
+				QtySpecified = true,
+				ItemRef = new ReferenceType()
+				{
+					Value = invoice.ItemValue,
+					name = invoice.ItemName
+				}
+			};
+			ippInvoiceLine.AnyIntuitObject = lineDetail;
+			ippInvoiceLine.DetailType = LineDetailTypeEnum.SalesItemLineDetail;
+			ippInvoiceLine.DetailTypeSpecified = true;
+
+			ippInvoiceLine.Amount = invoice.Amount;
+			ippInvoiceLine.AmountSpecified = true;
+
+			return ippInvoiceLine;
+		}
+
 		public static PurchaseOrder ToIppPurchaseOrder( this Models.Services.QuickBooksOnlineServicesSdk.UpdatePurchaseOrders.PurchaseOrder purchaseOrder )
 		{
 			var qbPurchaseOrder = new PurchaseOrder
@@ -193,10 +230,11 @@ namespace QuickBooksOnlineAccess.Misc
 				DocNumber = purchaseOrder.DocNumber,
 				Id = purchaseOrder.Id,
 				SyncToken = purchaseOrder.SyncToken,
-				Line = purchaseOrder.LineItems.Select(x => x.ToIppPurchaseOrderLineItem()).ToArray(),
+				Line = purchaseOrder.LineItems.Select( x => x.ToIppPurchaseOrderLineItem() ).ToArray(),
 				POStatus = purchaseOrder.POStatus.ToIppPurchaseOrderStatusEnum(),
 				POStatusSpecified = true,
-				VendorRef = new ReferenceType {
+				VendorRef = new ReferenceType
+				{
 					name = purchaseOrder.VendorName,
 					Value = purchaseOrder.VendorValue,
 				}
@@ -215,12 +253,14 @@ namespace QuickBooksOnlineAccess.Misc
 				LineNum = qbInternalPurchaseOrdeLineItem.LineNum,
 			};
 
-			var basedExpenseLineDetail = new ItemBasedExpenseLineDetail{
+			var basedExpenseLineDetail = new ItemBasedExpenseLineDetail
+			{
 				Qty = qbInternalPurchaseOrdeLineItem.Qty,
 				QtySpecified = true,
 			};
 
-			basedExpenseLineDetail.ItemRef = new Intuit.Ipp.Data.ReferenceType { 
+			basedExpenseLineDetail.ItemRef = new ReferenceType
+			{
 				name = qbInternalPurchaseOrdeLineItem.ItemName,
 				Value = qbInternalPurchaseOrdeLineItem.ItemValue,
 			};

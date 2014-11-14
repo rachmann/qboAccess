@@ -5,6 +5,8 @@ namespace QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Cre
 	internal class Invoicek
 	{
 		public string DocNumber { get; set; }
-		public IEnumerable<Linek> Line { get; set; }
+		public IEnumerable< Linek > Line { get; set; }
+		public string CustomerValue { get; set; }
+		public string CustomerName { get; set; }
 	}
 }
