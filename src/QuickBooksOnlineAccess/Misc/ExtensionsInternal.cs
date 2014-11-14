@@ -199,18 +199,18 @@ namespace QuickBooksOnlineAccess.Misc
 			return qbPurchaseOrder;
 		}
 
-		public static Line ToIppInvoiceLine( this Models.Services.QuickBooksOnlineServicesSdk.CreateInvoice.Line invoice )
+		public static Line ToIppInvoiceLine( this Models.Services.QuickBooksOnlineServicesSdk.CreateInvoice.Line line )
 		{
 			var ippInvoiceLine = new Line();
 
 			var lineDetail = new SalesItemLineDetail()
 			{
-				Qty = invoice.Qty,
+				Qty = line.Qty,
 				QtySpecified = true,
 				ItemRef = new ReferenceType()
 				{
-					Value = invoice.ItemValue,
-					name = invoice.ItemName
+					Value = line.ItemValue,
+					name = line.ItemName
 				},
 				ItemElementName = ItemChoiceType.UnitPrice,
 
@@ -222,7 +222,7 @@ namespace QuickBooksOnlineAccess.Misc
 			ippInvoiceLine.DetailTypeSpecified = true;
 
 			//todo: replace
-			ippInvoiceLine.Amount = ( decimal )5.5 * invoice.Qty;
+			ippInvoiceLine.Amount = ( decimal )5.5 * line.Qty;
 			ippInvoiceLine.AmountSpecified = true;
 
 			return ippInvoiceLine;
