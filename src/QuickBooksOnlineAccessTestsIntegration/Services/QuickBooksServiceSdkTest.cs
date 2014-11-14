@@ -120,7 +120,7 @@ namespace QuickBooksOnlineAccessTestsIntegration.Services
 						Qty = 3,
 						ItemValue = "21",
 						ItemName = "testSku1",
-						Amount = 35.0m,
+						UnitPrice = 12.3m,
 					}
 				},
 				CustomerValue = "3",

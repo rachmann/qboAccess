@@ -213,16 +213,12 @@ namespace QuickBooksOnlineAccess.Misc
 					name = line.ItemName
 				},
 				ItemElementName = ItemChoiceType.UnitPrice,
-
-				//todo: replace
-				AnyIntuitObject = ( decimal )5.5,
+				AnyIntuitObject = line.UnitPrice,
 			};
 			ippInvoiceLine.AnyIntuitObject = lineDetail;
 			ippInvoiceLine.DetailType = LineDetailTypeEnum.SalesItemLineDetail;
 			ippInvoiceLine.DetailTypeSpecified = true;
-
-			//todo: replace
-			ippInvoiceLine.Amount = ( decimal )5.5 * line.Qty;
+			ippInvoiceLine.Amount = line.UnitPrice * line.Qty;
 			ippInvoiceLine.AmountSpecified = true;
 
 			return ippInvoiceLine;
