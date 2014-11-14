@@ -6,6 +6,7 @@ using Intuit.Ipp.Data;
 using NUnit.Framework;
 using QuickBooksOnlineAccess.Misc;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Auth;
+using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreateInvoice;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.UpdatePurchaseOrders;
 using QuickBooksOnlineAccess.Services;
@@ -104,6 +105,33 @@ namespace QuickBooksOnlineAccessTestsIntegration.Services
 			getPurchaseOrders3.Result.PurchaseOrders.Should().HaveSameCount( getPurchaseOrders2.Result.PurchaseOrders );
 			getPurchaseOrders2.Result.PurchaseOrders.Should().OnlyContain( x => x.PoStatus == QBPurchaseOrderStatusEnum.Closed );
 			getPurchaseOrders3.Result.PurchaseOrders.Should().OnlyContain( x => x.PoStatus == QBPurchaseOrderStatusEnum.Open );
+		}
+
+		[ Test ]
+		public void CreateOrder_ServiceDontContainsSuchOrder_OrderCreated()
+		{
+			//A
+			var invoice = new Invoicek
+			{
+				DocNumber = "1-1-5-54-28400-101", Line = new List< Linek >
+				{
+					new Linek()
+					{
+						Qty = 3,
+						ItemValue = "21",
+						ItemName = "testSku1",
+						Amount = 35.0,
+						CustomerValue = "3",
+						CustomerName = "Francine"
+					}
+				}
+			};
+
+			//A
+			var getPurchaseOrders2 = this._quickBooksOnlineServiceSdk.CreateOrders( invoice );
+			getPurchaseOrders2.Wait();
+
+			//A
 		}
 
 		[ Test ]
@@ -225,7 +253,7 @@ namespace QuickBooksOnlineAccessTestsIntegration.Services
 			//A
 
 			//A
-			var getOrdersResponse = this._quickBooksOnlineServiceSdk.CreateOrders( new SalesOrder[ 0 ] );
+			var getOrdersResponse = this._quickBooksOnlineServiceSdk.CreateOrders( );
 
 			//A
 		}

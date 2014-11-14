@@ -122,6 +122,8 @@
     <Compile Include="Models\QuickBooksOnlineNonAuthenticatedUserCredentials.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\Auth\ConsumerProfile.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\Auth\RestProfile.cs" />
+    <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreateInvoice\Invoicek.cs" />
+    <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreateInvoice\Linek.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreateOrders\CreateOrdersResponse.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreatePurchaseOrders\CreatePurchaseOrdersResponse.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\GetBills\Bill.cs" />

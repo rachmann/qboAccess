@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Intuit.Ipp.Core;
@@ -9,6 +10,7 @@ using Intuit.Ipp.QueryFilter;
 using Intuit.Ipp.Security;
 using QuickBooksOnlineAccess.Misc;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Auth;
+using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreateInvoice;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreateOrders;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreatePurchaseOrders;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetBills;
@@ -22,6 +24,7 @@ using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.UpdateP
 using Bill = Intuit.Ipp.Data.Bill;
 using Invoice = Intuit.Ipp.Data.Invoice;
 using Item = Intuit.Ipp.Data.Item;
+using Line = Intuit.Ipp.Data.Line;
 using Payment = Intuit.Ipp.Data.Payment;
 using PurchaseOrder = Intuit.Ipp.Data.PurchaseOrder;
 using SalesReceipt = Intuit.Ipp.Data.SalesReceipt;
@@ -41,6 +44,7 @@ namespace QuickBooksOnlineAccess.Services
 		private readonly QueryService< Bill > _queryServiceBill;
 		private readonly QueryService< SalesReceipt > _queryServiceSalesReceipt;
 		private readonly QueryService< Invoice > _queryServiceInvoice;
+		private readonly QueryService< Customer > _queryServiceCustomer;
 
 		public ConsumerProfile ConsumerProfile { get; set; }
 
@@ -60,6 +64,7 @@ namespace QuickBooksOnlineAccess.Services
 			this._queryServiceBill = new QueryService< Bill >( this._serviceContext );
 			this._queryServiceSalesReceipt = new QueryService< SalesReceipt >( this._serviceContext );
 			this._queryServiceInvoice = new QueryService< Invoice >( this._serviceContext );
+			this._queryServiceCustomer = new QueryService<Customer>(this._serviceContext);
 		}
 
 		#region Items
@@ -247,14 +252,53 @@ namespace QuickBooksOnlineAccess.Services
 			} ).ConfigureAwait( false );
 		}
 
-		public async Task< CreateOrdersResponse > CreateOrders( params SalesOrder[] orders )
+		public async Task< CreateOrdersResponse > CreateOrders( params Invoicek[] orders )
 		{
 			return await Task.Factory.StartNew( () =>
 			{
-				if( orders == null || orders.Length == 0 )
+				if (orders == null || orders.Length == 0)
 					return new CreateOrdersResponse();
 
-				throw new NotImplementedException();
+				var customer = _queryServiceCustomer.Where(x=>true).ToList().ToArray()[1];
+
+				var v = new Invoice();
+				//v.Id = "115542";
+				v.DocNumber = "1-1-5-54-28400-101";
+				v.Line = new Line[1];
+				v.Line[0] = new Line();
+				var lineDetail = new SalesItemLineDetail()
+				{
+					Qty = 3,
+					QtySpecified = true,
+					ItemRef = new ReferenceType()
+					{
+						Value = "21",
+						name = "testSku1"
+					}
+				};
+				v.Line[0].AnyIntuitObject = lineDetail;
+				v.Line[0].Amount = 35;
+				v.Line[0].AmountSpecified = true;
+				v.Line[0].DetailType = LineDetailTypeEnum.SalesItemLineDetail;
+				v.Line[0].DetailTypeSpecified = true;
+				v.CustomerRef = new ReferenceType { Value = customer.Id, name = customer.GivenName };
+
+				//var inv = this._dataService.Add(v);
+
+				var batch = this._dataService.CreateNewBatch();
+//				batch.Add(@"<Invoice xmlns='http://schema.intuit.com/finance/v3'>
+//							  <Line>
+//								<Amount>15</Amount>
+//								<DetailType>SalesItemLineDetail</DetailType>
+//								<SalesItemLineDetail>
+//								  <ItemRef>3</ItemRef>
+//								</SalesItemLineDetail>
+//							  </Line>
+//							  <CustomerRef>3</CustomerRef>
+//							</Invoice>","123");
+				batch.Add(v, "bID7", OperationEnum.create);
+				batch.Execute();
+				return new CreateOrdersResponse();
 			} ).ConfigureAwait( false );
 		}
 
