@@ -9,7 +9,6 @@ using Intuit.Ipp.QueryFilter;
 using Intuit.Ipp.Security;
 using QuickBooksOnlineAccess.Misc;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Auth;
-using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreateInvoice;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreateOrders;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreatePurchaseOrders;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetBills;
@@ -250,7 +249,7 @@ namespace QuickBooksOnlineAccess.Services
 			} ).ConfigureAwait( false );
 		}
 
-		public async Task< CreateOrdersResponse > CreateOrders( params Invoicek[] orders )
+		public async Task< CreateOrdersResponse > CreateOrders( params Models.Services.QuickBooksOnlineServicesSdk.CreateInvoice.Invoice[] orders )
 		{
 			return await Task.Factory.StartNew( () =>
 			{

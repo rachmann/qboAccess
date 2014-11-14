@@ -9,7 +9,6 @@ using Intuit.Ipp.Data;
 using QuickBooksOnlineAccess.Models.GetOrders;
 using QuickBooksOnlineAccess.Models.GetProducts;
 using QuickBooksOnlineAccess.Models.GetPurchaseOrders;
-using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreateInvoice;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetInvoices;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetSalesReceipts;
@@ -187,19 +186,20 @@ namespace QuickBooksOnlineAccess.Misc
 		#endregion
 
 		#region FromIQuickBooksOnlineServiceInternal
-		public static Intuit.Ipp.Data.Invoice ToIppInvoice( this Invoicek invoice )
+		public static Intuit.Ipp.Data.Invoice ToIppInvoice( this Models.Services.QuickBooksOnlineServicesSdk.CreateInvoice.Invoice invoice )
 		{
 			var qbPurchaseOrder = new Intuit.Ipp.Data.Invoice
 			{
 				DocNumber = invoice.DocNumber,
 				Line = invoice.Line.Select( x => x.ToIppInvoiceLine() ).ToArray(),
-				CustomerRef = new ReferenceType { Value = invoice.CustomerValue, name = invoice.CustomerName }
+				CustomerRef = new ReferenceType { Value = invoice.CustomerValue, name = invoice.CustomerName },
+				CurrencyRef = new ReferenceType { name = "United States Dollar", Value = "USD" }
 			};
 
 			return qbPurchaseOrder;
 		}
 
-		public static Line ToIppInvoiceLine( this Linek invoice )
+		public static Line ToIppInvoiceLine( this Models.Services.QuickBooksOnlineServicesSdk.CreateInvoice.Line invoice )
 		{
 			var ippInvoiceLine = new Line();
 
@@ -211,13 +211,18 @@ namespace QuickBooksOnlineAccess.Misc
 				{
 					Value = invoice.ItemValue,
 					name = invoice.ItemName
-				}
+				},
+				ItemElementName = ItemChoiceType.UnitPrice,
+
+				//todo: replace
+				AnyIntuitObject = ( decimal )5.5,
 			};
 			ippInvoiceLine.AnyIntuitObject = lineDetail;
 			ippInvoiceLine.DetailType = LineDetailTypeEnum.SalesItemLineDetail;
 			ippInvoiceLine.DetailTypeSpecified = true;
 
-			ippInvoiceLine.Amount = invoice.Amount;
+			//todo: replace
+			ippInvoiceLine.Amount = ( decimal )5.5 * invoice.Qty;
 			ippInvoiceLine.AmountSpecified = true;
 
 			return ippInvoiceLine;

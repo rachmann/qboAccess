@@ -107,15 +107,15 @@ namespace QuickBooksOnlineAccessTestsIntegration.Services
 		}
 
 		[ Test ]
-		public void CreateOrder_ServiceDontContainsSuchOrder_OrderCreated()
+		public void CreateInvoice_ServiceDontContainsSuchInvoice_InvoiceCreated()
 		{
 			//A
-			var invoice = new Invoicek
+			var invoice = new Invoice
 			{
 				DocNumber = "1-1-5-54-28400-101",
-				Line = new List< Linek >
+				Line = new List< Line >
 				{
-					new Linek()
+					new Line()
 					{
 						Qty = 3,
 						ItemValue = "21",
@@ -132,6 +132,11 @@ namespace QuickBooksOnlineAccessTestsIntegration.Services
 			getPurchaseOrders2.Wait();
 
 			//A
+			var getInvoicesResponseTask = this._quickBooksOnlineServiceSdk.GetInvoices( DateTime.Now.AddMonths( -1 ), DateTime.Now.AddMinutes( 5 ) );
+			var getInvoicesResponse = getInvoicesResponseTask.Result;
+
+			//A
+			getInvoicesResponse.Invoices.Where( x => x.DocNumber == invoice.DocNumber ).ToList().Count.Should().BeGreaterThan( 0 );
 		}
 
 		[ Test ]

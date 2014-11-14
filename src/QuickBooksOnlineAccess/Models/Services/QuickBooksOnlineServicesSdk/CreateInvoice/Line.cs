@@ -1,6 +1,6 @@
 namespace QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreateInvoice
 {
-	public class Linek
+	public class Line
 	{
 		public int Qty { get; set; }
 		public string ItemValue { get; set; }
