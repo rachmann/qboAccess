@@ -124,7 +124,7 @@
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\Auth\RestProfile.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreateInvoice\Invoice.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreateInvoice\Line.cs" />
-    <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreateOrders\CreateOrdersResponse.cs" />
+    <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreateOrders\CreateInvoicesResponse.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreatePurchaseOrders\CreatePurchaseOrdersResponse.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\GetBills\Bill.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\GetBills\GetBillsResponse.cs" />

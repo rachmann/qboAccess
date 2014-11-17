@@ -1,6 +1,6 @@
 ﻿namespace QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreateOrders
 {
-	internal class CreateOrdersResponse
+	internal class CreateInvoicesResponse
 	{
 	}
 }

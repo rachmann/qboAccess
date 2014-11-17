@@ -249,12 +249,12 @@ namespace QuickBooksOnlineAccess.Services
 			} ).ConfigureAwait( false );
 		}
 
-		public async Task< CreateOrdersResponse > CreateOrders( params Models.Services.QuickBooksOnlineServicesSdk.CreateInvoice.Invoice[] orders )
+		public async Task< CreateInvoicesResponse > CreateInvoices( params Models.Services.QuickBooksOnlineServicesSdk.CreateInvoice.Invoice[] orders )
 		{
 			return await Task.Factory.StartNew( () =>
 			{
 				if( orders == null || orders.Length == 0 )
-					return new CreateOrdersResponse();
+					return new CreateInvoicesResponse();
 
 				var invoicesForBatch = orders.ToList().Select( x => x.ToIppInvoice() ).ToDictionary( x => Guid.NewGuid().ToString() );
 
@@ -265,7 +265,7 @@ namespace QuickBooksOnlineAccess.Services
 				}
 
 				batch.Execute();
-				return new CreateOrdersResponse();
+				return new CreateInvoicesResponse();
 			} ).ConfigureAwait( false );
 		}
 

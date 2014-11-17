@@ -128,7 +128,7 @@ namespace QuickBooksOnlineAccessTestsIntegration.Services
 			};
 
 			//A
-			var getPurchaseOrders2 = this._quickBooksOnlineServiceSdk.CreateOrders( invoice );
+			var getPurchaseOrders2 = this._quickBooksOnlineServiceSdk.CreateInvoices( invoice );
 			getPurchaseOrders2.Wait();
 
 			//A
@@ -258,7 +258,7 @@ namespace QuickBooksOnlineAccessTestsIntegration.Services
 			//A
 
 			//A
-			var getOrdersResponse = this._quickBooksOnlineServiceSdk.CreateOrders();
+			var getOrdersResponse = this._quickBooksOnlineServiceSdk.CreateInvoices();
 
 			//A
 		}
