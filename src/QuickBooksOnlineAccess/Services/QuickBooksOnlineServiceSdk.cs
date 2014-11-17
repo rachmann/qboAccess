@@ -259,9 +259,9 @@ namespace QuickBooksOnlineAccess.Services
 				var invoicesForBatch = orders.ToList().Select( x => x.ToIppInvoice() ).ToDictionary( x => Guid.NewGuid().ToString() );
 
 				var batch = this._dataService.CreateNewBatch();
-				foreach( var invoice in invoicesForBatch.Keys )
+				foreach( var invoiceKey in invoicesForBatch.Keys )
 				{
-					batch.Add( invoicesForBatch[ invoice ], invoice, OperationEnum.create );
+					batch.Add( invoicesForBatch[ invoiceKey ], invoiceKey, OperationEnum.create );
 				}
 
 				batch.Execute();
