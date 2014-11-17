@@ -126,6 +126,8 @@
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreateInvoice\Line.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreateOrders\CreateInvoicesResponse.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreatePurchaseOrders\CreatePurchaseOrdersResponse.cs" />
+    <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreatePurchaseOrders\PurchaseOrdeLineItem.cs" />
+    <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreatePurchaseOrders\PurchaseOrder.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\GetBills\Bill.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\GetBills\GetBillsResponse.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\GetInvoices\GetInvoicesResponse.cs" />

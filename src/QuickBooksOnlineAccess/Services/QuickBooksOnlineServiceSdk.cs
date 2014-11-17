@@ -154,15 +154,24 @@ namespace QuickBooksOnlineAccess.Services
 			//} ).ConfigureAwait( false );
 		}
 
-		public async Task< CreatePurchaseOrdersResponse > CreatePurchaseOrders( params PurchaseOrder[] purchaseOrders )
+		public async Task< CreatePurchaseOrdersResponse > CreatePurchaseOrders( params Models.Services.QuickBooksOnlineServicesSdk.CreatePurchaseOrders.PurchaseOrder[] purchaseOrders )
 		{
 			return await Task.Factory.StartNew( () =>
 			{
 				if( purchaseOrders == null || purchaseOrders.Length == 0 )
 					return new CreatePurchaseOrdersResponse();
 
-				//todo: implemet
-				throw new NotImplementedException();
+				var batch = this._dataService.CreateNewBatch();
+
+				var purchaseOrdersAndKeys = purchaseOrders.ToDictionary( x => Guid.NewGuid().ToString() );
+
+				foreach( var key in purchaseOrdersAndKeys.Keys )
+				{
+					batch.Add( purchaseOrdersAndKeys[ key ].ToIppPurchaseOrder(), key, OperationEnum.create );
+				}
+
+				batch.Execute();
+				return new CreatePurchaseOrdersResponse();
 			} ).ConfigureAwait( false );
 		}
 

@@ -10,7 +10,8 @@ using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetPurc
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.UpdatePurchaseOrders;
 using QuickBooksOnlineAccess.Services;
 using QuickBooksOnlineAccessTestsIntegration.TestEnvironment;
-using PurchaseOrder = Intuit.Ipp.Data.PurchaseOrder;
+using PurchaseOrdeLineItem = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreatePurchaseOrders.PurchaseOrdeLineItem;
+using PurchaseOrder = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreatePurchaseOrders.PurchaseOrder;
 
 namespace QuickBooksOnlineAccessTestsIntegration.Services
 {
@@ -107,6 +108,35 @@ namespace QuickBooksOnlineAccessTestsIntegration.Services
 		}
 
 		[ Test ]
+		public void CreatePurchaseOrders_ServiceDontContainsTheSamePurchaseOrders_PurchaseOrdersCreated()
+		{
+			//A
+
+			//A
+			var purchaseOrders = new PurchaseOrder[]
+			{
+				new PurchaseOrder
+				{
+					DocNumber = "123-101",
+					PoStatus = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreatePurchaseOrders.QBPurchaseOrderStatusEnum.Open,
+					VendorName = "Shoes Supplier",
+					VendorValue = "5",
+					LineItems = new List< PurchaseOrdeLineItem >
+					{
+						new PurchaseOrdeLineItem() { ItemName = "testSku1", ItemValue = "21", Qty = 3, UnitPrice = 1.1m, },
+						new PurchaseOrdeLineItem() { ItemName = "testSku2", ItemValue = "22", Qty = 4, UnitPrice = 1.11m, }
+					},
+				}
+			};
+			var createOrdersResponse = this._quickBooksOnlineServiceSdk.CreatePurchaseOrders( purchaseOrders );
+			createOrdersResponse.Wait();
+
+			//A
+			var getOrdersResponse = this._quickBooksOnlineServiceSdk.GetPurchseOrders( DateTime.UtcNow.AddMinutes( -5 ), DateTime.UtcNow.AddMinutes( 5 ) );
+			getOrdersResponse.Result.PurchaseOrders.Count().Should().BeGreaterThan( 0 );
+		}
+
+		[ Test ]
 		public void CreateInvoice_ServiceDontContainsSuchInvoice_InvoiceCreated()
 		{
 			//A
@@ -151,17 +181,6 @@ namespace QuickBooksOnlineAccessTestsIntegration.Services
 
 			//A
 			getPurchaseOrdersResponse.Bills.Count().Should().BeGreaterThan( 0 );
-		}
-
-		[ Test ]
-		public void CreatePurchaseOrders_ServiceDontContainsTheSamePurchaseOrders_PurchaseOrdersCreated()
-		{
-			//A
-
-			//A
-			var getOrdersResponse = this._quickBooksOnlineServiceSdk.CreatePurchaseOrders( new PurchaseOrder[ 0 ] );
-
-			//A
 		}
 
 		[ Test ]
