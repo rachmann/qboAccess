@@ -7,8 +7,8 @@ using Netco.Logging.NLogIntegration;
 using NUnit.Framework;
 using QuickBooksOnlineAccess;
 using QuickBooksOnlineAccess.Models;
+using QuickBooksOnlineAccess.Models.CreatePurchaseOrders;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Auth;
-using QuickBooksOnlineAccess.Services;
 using QuickBooksOnlineAccessTestsIntegration.TestEnvironment;
 
 namespace QuickBooksOnlineAccessTestsIntegration
@@ -19,7 +19,7 @@ namespace QuickBooksOnlineAccessTestsIntegration
 		private TestDataReader _testDataReader;
 		private ConsumerProfile _consumerProfile;
 		private RestProfile _restProfile;
-		private QuickBooksOnlineServiceSdk _quickBooksOnlineServiceSdk;
+		//private QuickBooksOnlineServiceSdk _quickBooksOnlineServiceSdk;
 		private QuickBooksOnlineService _quickBooksService;
 		private QuickBooksOnlineAuthenticatedUserCredentials _quickBooksAuthenticatedUserCredentials;
 		private QuickBooksOnlineNonAuthenticatedUserCredentials _quickBooksNonAuthenticatedUserCredentials;
@@ -36,7 +36,7 @@ namespace QuickBooksOnlineAccessTestsIntegration
 		{
 			this._consumerProfile = this._testDataReader.ConsumerProfile;
 			this._restProfile = this._testDataReader.RestProfile;
-			this._quickBooksOnlineServiceSdk = new QuickBooksOnlineServiceSdk( this._restProfile, this._consumerProfile );
+			//this._quickBooksOnlineServiceSdk = new QuickBooksOnlineServiceSdk( this._restProfile, this._consumerProfile );
 
 			this._quickBooksAuthenticatedUserCredentials = new QuickBooksOnlineAuthenticatedUserCredentials(
 				this._restProfile.RealmId,
@@ -70,6 +70,34 @@ namespace QuickBooksOnlineAccessTestsIntegration
 			//A
 			realInvoicesIds.Count.Should().BeGreaterThan( 0 );
 			filteredInvoicesResponse.Count().Should().Be( realInvoicesIds.Count );
+		}
+
+		[ Test ]
+		public void CreatePurchaseOrders_ServiceDontContainsTheSamePurchaseOrders_PurchaseOrdersCreated()
+		{
+			//A
+			var purchaseOrders = new PurchaseOrder[]
+			{
+				new PurchaseOrder
+				{
+					DocNumber = "123-103",
+					PoStatus = PoStatusEnum.Open,
+					VendorName = "Shoes Supplier",
+					LineItems = new List< OrderLineItem >
+					{
+						new OrderLineItem() { ItemName = "testSku1", Qty = 3, Rate = 1.1m, },
+						new OrderLineItem() { ItemName = "testSku2", Qty = 4, Rate = 1.11m, }
+					},
+				}
+			};
+
+			//A
+			var createOrdersResponse = this._quickBooksService.CreatePurchaseOrdersOrdersAsync( purchaseOrders );
+			createOrdersResponse.Wait();
+
+			//A
+			var getOrdersResponse = this._quickBooksService.GetPurchaseOrdersOrdersAsync( DateTime.UtcNow.AddMinutes( -5 ), DateTime.UtcNow.AddMinutes( 5 ) );
+			getOrdersResponse.Result.Count().Should().BeGreaterThan( 0 );
 		}
 	}
 }

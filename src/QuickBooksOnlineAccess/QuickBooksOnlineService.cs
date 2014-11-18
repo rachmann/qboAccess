@@ -10,6 +10,8 @@ using QuickBooksOnlineAccess.Models.GetProducts;
 using QuickBooksOnlineAccess.Models.GetPurchaseOrders;
 using QuickBooksOnlineAccess.Models.Ping;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Auth;
+using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetItems;
+using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetVendors;
 using QuickBooksOnlineAccess.Models.UpdateInventory;
 using QuickBooksOnlineAccess.Services;
 
@@ -79,6 +81,76 @@ namespace QuickBooksOnlineAccess
 				LogTraceException( ebayException.Message, ebayException );
 				throw ebayException;
 			}
+		}
+
+		public async Task CreatePurchaseOrdersOrdersAsync( params Models.CreatePurchaseOrders.PurchaseOrder[] purchaseOrders )
+		{
+			var methodParameters = string.Format( "{{purchaseOrders:{0}}}", purchaseOrders.ToJson() );
+			var mark = Guid.NewGuid().ToString();
+			try
+			{
+				QuickBooksOnlineLogger.LogTraceStarted( this.CreateMethodCallInfo( methodParameters, mark ) );
+
+				if( purchaseOrders == null || !purchaseOrders.Any() )
+					return;
+
+				var getItemsResponse = await this._quickBooksOnlineServiceSdk.GetItems();
+				var items = getItemsResponse.Items;
+				var ordersWithExistingLineItems = GetPurchaseOrdersWithExistingLineItems( purchaseOrders, items );
+
+				var getVendorsResponse = await this._quickBooksOnlineServiceSdk.GetVendors();
+				var vendors = getVendorsResponse.Vendors;
+				var ordersWithExistingVendor = this.GetPurchaseOrdersWithExistingVendor( ordersWithExistingLineItems, vendors );
+				var createPurchaseOrdersResponse = await this._quickBooksOnlineServiceSdk.CreatePurchaseOrders( ordersWithExistingVendor.Select( x => x.ToQBPurchaseOrder() ).ToArray() ).ConfigureAwait( false );
+
+				QuickBooksOnlineLogger.LogTraceEnded( this.CreateMethodCallInfo( methodParameters, mark ) );
+			}
+			catch( Exception exception )
+			{
+				var quickBooksException = new QuickBooksOnlineException( this.CreateMethodCallInfo(), exception );
+				QuickBooksOnlineLogger.LogTraceException( quickBooksException );
+				throw quickBooksException;
+			}
+		}
+
+		private IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > GetPurchaseOrdersWithExistingVendor( IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > purchaseOrders, IEnumerable< Vendor > vendors )
+		{
+			var ordersToCreate = new List< Models.CreatePurchaseOrders.PurchaseOrder >();
+			var vendorsList = vendors as IList< Vendor > ?? vendors.ToList();
+			foreach( var purchaseOrder in purchaseOrders )
+			{
+				var vendor = vendorsList.FirstOrDefault( x => x.Name == purchaseOrder.VendorName );
+				if( vendor != null )
+				{
+					purchaseOrder.VendorValue = vendor.Id;
+					ordersToCreate.Add( purchaseOrder );
+				}
+			}
+			return ordersToCreate;
+		}
+
+		private static IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > GetPurchaseOrdersWithExistingLineItems( IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > purchaseOrders, List< Item > items )
+		{
+			var ordersToCreate = new List< Models.CreatePurchaseOrders.PurchaseOrder >();
+			foreach( var purchaseOrder in purchaseOrders )
+			{
+				var skipOrder = false;
+				foreach( var lineItem in purchaseOrder.LineItems )
+				{
+					var item = items.FirstOrDefault( x => x.Name == lineItem.ItemName );
+					if( item != null )
+						lineItem.Id = item.Id;
+					else
+					{
+						skipOrder = true;
+						break;
+					}
+				}
+
+				if( !skipOrder )
+					ordersToCreate.Add( purchaseOrder );
+			}
+			return ordersToCreate;
 		}
 
 		public async Task< IEnumerable< Order > > GetOrdersAsync( DateTime dateFrom, DateTime dateTo )

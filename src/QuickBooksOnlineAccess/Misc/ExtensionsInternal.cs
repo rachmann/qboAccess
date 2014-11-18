@@ -12,6 +12,7 @@ using QuickBooksOnlineAccess.Models.GetPurchaseOrders;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreatePurchaseOrders;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetInvoices;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetSalesReceipts;
+using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetVendors;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.UpdateItemQuantityOnHand;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.UpdatePurchaseOrders;
 using QuickBooksOnlineAccess.Models.UpdateInventory;
@@ -21,6 +22,7 @@ using Item = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.
 using Payment = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetPayments.Payment;
 using PurchaseOrder = Intuit.Ipp.Data.PurchaseOrder;
 using SalesReceipt = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetSalesReceipts.SalesReceipt;
+using Vendor = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetVendors.Vendor;
 
 namespace QuickBooksOnlineAccess.Misc
 {
@@ -229,8 +231,8 @@ namespace QuickBooksOnlineAccess.Misc
 			var qbPurchaseOrder = new PurchaseOrder
 			{
 				DocNumber = purchaseOrder.DocNumber,
-				Id = purchaseOrder.Id,
-				SyncToken = purchaseOrder.SyncToken,
+				//Id = purchaseOrder.Id,
+				//SyncToken = purchaseOrder.SyncToken,
 				Line = purchaseOrder.LineItems.Select( x => x.ToIppPurchaseOrderLineItem() ).ToArray(),
 				POStatus = purchaseOrder.PoStatus.ToIppPurchaseOrderStatusEnum(),
 				POStatusSpecified = true,
@@ -516,6 +518,47 @@ namespace QuickBooksOnlineAccess.Misc
 			};
 			return order;
 		}
+
+		public static Models.Services.QuickBooksOnlineServicesSdk.CreatePurchaseOrders.PurchaseOrder ToQBPurchaseOrder( this Models.CreatePurchaseOrders.PurchaseOrder source )
+		{
+			var order = new Models.Services.QuickBooksOnlineServicesSdk.CreatePurchaseOrders.PurchaseOrder()
+			{
+				DocNumber = source.DocNumber,
+				//Id = source.,
+				//SyncToken = source.,
+				TnxDate = source.TnxDate,
+				VendorName = source.VendorName,
+				VendorValue = source.VendorValue,
+				PoStatus = source.PoStatus.ToQbPurchaseOrderStatusEnum(),
+				LineItems = source.LineItems.Select( x => x.ToQBPurchaseOrder() ),
+			};
+			return order;
+		}
+
+		public static QBPurchaseOrderStatusEnum ToQbPurchaseOrderStatusEnum( this Models.CreatePurchaseOrders.PoStatusEnum source )
+		{
+			switch( source )
+			{
+				case Models.CreatePurchaseOrders.PoStatusEnum.Closed:
+					return QBPurchaseOrderStatusEnum.Closed;
+				case Models.CreatePurchaseOrders.PoStatusEnum.Open:
+					return QBPurchaseOrderStatusEnum.Open;
+				default:
+					return QBPurchaseOrderStatusEnum.Unknown;
+			}
+		}
+
+		public static PurchaseOrdeLineItem ToQBPurchaseOrder( this Models.CreatePurchaseOrders.OrderLineItem source )
+		{
+			var order = new PurchaseOrdeLineItem()
+			{
+				ItemName = source.ItemName,
+				ItemValue = source.Id,
+				Qty = source.Qty,
+				UnitPrice = source.Rate,
+			};
+			return order;
+		}
 		#endregion
 
 		#region FromQBSdk
@@ -701,15 +744,34 @@ namespace QuickBooksOnlineAccess.Misc
 				Name = item.Name,
 				Qty = item.QtyOnHand,
 				SyncToken = item.SyncToken,
-				IncomeAccRefValue = item.IncomeAccountRef.Value,
-				IncomeAccRefName = item.IncomeAccountRef.name,
-				IncomeAccRefType = item.IncomeAccountRef.type,
-				ExpenseAccRefValue = item.ExpenseAccountRef.Value,
-				ExpenseAccRefName = item.ExpenseAccountRef.name,
-				ExpenseAccRefType = item.ExpenseAccountRef.type,
 			};
 
+			if( item.IncomeAccountRef != null )
+			{
+				qbAccessItem.IncomeAccRefValue = item.IncomeAccountRef.Value;
+				qbAccessItem.IncomeAccRefName = item.IncomeAccountRef.name;
+				qbAccessItem.IncomeAccRefType = item.IncomeAccountRef.type;
+			}
+
+			if( item.ExpenseAccountRef != null )
+			{
+				qbAccessItem.ExpenseAccRefValue = item.ExpenseAccountRef.Value;
+				qbAccessItem.ExpenseAccRefName = item.ExpenseAccountRef.name;
+				qbAccessItem.ExpenseAccRefType = item.ExpenseAccountRef.type;
+			}
+
 			return qbAccessItem;
+		}
+
+		public static Vendor ToQBAccessVendor(this Intuit.Ipp.Data.Vendor item)
+		{
+			var qbAccessVendor = new Vendor
+			{
+				Id = item.Id,
+				Name = item.DisplayName,
+			};
+
+			return qbAccessVendor;
 		}
 		#endregion
 
