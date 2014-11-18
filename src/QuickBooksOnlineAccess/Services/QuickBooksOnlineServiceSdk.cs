@@ -111,20 +111,20 @@ namespace QuickBooksOnlineAccess.Services
 			} ).ConfigureAwait( false );
 		}
 
-		public async Task<GetItemsResponse> GetItems()
+		public async Task< GetItemsResponse > GetItems()
 		{
-			var itemsQuery = string.Format("Select * FROM Item ");
+			var itemsQuery = string.Format( "Select * FROM Item " );
 
-			return await Task.Factory.StartNew(() =>
+			return await Task.Factory.StartNew( () =>
 			{
 				var itemsQueryBatch = this._dataService.CreateNewBatch();
-				itemsQueryBatch.Add(itemsQuery, "bID1");
+				itemsQueryBatch.Add( itemsQuery, "bID1" );
 				itemsQueryBatch.Execute();
-				var queryResponse = itemsQueryBatch["bID1"];
-				var items = queryResponse.Entities.Cast<Item>().ToList();
-				var itemsConvertedToQbAccessItems = items.Select(x => x.ToQBAccessItem()).ToList();
-				return new GetItemsResponse(itemsConvertedToQbAccessItems);
-			}).ConfigureAwait(false);
+				var queryResponse = itemsQueryBatch[ "bID1" ];
+				var items = queryResponse.Entities.Cast< Item >().ToList();
+				var itemsConvertedToQbAccessItems = items.Select( x => x.ToQBAccessItem() ).ToList();
+				return new GetItemsResponse( itemsConvertedToQbAccessItems );
+			} ).ConfigureAwait( false );
 		}
 
 		public async Task< GetItemsResponse > GetTrackingItems()

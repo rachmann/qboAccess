@@ -11,9 +11,9 @@ namespace QuickBooksOnlineAccess
 {
 	public interface IQuickBooksOnlineService
 	{
-		Task<IEnumerable<PurchaseOrder>> GetPurchaseOrdersOrdersAsync(DateTime dateFrom, DateTime dateTo);
+		Task< IEnumerable< PurchaseOrder > > GetPurchaseOrdersOrdersAsync( DateTime dateFrom, DateTime dateTo );
 
-		Task CreatePurchaseOrdersOrdersAsync(params Models.CreatePurchaseOrders.PurchaseOrder[] purchaseOrders);
+		Task CreatePurchaseOrdersOrdersAsync( params Models.CreatePurchaseOrders.PurchaseOrder[] purchaseOrders );
 
 		Task< IEnumerable< Order > > GetOrdersAsync( DateTime dateFrom, DateTime dateTo );
 

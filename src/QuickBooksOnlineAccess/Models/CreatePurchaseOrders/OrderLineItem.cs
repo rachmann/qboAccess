@@ -17,7 +17,7 @@ namespace QuickBooksOnlineAccess.Models.CreatePurchaseOrders
 			try
 			{
 				//var res = string.Format( "Id:{0}, Qty:{1}, Amount:{2}", this.Id, this.Qty, this.Amount );
-				var res = string.Format("ItemName: {0}, Qty: {1}, Rate: {2}", this.ItemName, this.Qty, this.Rate);
+				var res = string.Format( "ItemName: {0}, Qty: {1}, Rate: {2}", this.ItemName, this.Qty, this.Rate );
 
 				return res;
 			}

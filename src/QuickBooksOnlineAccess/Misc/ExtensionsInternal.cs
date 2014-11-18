@@ -12,7 +12,6 @@ using QuickBooksOnlineAccess.Models.GetPurchaseOrders;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreatePurchaseOrders;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetInvoices;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetSalesReceipts;
-using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetVendors;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.UpdateItemQuantityOnHand;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.UpdatePurchaseOrders;
 using QuickBooksOnlineAccess.Models.UpdateInventory;
@@ -763,7 +762,7 @@ namespace QuickBooksOnlineAccess.Misc
 			return qbAccessItem;
 		}
 
-		public static Vendor ToQBAccessVendor(this Intuit.Ipp.Data.Vendor item)
+		public static Vendor ToQBAccessVendor( this Intuit.Ipp.Data.Vendor item )
 		{
 			var qbAccessVendor = new Vendor
 			{
