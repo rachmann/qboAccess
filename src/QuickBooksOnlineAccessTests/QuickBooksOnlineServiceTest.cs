@@ -81,5 +81,44 @@ namespace QuickBooksOnlineAccessTests
 			//A
 			purchaseOrders.Should().OnlyContain( x => x.LineItems.All( y => y.Id == y.ItemName.Substring( y.ItemName.Length - 1 ) ) );
 		}
+
+		[ Test ]
+		public void GetOnlyPurchaseOrdersWithNotEmptyLineItemsId_ThereAreEmptyAndNotEmptyItemsInPurchaseOrder_ReturnedPurchaseOrdersOnlyWithNotEmptyLineItems()
+		{
+			//A
+			var purchaseOrders = new[]
+			{
+				new PurchaseOrder
+				{
+					LineItems = new[]
+					{
+						new OrderLineItem { ItemName = "testSku1", Id = "1" },
+						new OrderLineItem { ItemName = "testSku2" }
+					}
+				},
+				new PurchaseOrder
+				{
+					LineItems = new[]
+					{
+						new OrderLineItem { ItemName = "testSku2" },
+						new OrderLineItem { ItemName = "testSku3", Id = "3" }
+					}
+				},
+				new PurchaseOrder
+				{
+					LineItems = new[]
+					{
+						new OrderLineItem { ItemName = "testSku2", Id = "2" },
+						new OrderLineItem { ItemName = "testSku3", Id = "3" }
+					}
+				}
+			};
+
+			//A
+			var filteredOrders = QuickBooksOnlineService.GetOnlyPurchaseOrdersWithNotEmptyLineItemsId( purchaseOrders );
+
+			//A
+			filteredOrders.Should().OnlyContain( x => x.LineItems.All( y => !string.IsNullOrWhiteSpace( y.Id ) && !string.IsNullOrWhiteSpace( y.ItemName ) ) );
+		}
 	}
 }
