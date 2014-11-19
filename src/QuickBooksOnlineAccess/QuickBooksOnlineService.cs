@@ -96,11 +96,13 @@ namespace QuickBooksOnlineAccess
 				var getItemsResponse = await this._quickBooksOnlineServiceSdk.GetItems();
 				var items = getItemsResponse.Items;
 				FillPurchaseOrdersLineItemsById( purchaseOrders, items.ToQBProduct() );
-				var purchaseOrdersWithNotEmptyLineItems = GetOnlyPurchaseOrdersWithNotEmptyLineItemsId(purchaseOrders);
+				var purchaseOrdersWithNotEmptyLineItems = GetOnlyPurchaseOrdersWithNotEmptyLineItemsId( purchaseOrders );
 
 				var getVendorsResponse = await this._quickBooksOnlineServiceSdk.GetVendors();
 				var vendors = getVendorsResponse.Vendors;
-				var ordersWithExistingVendor = this.GetPurchaseOrdersWithExistingVendor( purchaseOrders, vendors );
+				FillPurchaseOrdersByVendorId( purchaseOrdersWithNotEmptyLineItems, vendors );
+				var ordersWithExistingVendor = GetOnlyPurchaseOrdersWithNotEmptyVendorId( purchaseOrdersWithNotEmptyLineItems );
+
 				var createPurchaseOrdersResponse = await this._quickBooksOnlineServiceSdk.CreatePurchaseOrders( ordersWithExistingVendor.Select( x => x.ToQBPurchaseOrder() ).ToArray() ).ConfigureAwait( false );
 
 				QuickBooksOnlineLogger.LogTraceEnded( this.CreateMethodCallInfo( methodParameters, mark ) );
@@ -128,22 +130,6 @@ namespace QuickBooksOnlineAccess
 		{
 			var res = purchaseOrders.Where( po => !string.IsNullOrWhiteSpace( po.VendorName ) && !string.IsNullOrWhiteSpace( po.VendorValue ) ).ToList();
 			return res;
-		}
-
-		private IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > GetPurchaseOrdersWithExistingVendor( IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > purchaseOrders, IEnumerable< Vendor > vendors )
-		{
-			var ordersToCreate = new List< Models.CreatePurchaseOrders.PurchaseOrder >();
-			var vendorsList = vendors as IList< Vendor > ?? vendors.ToList();
-			foreach( var purchaseOrder in purchaseOrders )
-			{
-				var vendor = vendorsList.FirstOrDefault( x => x.Name == purchaseOrder.VendorName );
-				if( vendor != null )
-				{
-					purchaseOrder.VendorValue = vendor.Id;
-					ordersToCreate.Add( purchaseOrder );
-				}
-			}
-			return ordersToCreate;
 		}
 
 		internal static void FillPurchaseOrdersLineItemsById( IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > purchaseOrders, IEnumerable< Product > items )
