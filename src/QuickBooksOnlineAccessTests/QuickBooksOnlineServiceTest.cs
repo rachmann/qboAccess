@@ -45,7 +45,7 @@ namespace QuickBooksOnlineAccessTests
 		}
 
 		[ Test ]
-		public void CreatePurchaseOrders_ServiceDontContainsTheSamePurchaseOrders_PurchaseOrdersCreated()
+		public void FillPurchaseOrdersLineItemsById_ThereAreCorespondItemsForPurchaseOrderLineItems_PurchaseOrdersLineItemsFilled()
 		{
 			//A
 			var products = new[]
@@ -55,7 +55,7 @@ namespace QuickBooksOnlineAccessTests
 				new Product { Id = "3", Name = "testSku3" },
 			};
 
-			var purchaseOrder = new[]
+			var purchaseOrders = new[]
 			{
 				new PurchaseOrder
 				{
@@ -76,10 +76,10 @@ namespace QuickBooksOnlineAccessTests
 			};
 
 			//A
-			QuickBooksOnlineService.FillPurchaseOrdersLineItemsById( purchaseOrder, products );
+			QuickBooksOnlineService.FillPurchaseOrdersLineItemsById( purchaseOrders, products );
 
 			//A
-			purchaseOrder.Should().OnlyContain( x => x.LineItems.All( y => y.Id == y.ItemName.Substring( y.ItemName.Length - 1 ) ) );
+			purchaseOrders.Should().OnlyContain( x => x.LineItems.All( y => y.Id == y.ItemName.Substring( y.ItemName.Length - 1 ) ) );
 		}
 	}
 }

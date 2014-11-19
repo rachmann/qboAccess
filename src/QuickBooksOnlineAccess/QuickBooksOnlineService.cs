@@ -10,7 +10,6 @@ using QuickBooksOnlineAccess.Models.GetProducts;
 using QuickBooksOnlineAccess.Models.GetPurchaseOrders;
 using QuickBooksOnlineAccess.Models.Ping;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Auth;
-using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetItems;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetVendors;
 using QuickBooksOnlineAccess.Models.UpdateInventory;
 using QuickBooksOnlineAccess.Services;
@@ -96,11 +95,12 @@ namespace QuickBooksOnlineAccess
 
 				var getItemsResponse = await this._quickBooksOnlineServiceSdk.GetItems();
 				var items = getItemsResponse.Items;
-				var ordersWithExistingLineItems = GetPurchaseOrdersWithExistingLineItems( purchaseOrders, items );
+				FillPurchaseOrdersLineItemsById( purchaseOrders, items.ToQBProduct() );
+				//var ordersWithExistingLineItems = GetPurchaseOrdersWithExistingLineItems( purchaseOrders, items );
 
 				var getVendorsResponse = await this._quickBooksOnlineServiceSdk.GetVendors();
 				var vendors = getVendorsResponse.Vendors;
-				var ordersWithExistingVendor = this.GetPurchaseOrdersWithExistingVendor( ordersWithExistingLineItems, vendors );
+				var ordersWithExistingVendor = this.GetPurchaseOrdersWithExistingVendor( purchaseOrders, vendors );
 				var createPurchaseOrdersResponse = await this._quickBooksOnlineServiceSdk.CreatePurchaseOrders( ordersWithExistingVendor.Select( x => x.ToQBPurchaseOrder() ).ToArray() ).ConfigureAwait( false );
 
 				QuickBooksOnlineLogger.LogTraceEnded( this.CreateMethodCallInfo( methodParameters, mark ) );
@@ -129,28 +129,18 @@ namespace QuickBooksOnlineAccess
 			return ordersToCreate;
 		}
 
-		private static IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > GetPurchaseOrdersWithExistingLineItems( IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > purchaseOrders, List< Item > items )
+		internal static void FillPurchaseOrdersLineItemsById( IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > purchaseOrders, IEnumerable< Product > items )
 		{
-			var ordersToCreate = new List< Models.CreatePurchaseOrders.PurchaseOrder >();
+			var itemsList = items as IList< Product > ?? items.ToList();
 			foreach( var purchaseOrder in purchaseOrders )
 			{
-				var skipOrder = false;
-				foreach( var lineItem in purchaseOrder.LineItems )
+				foreach( var lineItem in purchaseOrder.LineItems.ToList() )
 				{
-					var item = items.FirstOrDefault( x => x.Name == lineItem.ItemName );
-					if( item != null )
-						lineItem.Id = item.Id;
-					else
-					{
-						skipOrder = true;
-						break;
-					}
+					var itemMayBe = itemsList.FirstOrDefault( item => item.Name == lineItem.ItemName );
+					if( itemMayBe != null )
+						lineItem.Id = itemMayBe.Id;
 				}
-
-				if( !skipOrder )
-					ordersToCreate.Add( purchaseOrder );
 			}
-			return ordersToCreate;
 		}
 
 		public async Task< IEnumerable< Order > > GetOrdersAsync( DateTime dateFrom, DateTime dateTo )
