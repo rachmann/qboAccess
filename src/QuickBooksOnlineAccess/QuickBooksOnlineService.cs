@@ -13,15 +13,16 @@ using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Auth;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetVendors;
 using QuickBooksOnlineAccess.Models.UpdateInventory;
 using QuickBooksOnlineAccess.Services;
+using OrderLineItem = QuickBooksOnlineAccess.Models.CreatePurchaseOrders.OrderLineItem;
 
 namespace QuickBooksOnlineAccess
 {
-	public class QuickBooksOnlineService : IQuickBooksOnlineService
+	public class QuickBooksOnlineService: IQuickBooksOnlineService
 	{
 		private readonly QuickBooksOnlineServiceSdk _quickBooksOnlineServiceSdk;
 		private readonly RestProfile _restProfile;
 		private readonly ConsumerProfile _consumerProfile;
-		public Func< string > AdditionalLogInfo { get; set; }
+		public Func< string > AdditionalLogInfo{ get; set; }
 
 		public QuickBooksOnlineService( QuickBooksOnlineAuthenticatedUserCredentials quickBooksAuthenticatedUserCredentials, QuickBooksOnlineNonAuthenticatedUserCredentials quickBooksNonAuthenticatedUserCredentials )
 		{
@@ -132,19 +133,44 @@ namespace QuickBooksOnlineAccess
 			return res;
 		}
 
-		internal static void FillPurchaseOrdersLineItemsById( IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > purchaseOrders, IEnumerable< Product > items )
+
+
+		internal static void FillPurchaseOrdersLineItemsById(IEnumerable<Models.CreatePurchaseOrders.PurchaseOrder> purchaseOrders, IEnumerable<Product> items)
 		{
-			var itemsList = items as IList< Product > ?? items.ToList();
+			var itemsList = ( items as IList<Product> ?? items.ToList() );
+
 			foreach( var purchaseOrder in purchaseOrders )
 			{
-				foreach( var lineItem in purchaseOrder.LineItems.ToList() )
+				var newLineItems = new List< OrderLineItem >();
+				foreach( var lineItem in purchaseOrder.LineItems )
 				{
-					var itemMayBe = itemsList.FirstOrDefault( item => item.Name == lineItem.ItemName );
-					if( itemMayBe != null )
+					var itemMayBe = itemsList.FirstOrDefault(item => item.Name == lineItem.ItemName);
+					if (itemMayBe != null)
+					{
 						lineItem.Id = itemMayBe.Id;
+						newLineItems.Add( lineItem );
+					}
 				}
+
+				purchaseOrder.LineItems = newLineItems;
 			}
 		}
+
+		//internal static void FillPurchaseOrdersLineItemsById(IEnumerable<Models.CreatePurchaseOrders.PurchaseOrder> purchaseOrders, IEnumerable<Product> items)
+		//{
+		//	var itemsList = items as IList<Product> ?? items.ToList();
+		//	var purchaseOrdersArray = purchaseOrders as Models.CreatePurchaseOrders.PurchaseOrder[] ?? purchaseOrders.ToArray();
+		//	for (var i = 0; i < purchaseOrdersArray.Length; i++)
+		//	{
+		//		var lineItemArray = purchaseOrdersArray[i].LineItems.ToArray();
+		//		for (var j = 0; j < lineItemArray.Length; j++)
+		//		{
+		//			var itemMayBe = itemsList.FirstOrDefault(item => item.Name == lineItemArray[j].ItemName);
+		//			if (itemMayBe != null)
+		//				lineItemArray[j].Id = itemMayBe.Id;
+		//		}
+		//	}
+		//}
 
 		internal static IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > GetOnlyPurchaseOrdersWithNotEmptyLineItemsId( IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > purchaseOrders )
 		{
@@ -154,7 +180,7 @@ namespace QuickBooksOnlineAccess
 
 		public async Task< IEnumerable< Order > > GetOrdersAsync( DateTime dateFrom, DateTime dateTo )
 		{
-			var methodParameters = string.Format( "{{dateFrom:{0},dateTo:{1}}}", dateFrom, dateTo );
+			var methodParameters = string.Format( "{{dateFrom:{0}, dateTo:{1}}}", dateFrom, dateTo );
 			var mark = Guid.NewGuid().ToString();
 			try
 			{
