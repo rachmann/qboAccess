@@ -113,6 +113,17 @@ namespace QuickBooksOnlineAccess
 			}
 		}
 
+		internal static void FillPurchaseOrdersByVendorId( IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > purchaseOrders, IEnumerable< Vendor > vendors )
+		{
+			var vendorsList = vendors as IList< Vendor > ?? vendors.ToList();
+			foreach( var purchaseOrder in purchaseOrders )
+			{
+				var vendor = vendorsList.FirstOrDefault( x => x.Name == purchaseOrder.VendorName );
+				if( vendor != null )
+					purchaseOrder.VendorValue = vendor.Id;
+			}
+		}
+
 		private IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > GetPurchaseOrdersWithExistingVendor( IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > purchaseOrders, IEnumerable< Vendor > vendors )
 		{
 			var ordersToCreate = new List< Models.CreatePurchaseOrders.PurchaseOrder >();

@@ -6,6 +6,7 @@ using QuickBooksOnlineAccess.Models;
 using QuickBooksOnlineAccess.Models.CreatePurchaseOrders;
 using QuickBooksOnlineAccess.Models.GetProducts;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Auth;
+using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetVendors;
 
 namespace QuickBooksOnlineAccessTests
 {
@@ -80,6 +81,39 @@ namespace QuickBooksOnlineAccessTests
 
 			//A
 			purchaseOrders.Should().OnlyContain( x => x.LineItems.All( y => y.Id == y.ItemName.Substring( y.ItemName.Length - 1 ) ) );
+		}
+
+		[ Test ]
+		public void FillPurchaseOrdersVendorById_ThereAreCorespondVendorsForPurchaseOrder_PurchaseOrdersVendorsFilled()
+		{
+			//A
+			var vendors = new[]
+			{
+				new Vendor { Id = "1", Name = "Vendor1" },
+				new Vendor { Id = "2", Name = "Vendor2" },
+				new Vendor { Id = "3", Name = "Vendor3" },
+			};
+			var purchaseOrders = new[]
+			{
+				new PurchaseOrder
+				{
+					VendorName = vendors[ 0 ].Name
+				},
+				new PurchaseOrder
+				{
+					VendorName = vendors[ 1 ].Name
+				},
+				new PurchaseOrder
+				{
+					VendorName = vendors[ 2 ].Name
+				},
+			};
+
+			//A
+			QuickBooksOnlineService.FillPurchaseOrdersByVendorId( purchaseOrders, vendors );
+
+			//A
+			purchaseOrders.Should().OnlyContain( x => x.VendorValue == x.VendorName.Substring( x.VendorName.Length - 1 ) );
 		}
 
 		[ Test ]
