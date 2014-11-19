@@ -154,5 +154,37 @@ namespace QuickBooksOnlineAccessTests
 			//A
 			filteredOrders.Should().OnlyContain( x => x.LineItems.All( y => !string.IsNullOrWhiteSpace( y.Id ) && !string.IsNullOrWhiteSpace( y.ItemName ) ) );
 		}
+
+		[ Test ]
+		public void GetOnlyPurchaseOrdersWithNotEmptyVendorId_ThereArePurchaseOrderWithEmptyAndNotEmptyVendor_ReturnedPurchaseOrdersOnlyWithNotEmptyVendor()
+		{
+			//A
+
+			var purchaseOrders = new[]
+			{
+				new PurchaseOrder
+				{
+					VendorName = "vendor1",
+					VendorValue = "1",
+					DocNumber = "1"
+				},
+				new PurchaseOrder
+				{
+					VendorName = "vendor1",
+					DocNumber = "2"
+				},
+				new PurchaseOrder
+				{
+					VendorName = "vendor1",
+					DocNumber = "3"
+				},
+			};
+
+			//A
+			var filteredOrders = QuickBooksOnlineService.GetOnlyPurchaseOrdersWithNotEmptyVendorId( purchaseOrders );
+
+			//A
+			filteredOrders.Should().OnlyContain( y => y.DocNumber == "1" );
+		}
 	}
 }

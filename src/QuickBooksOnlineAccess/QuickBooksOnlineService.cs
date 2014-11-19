@@ -124,6 +124,12 @@ namespace QuickBooksOnlineAccess
 			}
 		}
 
+		internal static IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > GetOnlyPurchaseOrdersWithNotEmptyVendorId( IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > purchaseOrders )
+		{
+			var res = purchaseOrders.Where( po => !string.IsNullOrWhiteSpace( po.VendorName ) && !string.IsNullOrWhiteSpace( po.VendorValue ) ).ToList();
+			return res;
+		}
+
 		private IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > GetPurchaseOrdersWithExistingVendor( IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > purchaseOrders, IEnumerable< Vendor > vendors )
 		{
 			var ordersToCreate = new List< Models.CreatePurchaseOrders.PurchaseOrder >();
