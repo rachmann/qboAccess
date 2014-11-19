@@ -96,7 +96,7 @@ namespace QuickBooksOnlineAccess
 				var getItemsResponse = await this._quickBooksOnlineServiceSdk.GetItems();
 				var items = getItemsResponse.Items;
 				FillPurchaseOrdersLineItemsById( purchaseOrders, items.ToQBProduct() );
-				//var ordersWithExistingLineItems = GetPurchaseOrdersWithExistingLineItems( purchaseOrders, items );
+				var purchaseOrdersWithNotEmptyLineItems = GetOnlyPurchaseOrdersWithNotEmptyLineItemsId(purchaseOrders);
 
 				var getVendorsResponse = await this._quickBooksOnlineServiceSdk.GetVendors();
 				var vendors = getVendorsResponse.Vendors;
@@ -141,6 +141,12 @@ namespace QuickBooksOnlineAccess
 						lineItem.Id = itemMayBe.Id;
 				}
 			}
+		}
+
+		internal static IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > GetOnlyPurchaseOrdersWithNotEmptyLineItemsId( IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > purchaseOrders )
+		{
+			var res = purchaseOrders.Where( po => po.LineItems != null && po.LineItems.All( y => !string.IsNullOrWhiteSpace( y.Id ) && !string.IsNullOrWhiteSpace( y.ItemName ) ) ).ToList();
+			return res;
 		}
 
 		public async Task< IEnumerable< Order > > GetOrdersAsync( DateTime dateFrom, DateTime dateTo )
