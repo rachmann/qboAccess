@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreateSaleReceipts
@@ -8,5 +9,6 @@ namespace QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Cre
 		public IEnumerable< Line > Line { get; set; }
 		public string CustomerValue { get; set; }
 		public string CustomerName { get; set; }
+		public DateTime TnxDate { get; set; }
 	}
 }

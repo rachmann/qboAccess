@@ -7,9 +7,11 @@ using Netco.Logging.NLogIntegration;
 using NUnit.Framework;
 using QuickBooksOnlineAccess;
 using QuickBooksOnlineAccess.Models;
+using QuickBooksOnlineAccess.Models.CreateOrders;
 using QuickBooksOnlineAccess.Models.CreatePurchaseOrders;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Auth;
 using QuickBooksOnlineAccessTestsIntegration.TestEnvironment;
+using OrderLineItem = QuickBooksOnlineAccess.Models.CreatePurchaseOrders.OrderLineItem;
 
 namespace QuickBooksOnlineAccessTestsIntegration
 {
@@ -98,6 +100,39 @@ namespace QuickBooksOnlineAccessTestsIntegration
 			//A
 			var getOrdersResponse = this._quickBooksService.GetPurchaseOrdersOrdersAsync( DateTime.UtcNow.AddMinutes( -5 ), DateTime.UtcNow.AddMinutes( 5 ) );
 			getOrdersResponse.Result.Count().Should().BeGreaterThan( 0 );
+		}
+
+		[ Test ]
+		public void CreateOrder_ServiceDontContainsSuchOrder_SaleReceiptCreated()
+		{
+			//A
+			var receipt = new Order
+			{
+				DocNumber = "1-1-5-54-28400-105",
+				LineItems = new List< QuickBooksOnlineAccess.Models.CreateOrders.OrderLineItem >
+				{
+					new QuickBooksOnlineAccess.Models.CreateOrders.OrderLineItem()
+					{
+						Qty = 3,
+						ItemName = "testSku1",
+						Rate = 12.3m,
+					}
+				},
+				CustomerName = "Mrs Francine Smith",
+				OrderStatus = OrderStatusEnum.Paid,
+				TnxDate = new DateTime( 2014, 11, 15 ),
+			};
+
+			//A
+			var createSaleReceipts = this._quickBooksService.CreateOrdersAsync( receipt );
+			createSaleReceipts.Wait();
+
+			//A
+			var getSaleRceipts = this._quickBooksService.GetOrdersAsync( receipt.DocNumber );
+			var salesReceiptsResponse = getSaleRceipts.Result;
+
+			//A
+			salesReceiptsResponse.ToList().Where( x => x.DocNumber == receipt.DocNumber ).ToList().Count.Should().BeGreaterThan( 0 );
 		}
 	}
 }

@@ -116,6 +116,8 @@
     <Compile Include="IQuickBooksOnlineService.cs" />
     <Compile Include="Misc\ExtensionsPublic.cs" />
     <Compile Include="Misc\IManualSerializable.cs" />
+    <Compile Include="Models\CreateOrders\OrderLineItem.cs" />
+    <Compile Include="Models\CreateOrders\Order.cs" />
     <Compile Include="Models\GetOrders\OrderLine.cs" />
     <Compile Include="Models\CreatePurchaseOrders\OrderLineItem.cs" />
     <Compile Include="Models\CreatePurchaseOrders\PurchaseOrder.cs" />
@@ -149,6 +151,8 @@
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\GetPurchaseOrders\GetPurchaseOrdersResponse.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\GetSalesReceipts\Line.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\GetSalesReceipts\SalesReceipt.cs" />
+    <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\GetCustomers\GetCustomersResponse.cs" />
+    <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\GetCustomers\Customer.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\GetVendors\GetVendorsResponse.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\GetVendors\Vendor.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\UpdateItemQuantityOnHand\InventoryItem.cs" />

@@ -5,11 +5,12 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using QuickBooksOnlineAccess.Misc;
 using QuickBooksOnlineAccess.Models;
-using QuickBooksOnlineAccess.Models.GetOrders;
+using QuickBooksOnlineAccess.Models.CreateOrders;
 using QuickBooksOnlineAccess.Models.GetProducts;
 using QuickBooksOnlineAccess.Models.GetPurchaseOrders;
 using QuickBooksOnlineAccess.Models.Ping;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Auth;
+using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetCustomers;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetVendors;
 using QuickBooksOnlineAccess.Models.UpdateInventory;
 using QuickBooksOnlineAccess.Services;
@@ -59,6 +60,7 @@ namespace QuickBooksOnlineAccess
 			}
 		}
 
+		#region PurchaseOrder
 		public async Task< IEnumerable< PurchaseOrder > > GetPurchaseOrdersOrdersAsync( DateTime dateFrom, DateTime dateTo )
 		{
 			var methodParameters = string.Format( "{{dateFrom:{0},dateTo:{1}}}", dateFrom, dateTo );
@@ -169,14 +171,49 @@ namespace QuickBooksOnlineAccess
 		//		}
 		//	}
 		//}
-
 		internal static IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > GetOnlyPurchaseOrdersWithNotEmptyLineItemsId( IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > purchaseOrders )
 		{
 			var res = purchaseOrders.Where( po => po.LineItems != null && po.LineItems.All( y => !string.IsNullOrWhiteSpace( y.Id ) && !string.IsNullOrWhiteSpace( y.ItemName ) ) ).ToList();
 			return res;
 		}
+		#endregion
 
-		public async Task< IEnumerable< Order > > GetOrdersAsync( DateTime dateFrom, DateTime dateTo )
+		#region Orders
+		public async Task CreateOrdersAsync( params Order[] purchaseOrders )
+		{
+			var methodParameters = string.Format( "{{Orders:{0}}}", purchaseOrders.ToJson() );
+			var mark = Guid.NewGuid().ToString();
+			try
+			{
+				QuickBooksOnlineLogger.LogTraceStarted( this.CreateMethodCallInfo( methodParameters, mark ) );
+
+				if( purchaseOrders == null || !purchaseOrders.Any() )
+					return;
+
+				var getItemsResponse = await this._quickBooksOnlineServiceSdk.GetItems();
+				var items = getItemsResponse.Items;
+				FillOrdersLineItemsById( purchaseOrders, items.ToQBProduct() );
+				var purchaseOrdersWithNotEmptyLineItems = GetOnlyPurchaseOrdersWithNotEmptyLineItemsId( purchaseOrders );
+
+				var getVendorsResponse = await this._quickBooksOnlineServiceSdk.GetCustomers();
+				var customers = getVendorsResponse.Customers;
+				FillOrdersByCustomerId( purchaseOrdersWithNotEmptyLineItems, customers );
+				var ordersWithExistingCustomer = GetOnlyOrdersWithNotEmptyVendorId( purchaseOrdersWithNotEmptyLineItems );
+
+				var paidOrders = ordersWithExistingCustomer.Where( x => x.OrderStatus == OrderStatusEnum.Paid ).ToList();
+				var createPurchaseOrdersResponse = await this._quickBooksOnlineServiceSdk.CreateSaleReceipts( paidOrders.Select( x => x.ToQBSaleReceipt() ).ToArray() ).ConfigureAwait( false );
+
+				QuickBooksOnlineLogger.LogTraceEnded( this.CreateMethodCallInfo( methodParameters, mark ) );
+			}
+			catch( Exception exception )
+			{
+				var quickBooksException = new QuickBooksOnlineException( this.CreateMethodCallInfo(), exception );
+				QuickBooksOnlineLogger.LogTraceException( quickBooksException );
+				throw quickBooksException;
+			}
+		}
+
+		public async Task< IEnumerable< Models.GetOrders.Order > > GetOrdersAsync( DateTime dateFrom, DateTime dateTo )
 		{
 			var methodParameters = string.Format( "{{dateFrom:{0}, dateTo:{1}}}", dateFrom, dateTo );
 			var mark = Guid.NewGuid().ToString();
@@ -207,7 +244,7 @@ namespace QuickBooksOnlineAccess
 			}
 		}
 
-		public async Task< IEnumerable< Order > > GetOrdersAsync( params string[] docNumbers )
+		public async Task< IEnumerable< Models.GetOrders.Order > > GetOrdersAsync( params string[] docNumbers )
 		{
 			var methodParameters = string.Format( "{{docNumbers:{0}}}", docNumbers.ToJson() );
 			var mark = Guid.NewGuid().ToString();
@@ -236,7 +273,7 @@ namespace QuickBooksOnlineAccess
 			}
 		}
 
-		public async Task< IEnumerable< Order > > GetOrdersAsync()
+		public async Task< IEnumerable< Models.GetOrders.Order > > GetOrdersAsync()
 		{
 			try
 			{
@@ -250,6 +287,51 @@ namespace QuickBooksOnlineAccess
 				throw quickBooksException;
 			}
 		}
+
+		internal static void FillOrdersLineItemsById( IEnumerable< Order > purchaseOrders, IEnumerable< Product > items )
+		{
+			var itemsList = ( items as IList< Product > ?? items.ToList() );
+
+			foreach( var purchaseOrder in purchaseOrders )
+			{
+				var newLineItems = new List< Models.CreateOrders.OrderLineItem >();
+				foreach( var lineItem in purchaseOrder.LineItems )
+				{
+					var itemMayBe = itemsList.FirstOrDefault( item => item.Name == lineItem.ItemName );
+					if( itemMayBe != null )
+					{
+						lineItem.Id = itemMayBe.Id;
+						newLineItems.Add( lineItem );
+					}
+				}
+
+				purchaseOrder.LineItems = newLineItems;
+			}
+		}
+
+		internal static IEnumerable< Order > GetOnlyPurchaseOrdersWithNotEmptyLineItemsId( IEnumerable< Order > purchaseOrders )
+		{
+			var res = purchaseOrders.Where( po => po.LineItems != null && po.LineItems.All( y => !string.IsNullOrWhiteSpace( y.Id ) && !string.IsNullOrWhiteSpace( y.ItemName ) ) ).ToList();
+			return res;
+		}
+
+		internal static void FillOrdersByCustomerId( IEnumerable< Order > purchaseOrders, IEnumerable< Customer > vendors )
+		{
+			var vendorsList = vendors as IList< Customer > ?? vendors.ToList();
+			foreach( var purchaseOrder in purchaseOrders )
+			{
+				var vendor = vendorsList.FirstOrDefault( x => x.Name == purchaseOrder.CustomerName );
+				if( vendor != null )
+					purchaseOrder.CustomerValue = vendor.Id;
+			}
+		}
+
+		internal static IEnumerable< Order > GetOnlyOrdersWithNotEmptyVendorId( IEnumerable< Order > purchaseOrders )
+		{
+			var res = purchaseOrders.Where( po => !string.IsNullOrWhiteSpace( po.CustomerName ) && !string.IsNullOrWhiteSpace( po.CustomerValue ) ).ToList();
+			return res;
+		}
+		#endregion
 
 		public async Task< IEnumerable< Product > > GetProductsAsync()
 		{

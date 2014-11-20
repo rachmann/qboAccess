@@ -13,6 +13,7 @@ using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreateI
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreatePurchaseOrders;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreateSaleReceipts;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetBills;
+using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetCustomers;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetInvoices;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetItems;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetPayments;
@@ -22,6 +23,7 @@ using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetVend
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.UpdateItemQuantityOnHand;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.UpdatePurchaseOrders;
 using Bill = Intuit.Ipp.Data.Bill;
+using Customer = Intuit.Ipp.Data.Customer;
 using Invoice = Intuit.Ipp.Data.Invoice;
 using Item = Intuit.Ipp.Data.Item;
 using Payment = Intuit.Ipp.Data.Payment;
@@ -226,6 +228,22 @@ namespace QuickBooksOnlineAccess.Services
 				var items = queryResponse.Entities.Cast< Vendor >().ToList();
 				var itemsConvertedToQbAccessItems = items.Select( x => x.ToQBAccessVendor() ).ToList();
 				return new GetVendorsResponse( itemsConvertedToQbAccessItems );
+			} ).ConfigureAwait( false );
+		}
+
+		public async Task< GetCustomersResponse > GetCustomers()
+		{
+			var itemsQuery = string.Format( "Select * FROM Customer" );
+
+			return await Task.Factory.StartNew( () =>
+			{
+				var itemsQueryBatch = this._dataService.CreateNewBatch();
+				itemsQueryBatch.Add( itemsQuery, "bID1" );
+				itemsQueryBatch.Execute();
+				var queryResponse = itemsQueryBatch[ "bID1" ];
+				var items = queryResponse.Entities.Cast< Customer >().ToList();
+				var itemsConvertedToQbAccessItems = items.Select( x => x.ToQBAccessCustomer() ).ToList();
+				return new GetCustomersResponse( itemsConvertedToQbAccessItems );
 			} ).ConfigureAwait( false );
 		}
 		#endregion

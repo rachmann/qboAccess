@@ -2,7 +2,7 @@ namespace QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Cre
 {
 	public class Line
 	{
-		public int Qty { get; set; }
+		public decimal Qty { get; set; }
 		public string ItemValue { get; set; }
 		public string ItemName { get; set; }
 		public decimal UnitPrice { get; set; }

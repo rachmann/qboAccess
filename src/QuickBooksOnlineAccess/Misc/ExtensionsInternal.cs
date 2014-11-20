@@ -17,6 +17,7 @@ using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.UpdateI
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.UpdatePurchaseOrders;
 using QuickBooksOnlineAccess.Models.UpdateInventory;
 using Bill = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetBills.Bill;
+using Customer = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetCustomers.Customer;
 using Invoice = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetInvoices.Invoice;
 using Item = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetItems.Item;
 using Line = Intuit.Ipp.Data.Line;
@@ -195,6 +196,8 @@ namespace QuickBooksOnlineAccess.Misc
 			{
 				DocNumber = saleReceipt.DocNumber,
 				Line = saleReceipt.Line.Select( x => x.ToIppSaleReceiptLine() ).ToArray(),
+				TxnDate = saleReceipt.TnxDate,
+				TxnDateSpecified = true,
 				CustomerRef = new ReferenceType { Value = saleReceipt.CustomerValue, name = saleReceipt.CustomerName },
 				CurrencyRef = new ReferenceType { name = "United States Dollar", Value = "USD" }
 			};
@@ -534,6 +537,31 @@ namespace QuickBooksOnlineAccess.Misc
 		#endregion
 
 		#region FromPublicService
+		public static SaleReceipt ToQBSaleReceipt( this Models.CreateOrders.Order source )
+		{
+			var saleReceipt = new SaleReceipt()
+			{
+				DocNumber = source.DocNumber,
+				CustomerName = source.CustomerName,
+				CustomerValue = source.CustomerValue,
+				TnxDate = source.TnxDate,
+				Line = source.LineItems.Select( x => x.ToQBSaleReceiptLineItem() ),
+			};
+			return saleReceipt;
+		}
+
+		public static Models.Services.QuickBooksOnlineServicesSdk.CreateSaleReceipts.Line ToQBSaleReceiptLineItem( this Models.CreateOrders.OrderLineItem source )
+		{
+			var lineItem = new Models.Services.QuickBooksOnlineServicesSdk.CreateSaleReceipts.Line()
+			{
+				ItemName = source.ItemName,
+				ItemValue = source.Id,
+				Qty = source.Qty,
+				UnitPrice = source.Rate,
+			};
+			return lineItem;
+		}
+
 		public static IEnumerable< InventoryItem > ToQBInventoryItem( this IEnumerable< Inventory > source )
 		{
 			var orders = source.Select( x => ToQBInventoryItem( ( Inventory )x ) );
@@ -811,6 +839,17 @@ namespace QuickBooksOnlineAccess.Misc
 			};
 
 			return qbAccessVendor;
+		}
+
+		public static Customer ToQBAccessCustomer( this Intuit.Ipp.Data.Customer source )
+		{
+			var customer = new Customer
+			{
+				Id = source.Id,
+				Name = source.DisplayName,
+			};
+
+			return customer;
 		}
 		#endregion
 
