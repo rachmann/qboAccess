@@ -21,5 +21,7 @@ namespace QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Get
 		public string TrackingNum { get; set; }
 		public DateTime CreateTime { get; set; }
 		public decimal Balance { get; set; }
+		public string CustomerName { get; set; }
+		public string CustomerValue { get; set; }
 	}
 }

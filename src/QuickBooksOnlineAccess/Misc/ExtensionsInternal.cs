@@ -151,6 +151,8 @@ namespace QuickBooksOnlineAccess.Misc
 				ShipDate = source.ShipDate,
 				TotalAmt = source.TotalAmt,
 				CreateTime = source.CreateTime,
+				CustomerName = source.CustomerName,
+				CustomerValue = source.CustomerValue,
 			};
 
 			return qbOrder;
@@ -176,6 +178,8 @@ namespace QuickBooksOnlineAccess.Misc
 				ShipDate = source.ShipDate,
 				TotalAmt = source.TotalAmt,
 				CreateTime = source.CreateTime,
+				CustomerName = source.CustomerName,
+				CustomerValue = source.CustomerValue,
 			};
 
 			return qbOrder;
@@ -750,6 +754,8 @@ namespace QuickBooksOnlineAccess.Misc
 				ShipDate = salesReceipt.ShipDate,
 				CreateTime = salesReceipt.MetaData.CreateTime,
 				TrackingNum = salesReceipt.TrackingNum,
+				CustomerName = ( salesReceipt.CustomerRef != null ) ? salesReceipt.CustomerRef.name : null,
+				CustomerValue = ( salesReceipt.CustomerRef != null ) ? salesReceipt.CustomerRef.Value : null,
 			};
 
 			return qbSalesReceipt;
@@ -784,6 +790,8 @@ namespace QuickBooksOnlineAccess.Misc
 				TrackingNum = invoice.TrackingNum,
 				CreateTime = invoice.MetaData.CreateTime,
 				Line = invoice.Line.Select( x => x.ToQBAccessInvoiceLine() ).ToList(),
+				CustomerName = ( invoice.CustomerRef != null ) ? invoice.CustomerRef.name : null,
+				CustomerValue = ( invoice.CustomerRef != null ) ? invoice.CustomerRef.Value : null,
 			};
 
 			return qbAccessItem;

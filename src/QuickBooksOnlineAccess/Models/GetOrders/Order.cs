@@ -23,6 +23,8 @@ namespace QuickBooksOnlineAccess.Models.GetOrders
 		public decimal TotalAmt { get; set; }
 		public IEnumerable< OrderLine > Line { get; set; }
 		public DateTime CreateTime { get; set; }
+		public string CustomerName { get; set; }
+		public string CustomerValue { get; set; }
 
 		public OrderStatus GetOrderStatus()
 		{

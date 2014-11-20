@@ -21,5 +21,7 @@ namespace QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Get
 		public string PONumber { get; set; }
 		public List< SalesReceiptLine > Line { get; set; }
 		public DateTime CreateTime { get; set; }
+		public string CustomerName { get; set; }
+		public string CustomerValue { get; set; }
 	}
 }
