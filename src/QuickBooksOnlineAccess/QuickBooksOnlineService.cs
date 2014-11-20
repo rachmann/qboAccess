@@ -17,12 +17,12 @@ using OrderLineItem = QuickBooksOnlineAccess.Models.CreatePurchaseOrders.OrderLi
 
 namespace QuickBooksOnlineAccess
 {
-	public class QuickBooksOnlineService: IQuickBooksOnlineService
+	public class QuickBooksOnlineService : IQuickBooksOnlineService
 	{
 		private readonly QuickBooksOnlineServiceSdk _quickBooksOnlineServiceSdk;
 		private readonly RestProfile _restProfile;
 		private readonly ConsumerProfile _consumerProfile;
-		public Func< string > AdditionalLogInfo{ get; set; }
+		public Func< string > AdditionalLogInfo { get; set; }
 
 		public QuickBooksOnlineService( QuickBooksOnlineAuthenticatedUserCredentials quickBooksAuthenticatedUserCredentials, QuickBooksOnlineNonAuthenticatedUserCredentials quickBooksNonAuthenticatedUserCredentials )
 		{
@@ -133,19 +133,17 @@ namespace QuickBooksOnlineAccess
 			return res;
 		}
 
-
-
-		internal static void FillPurchaseOrdersLineItemsById(IEnumerable<Models.CreatePurchaseOrders.PurchaseOrder> purchaseOrders, IEnumerable<Product> items)
+		internal static void FillPurchaseOrdersLineItemsById( IEnumerable< Models.CreatePurchaseOrders.PurchaseOrder > purchaseOrders, IEnumerable< Product > items )
 		{
-			var itemsList = ( items as IList<Product> ?? items.ToList() );
+			var itemsList = ( items as IList< Product > ?? items.ToList() );
 
 			foreach( var purchaseOrder in purchaseOrders )
 			{
 				var newLineItems = new List< OrderLineItem >();
 				foreach( var lineItem in purchaseOrder.LineItems )
 				{
-					var itemMayBe = itemsList.FirstOrDefault(item => item.Name == lineItem.ItemName);
-					if (itemMayBe != null)
+					var itemMayBe = itemsList.FirstOrDefault( item => item.Name == lineItem.ItemName );
+					if( itemMayBe != null )
 					{
 						lineItem.Id = itemMayBe.Id;
 						newLineItems.Add( lineItem );
@@ -193,7 +191,7 @@ namespace QuickBooksOnlineAccess
 				var salesReceipts = await this._quickBooksOnlineServiceSdk.GetSalesReceipt( dateFrom, dateTo ).ConfigureAwait( false );
 
 				var invoicesConverted = invoices.Invoices.ToQBOrder().ToList();
-				var salesReceiptsConverted = salesReceipts.Orders.ToQBOrder().ToList();
+				var salesReceiptsConverted = salesReceipts.SaleReceipts.ToQBOrder().ToList();
 
 				var result = invoicesConverted.Concat( salesReceiptsConverted );
 
@@ -222,7 +220,7 @@ namespace QuickBooksOnlineAccess
 				var salesReceipts = await this._quickBooksOnlineServiceSdk.GetSalesReceipt( docNumbers ).ConfigureAwait( false );
 
 				var invoicesConverted = invoices.Invoices.ToQBOrder().ToList();
-				var salesReceiptsConverted = salesReceipts.Orders.ToQBOrder().ToList();
+				var salesReceiptsConverted = salesReceipts.SaleReceipts.ToQBOrder().ToList();
 
 				var result = invoicesConverted.Concat( salesReceiptsConverted );
 

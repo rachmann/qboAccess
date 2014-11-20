@@ -124,6 +124,9 @@
     <Compile Include="Models\QuickBooksOnlineNonAuthenticatedUserCredentials.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\Auth\ConsumerProfile.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\Auth\RestProfile.cs" />
+    <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreateSaleReceipts\CreateSaleReceiptsResponse.cs" />
+    <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreateSaleReceipts\SaleReceipt.cs" />
+    <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreateSaleReceipts\Line.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreateInvoice\Invoice.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreateInvoice\Line.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreateOrders\CreateInvoicesResponse.cs" />
@@ -174,7 +177,9 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Models\Services\QuickBooksOnlineServicesSdk\CreateOrders\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

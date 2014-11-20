@@ -10,6 +10,7 @@ using QuickBooksOnlineAccess.Models.GetOrders;
 using QuickBooksOnlineAccess.Models.GetProducts;
 using QuickBooksOnlineAccess.Models.GetPurchaseOrders;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreatePurchaseOrders;
+using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreateSaleReceipts;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetInvoices;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetSalesReceipts;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.UpdateItemQuantityOnHand;
@@ -18,6 +19,7 @@ using QuickBooksOnlineAccess.Models.UpdateInventory;
 using Bill = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetBills.Bill;
 using Invoice = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetInvoices.Invoice;
 using Item = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetItems.Item;
+using Line = Intuit.Ipp.Data.Line;
 using Payment = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetPayments.Payment;
 using PurchaseOrder = Intuit.Ipp.Data.PurchaseOrder;
 using SalesReceipt = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetSalesReceipts.SalesReceipt;
@@ -187,6 +189,44 @@ namespace QuickBooksOnlineAccess.Misc
 		#endregion
 
 		#region FromIQuickBooksOnlineServiceInternal
+		public static Intuit.Ipp.Data.SalesReceipt ToIppSaleReceipt( this SaleReceipt saleReceipt )
+		{
+			var ippSaleReceipt = new Intuit.Ipp.Data.SalesReceipt
+			{
+				DocNumber = saleReceipt.DocNumber,
+				Line = saleReceipt.Line.Select( x => x.ToIppSaleReceiptLine() ).ToArray(),
+				CustomerRef = new ReferenceType { Value = saleReceipt.CustomerValue, name = saleReceipt.CustomerName },
+				CurrencyRef = new ReferenceType { name = "United States Dollar", Value = "USD" }
+			};
+
+			return ippSaleReceipt;
+		}
+
+		public static Line ToIppSaleReceiptLine( this Models.Services.QuickBooksOnlineServicesSdk.CreateSaleReceipts.Line line )
+		{
+			var ippSaleReceiptLine = new Line();
+
+			var lineDetail = new SalesItemLineDetail()
+			{
+				Qty = line.Qty,
+				QtySpecified = true,
+				ItemRef = new ReferenceType()
+				{
+					Value = line.ItemValue,
+					name = line.ItemName
+				},
+				ItemElementName = ItemChoiceType.UnitPrice,
+				AnyIntuitObject = line.UnitPrice,
+			};
+			ippSaleReceiptLine.AnyIntuitObject = lineDetail;
+			ippSaleReceiptLine.DetailType = LineDetailTypeEnum.SalesItemLineDetail;
+			ippSaleReceiptLine.DetailTypeSpecified = true;
+			ippSaleReceiptLine.Amount = line.UnitPrice * line.Qty;
+			ippSaleReceiptLine.AmountSpecified = true;
+
+			return ippSaleReceiptLine;
+		}
+
 		public static Intuit.Ipp.Data.Invoice ToIppInvoice( this Models.Services.QuickBooksOnlineServicesSdk.CreateInvoice.Invoice invoice )
 		{
 			var qbPurchaseOrder = new Intuit.Ipp.Data.Invoice

@@ -4,11 +4,11 @@ namespace QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Get
 {
 	internal class GetSalesReceiptsResponse
 	{
-		public GetSalesReceiptsResponse( IEnumerable< SalesReceipt > ordersFilteredFromAndTo )
+		public GetSalesReceiptsResponse( IEnumerable< SalesReceipt > salesReceipts )
 		{
-			this.Orders = ordersFilteredFromAndTo;
+			this.SaleReceipts = salesReceipts;
 		}
 
-		public IEnumerable< SalesReceipt > Orders { get; set; }
+		public IEnumerable< SalesReceipt > SaleReceipts { get; set; }
 	}
 }

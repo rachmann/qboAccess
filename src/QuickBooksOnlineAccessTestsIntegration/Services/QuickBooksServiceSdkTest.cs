@@ -6,10 +6,12 @@ using NUnit.Framework;
 using QuickBooksOnlineAccess.Misc;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Auth;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreateInvoice;
+using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreateSaleReceipts;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetPurchaseOrders;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.UpdatePurchaseOrders;
 using QuickBooksOnlineAccess.Services;
 using QuickBooksOnlineAccessTestsIntegration.TestEnvironment;
+using Line = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreateInvoice.Line;
 using PurchaseOrdeLineItem = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreatePurchaseOrders.PurchaseOrdeLineItem;
 using PurchaseOrder = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreatePurchaseOrders.PurchaseOrder;
 
@@ -170,6 +172,39 @@ namespace QuickBooksOnlineAccessTestsIntegration.Services
 		}
 
 		[ Test ]
+		public void CreateSaleReceipt_ServiceDontContainsSuchSaleReceipt_SaleReceiptCreated()
+		{
+			//A
+			var receipt = new SaleReceipt
+			{
+				DocNumber = "1-1-5-54-28400-105",
+				Line = new List< QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreateSaleReceipts.Line >
+				{
+					new QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreateSaleReceipts.Line()
+					{
+						Qty = 3,
+						ItemValue = "21",
+						ItemName = "testSku1",
+						UnitPrice = 12.3m,
+					}
+				},
+				CustomerValue = "3",
+				CustomerName = "Francine"
+			};
+
+			//A
+			var createSaleReceipts = this._quickBooksOnlineServiceSdk.CreateSaleReceipts( receipt );
+			createSaleReceipts.Wait();
+
+			//A
+			var getSaleRceipts = this._quickBooksOnlineServiceSdk.GetSalesReceipt( receipt.DocNumber );
+			var salesReceiptsResponse = getSaleRceipts.Result;
+
+			//A
+			salesReceiptsResponse.SaleReceipts.Where( x => x.DocNumber == receipt.DocNumber ).ToList().Count.Should().BeGreaterThan( 0 );
+		}
+
+		[ Test ]
 		public void GetBills_ServiceContainsBills_BillsReceived()
 		{
 			//A
@@ -219,7 +254,7 @@ namespace QuickBooksOnlineAccessTestsIntegration.Services
 			var getSalesReceiptsResponse = getSalesReceiptsResponseTask.Result;
 
 			//A
-			getSalesReceiptsResponse.Orders.Count().Should().BeGreaterThan( 0 );
+			getSalesReceiptsResponse.SaleReceipts.Count().Should().BeGreaterThan( 0 );
 		}
 
 		[ Test ]
@@ -246,7 +281,7 @@ namespace QuickBooksOnlineAccessTestsIntegration.Services
 		{
 			//A
 			var getAllSalesReceiptsResponseTask = this._quickBooksOnlineServiceSdk.GetSalesReceipt( DateTime.Now.AddMonths( -1 ), DateTime.Now );
-			var realReceiptsIds = getAllSalesReceiptsResponseTask.Result.Orders.Select( x => x.DocNumber ).ToList();
+			var realReceiptsIds = getAllSalesReceiptsResponseTask.Result.SaleReceipts.Select( x => x.DocNumber ).ToList();
 			var fakeIds = new List< string >() { "1000" };
 
 			//A
@@ -255,7 +290,7 @@ namespace QuickBooksOnlineAccessTestsIntegration.Services
 
 			//A
 			realReceiptsIds.Count.Should().BeGreaterThan( 0 );
-			getSalesReceiptsResponse.Orders.Count().Should().Be( realReceiptsIds.Count );
+			getSalesReceiptsResponse.SaleReceipts.Count().Should().Be( realReceiptsIds.Count );
 		}
 
 		[ Test ]

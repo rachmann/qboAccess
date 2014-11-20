@@ -11,6 +11,7 @@ using QuickBooksOnlineAccess.Misc;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Auth;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreateInvoice;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreatePurchaseOrders;
+using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.CreateSaleReceipts;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetBills;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetInvoices;
 using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetItems;
@@ -309,6 +310,26 @@ namespace QuickBooksOnlineAccess.Services
 
 				batch.Execute();
 				return new CreateInvoicesResponse();
+			} ).ConfigureAwait( false );
+		}
+
+		public async Task< CreateSaleReceiptsResponse > CreateSaleReceipts( params SaleReceipt[] orders )
+		{
+			return await Task.Factory.StartNew( () =>
+			{
+				if( orders == null || orders.Length == 0 )
+					return new CreateSaleReceiptsResponse();
+
+				var invoicesForBatch = orders.ToList().Select( x => x.ToIppSaleReceipt() ).ToDictionary( x => Guid.NewGuid().ToString() );
+
+				var batch = this._dataService.CreateNewBatch();
+				foreach( var invoiceKey in invoicesForBatch.Keys )
+				{
+					batch.Add( invoicesForBatch[ invoiceKey ], invoiceKey, OperationEnum.create );
+				}
+
+				batch.Execute();
+				return new CreateSaleReceiptsResponse();
 			} ).ConfigureAwait( false );
 		}
 
