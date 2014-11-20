@@ -28,5 +28,6 @@ namespace QuickBooksOnlineAccess
 		Func< string > AdditionalLogInfo { get; set; }
 
 		Task< IEnumerable< Order > > GetOrdersAsync( params string[] docNumbers );
+		Task CreateOrdersAsync( params Models.CreateOrders.Order[] purchaseOrders );
 	}
 }
