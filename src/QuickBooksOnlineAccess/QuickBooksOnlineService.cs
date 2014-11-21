@@ -253,13 +253,17 @@ namespace QuickBooksOnlineAccess
 			{
 				QuickBooksOnlineLogger.LogTraceStarted( this.CreateMethodCallInfo( methodParameters, mark ) );
 
-				var invoices = await this._quickBooksOnlineServiceSdk.GetInvoices( docNumbers ).ConfigureAwait( false );
-				var salesReceipts = await this._quickBooksOnlineServiceSdk.GetSalesReceipt( docNumbers ).ConfigureAwait( false );
+				var result = new List< Models.GetOrders.Order >();
+				if( docNumbers.Length > 0 )
+				{
+					var invoices = await this._quickBooksOnlineServiceSdk.GetInvoices( docNumbers ).ConfigureAwait( false );
+					var salesReceipts = await this._quickBooksOnlineServiceSdk.GetSalesReceipt( docNumbers ).ConfigureAwait( false );
 
-				var invoicesConverted = invoices.Invoices.ToQBOrder().ToList();
-				var salesReceiptsConverted = salesReceipts.SaleReceipts.ToQBOrder().ToList();
+					var invoicesConverted = invoices.Invoices.ToQBOrder().ToList();
+					var salesReceiptsConverted = salesReceipts.SaleReceipts.ToQBOrder().ToList();
 
-				var result = invoicesConverted.Concat( salesReceiptsConverted );
+					result = invoicesConverted.Concat( salesReceiptsConverted ).ToList();
+				}
 
 				QuickBooksOnlineLogger.LogTraceEnded( this.CreateMethodCallInfo( methodParameters, mark, methodResult : result.ToJson() ) );
 
