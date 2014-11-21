@@ -154,6 +154,7 @@ namespace QuickBooksOnlineAccess.Misc
 				CreateTime = source.CreateTime,
 				CustomerName = source.CustomerName,
 				CustomerValue = source.CustomerValue,
+				PrivateNote = source.PrivateNote,
 			};
 
 			return qbOrder;
@@ -181,6 +182,7 @@ namespace QuickBooksOnlineAccess.Misc
 				CreateTime = source.CreateTime,
 				CustomerName = source.CustomerName,
 				CustomerValue = source.CustomerValue,
+				PrivateNote = source.PrivateNote,
 			};
 
 			return qbOrder;
@@ -785,6 +787,7 @@ namespace QuickBooksOnlineAccess.Misc
 				TrackingNum = salesReceipt.TrackingNum,
 				CustomerName = ( salesReceipt.CustomerRef != null ) ? salesReceipt.CustomerRef.name : null,
 				CustomerValue = ( salesReceipt.CustomerRef != null ) ? salesReceipt.CustomerRef.Value : null,
+				PrivateNote = salesReceipt.PrivateNote,
 			};
 
 			return qbSalesReceipt;
@@ -821,6 +824,7 @@ namespace QuickBooksOnlineAccess.Misc
 				Line = invoice.Line.Select( x => x.ToQBAccessInvoiceLine() ).ToList(),
 				CustomerName = ( invoice.CustomerRef != null ) ? invoice.CustomerRef.name : null,
 				CustomerValue = ( invoice.CustomerRef != null ) ? invoice.CustomerRef.Value : null,
+				PrivateNote = invoice.PrivateNote,
 			};
 
 			return qbAccessItem;

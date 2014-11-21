@@ -23,5 +23,6 @@ namespace QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Get
 		public decimal Balance { get; set; }
 		public string CustomerName { get; set; }
 		public string CustomerValue { get; set; }
+		public string PrivateNote { get; set; }
 	}
 }

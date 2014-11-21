@@ -25,6 +25,7 @@ namespace QuickBooksOnlineAccess.Models.GetOrders
 		public DateTime CreateTime { get; set; }
 		public string CustomerName { get; set; }
 		public string CustomerValue { get; set; }
+		public string PrivateNote { get; set; }
 
 		public OrderStatus GetOrderStatus()
 		{
