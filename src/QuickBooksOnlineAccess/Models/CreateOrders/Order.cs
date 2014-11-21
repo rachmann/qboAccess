@@ -10,7 +10,7 @@ namespace QuickBooksOnlineAccess.Models.CreateOrders
 		{
 			try
 			{
-				var res = String.Format( "{{DocNumber:{0}, CustomerId:{1}, CustomerName:{2}, TnxDate:{3}, OrderStatus:{4}, LineItems:{5}}}", this.DocNumber, this.CustomerValue, this.TnxDate, this.OrderStatus, this.LineItems.ToJson() );
+				var res = String.Format( "{{DocNumber:{0}, CustomerId:{1}, CustomerName:{2}, TnxDate:{3}, OrderStatus:{4}, LineItems:{5}}}", this.DocNumber, this.CustomerValue, this.CustomerName, this.TnxDate, this.OrderStatus, this.LineItems.ToJson() );
 				return res;
 			}
 			catch
