@@ -18,6 +18,7 @@ using QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.UpdateP
 using QuickBooksOnlineAccess.Models.UpdateInventory;
 using Bill = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetBills.Bill;
 using Customer = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetCustomers.Customer;
+using CustomField = Intuit.Ipp.Data.CustomField;
 using Invoice = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetInvoices.Invoice;
 using Item = QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.GetItems.Item;
 using Line = Intuit.Ipp.Data.Line;
@@ -203,10 +204,24 @@ namespace QuickBooksOnlineAccess.Misc
 				TxnDate = saleReceipt.TnxDate,
 				TxnDateSpecified = true,
 				CustomerRef = new ReferenceType { Value = saleReceipt.CustomerValue, name = saleReceipt.CustomerName },
-				CurrencyRef = new ReferenceType { name = "United States Dollar", Value = "USD" }
+				CurrencyRef = new ReferenceType { name = "United States Dollar", Value = "USD" },
+				PrivateNote = saleReceipt.PrivateNote,
+				CustomField = ( saleReceipt.CustomFields ?? Enumerable.Empty< Models.Services.QuickBooksOnlineServicesSdk.CreateSaleReceipts.CustomField >() ).Select( x => x.ToQBCustomField() ).TakeWhile( ( cf, i ) => i < 2 ).ToArray(),
 			};
 
 			return ippSaleReceipt;
+		}
+
+		public static CustomField ToQBCustomField( this Models.Services.QuickBooksOnlineServicesSdk.CreateSaleReceipts.CustomField source )
+		{
+			var customField = new CustomField
+			{
+				Name = source.Name,
+				DefinitionId = source.DefinitioId,
+				AnyIntuitObject = source.Value,
+				Type = CustomFieldTypeEnum.StringType,
+			};
+			return customField;
 		}
 
 		public static Line ToIppSaleReceiptLine( this Models.Services.QuickBooksOnlineServicesSdk.CreateSaleReceipts.Line line )
@@ -548,10 +563,24 @@ namespace QuickBooksOnlineAccess.Misc
 				DocNumber = source.DocNumber,
 				CustomerName = source.CustomerName,
 				CustomerValue = source.CustomerValue,
+				PrivateNote = source.PrivateNote,
 				TnxDate = source.TnxDate,
 				Line = source.LineItems.Select( x => x.ToQBSaleReceiptLineItem() ),
+				CustomFields = ( source.CustomFields ?? Enumerable.Empty< Models.CreateOrders.CustomField >() ).Select( x => x.ToQBCustomField() ),
 			};
+
 			return saleReceipt;
+		}
+
+		public static Models.Services.QuickBooksOnlineServicesSdk.CreateSaleReceipts.CustomField ToQBCustomField( this Models.CreateOrders.CustomField source )
+		{
+			var customField = new Models.Services.QuickBooksOnlineServicesSdk.CreateSaleReceipts.CustomField
+			{
+				Name = source.Name,
+				DefinitioId = source.DefinitioId,
+				Value = source.Value,
+			};
+			return customField;
 		}
 
 		public static Models.Services.QuickBooksOnlineServicesSdk.CreateSaleReceipts.Line ToQBSaleReceiptLineItem( this Models.CreateOrders.OrderLineItem source )

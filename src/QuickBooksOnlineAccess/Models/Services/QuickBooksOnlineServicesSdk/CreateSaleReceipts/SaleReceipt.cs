@@ -10,5 +10,7 @@ namespace QuickBooksOnlineAccess.Models.Services.QuickBooksOnlineServicesSdk.Cre
 		public string CustomerValue { get; set; }
 		public string CustomerName { get; set; }
 		public DateTime TnxDate { get; set; }
+		public IEnumerable< CustomField > CustomFields { get; set; }
+		public string PrivateNote { get; set; }
 	}
 }

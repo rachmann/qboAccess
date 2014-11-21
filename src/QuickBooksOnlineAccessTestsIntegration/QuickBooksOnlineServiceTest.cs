@@ -108,7 +108,7 @@ namespace QuickBooksOnlineAccessTestsIntegration
 			//A
 			var receipt = new Order
 			{
-				DocNumber = "1-1-5-54-28400-105",
+				DocNumber = "1-1-5-54-28400-117",
 				LineItems = new List< QuickBooksOnlineAccess.Models.CreateOrders.OrderLineItem >
 				{
 					new QuickBooksOnlineAccess.Models.CreateOrders.OrderLineItem()
@@ -119,8 +119,10 @@ namespace QuickBooksOnlineAccessTestsIntegration
 					}
 				},
 				CustomerName = "Mrs Francine Smith",
+				PrivateNote = "123456789012345678901234567890123456789012345678901234567890_1234567890",
 				OrderStatus = OrderStatusEnum.Paid,
 				TnxDate = new DateTime( 2014, 11, 15 ),
+				CustomFields = new List< CustomField > { new CustomField { DefinitioId = "1", Name = "SomeField", Value = "123456789012345678901234567890123456789012345678901234567890_1234567890" } },
 			};
 
 			//A

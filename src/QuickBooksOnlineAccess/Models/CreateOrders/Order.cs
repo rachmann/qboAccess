@@ -25,6 +25,8 @@ namespace QuickBooksOnlineAccess.Models.CreateOrders
 		public OrderStatusEnum OrderStatus { get; set; }
 		public IEnumerable< OrderLineItem > LineItems { get; set; }
 		public string CustomerValue { get; set; }
+		public IEnumerable< CustomField > CustomFields { get; set; }
+		public string PrivateNote { get; set; }
 	}
 
 	public enum OrderStatusEnum

@@ -116,6 +116,7 @@
     <Compile Include="IQuickBooksOnlineService.cs" />
     <Compile Include="Misc\ExtensionsPublic.cs" />
     <Compile Include="Misc\IManualSerializable.cs" />
+    <Compile Include="Models\CreateOrders\CustomField.cs" />
     <Compile Include="Models\CreateOrders\OrderLineItem.cs" />
     <Compile Include="Models\CreateOrders\Order.cs" />
     <Compile Include="Models\GetOrders\OrderLine.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\Auth\RestProfile.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreateInvoice\CreateInvoicesResponse.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreateSaleReceipts\CreateSaleReceiptsResponse.cs" />
+    <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreateSaleReceipts\CustomField.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreateSaleReceipts\SaleReceipt.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreateSaleReceipts\Line.cs" />
     <Compile Include="Models\Services\QuickBooksOnlineServicesSdk\CreateInvoice\Invoice.cs" />
